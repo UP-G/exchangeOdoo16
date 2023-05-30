@@ -1,0 +1,6 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_tmtr_exchange_1c_user,access.tmtr.exchange.1c.user,model_tmtr_exchange_1c_user,,1,1,1,1
+access_tmtr_exchange_1c_contact,access.tmtr.exchange.1c.contact,model_tmtr_exchange_1c_contact,,1,1,1,1
+access_tmtr_exchange_1c_counterparty,access.tmtr.exchange.1c.counterparty,model_tmtr_exchange_1c_counterparty,,1,1,1,1
+access_tmtr_exchange_1c_partner,access.tmtr.exchange.1c.partner,model_tmtr_exchange_1c_partner,,1,1,1,1
+access_tmtr_exchange_1c_interaction,access.tmtr.exchange.1c.interaction,model_tmtr_exchange_1c_interaction,,1,1,1,1

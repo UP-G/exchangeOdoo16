@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <menuitem
+            id="menu_tmtr_exchange_root"
+            name="Tmtr exchange"
+            sequence="190"/>
+
+        <menuitem
+            id="menu_tmtr_exchange_1c_user"
+            name="1C User"
+            parent="menu_tmtr_exchange_root"
+            sequence="0"/>
+
+        <menuitem
+            id="menu_tmtr_exchange_1c_contact"
+            name="1C Contact"
+            parent="menu_tmtr_exchange_root"
+            action="action_tmtr_exchange_contact"
+            sequence="5"/>
+
+        <menuitem
+            id="menu_tmtr_exchange_1c_counterparty"
+            name="1C Counterparty"
+            parent="menu_tmtr_exchange_root"
+            action="action_tmtr_exchange_counterparty"
+            sequence="5"/>
+
+        <menuitem
+            id="menu_tmtr_exchange_1c_partner"
+            name="1C Partner"
+            parent="menu_tmtr_exchange_root"
+            action="action_tmtr_exchange_partner"
+            sequence="5"/>
+
+        <menuitem
+            id="menu_tmtr_exchange_1c_interaction"
+            name="1C Interaction"
+            parent="menu_tmtr_exchange_root"
+            action="action_tmtr_exchange_interaction"
+            sequence="5"/>
+
+    </data>
+</odoo>
