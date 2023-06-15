@@ -23,13 +23,13 @@ class EfficiencySalerReport(models.Model):
     plan = fields.Float(string='Plan this month')
     
     def _select(self):
-#                date_trunc('month',now())::timestamp at time zone 'Europe/Moscow' as date,
+# не работает в pivot:         date_trunc('month',now())::timestamp at time zone 'Europe/Moscow' as date,
 # timezone('Europe/Moscow',date_trunc('month',now())) as date,
         return """
             SELECT
                 1 as id,
                 indicators.manager_id as manager_name,
-                client.name as client_name,
+                client.partner_id as client_name,
                 null as type_client,
                 date_trunc('month',now()) as date,
 
@@ -49,7 +49,7 @@ class EfficiencySalerReport(models.Model):
 
     def _join(self):
         return """
-            INNER JOIN res_partner as client ON indicators.partner_id = client.id
+            INNER JOIN tmtr_exchange_1c_partner as client ON indicators.partner_id = client.id
         """
 
     def _where(self):
