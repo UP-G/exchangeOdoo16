@@ -9,6 +9,6 @@ class ResConfigSettings(models.TransientModel):
     tag_1c_contact = fields.Many2one('res.partner.category', config_parameter='tmtr_exchange.tag_1c_contact')
     tag_1c_partner = fields.Many2one('res.partner.category', config_parameter='tmtr_exchange.tag_1c_partner')
     tag_1c_counterparty = fields.Many2one('res.partner.category', config_parameter='tmtr_exchange.tag_1c_counterparty')
-    tag_1c_saler = fields.Many2one('res.partner.category', config_parameter='tmtr_exchange.tag_1c_counterparty')
+    tag_1c_saler = fields.Many2one('res.partner.category', config_parameter='tmtr_exchange.tag_1c_saler')
 
     template_1c_manager = fields.Many2one('res.users', config_parameter='tmtr_exchange.template_1c_manager')

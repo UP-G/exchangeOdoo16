@@ -20,7 +20,7 @@ class EfficiencySalerReport(models.Model):
     debt = fields.Float('Debt amount')
     overdue_debt = fields.Float('Overdue debt amount')
     task_count = fields.Integer('Task client')
-    plan = fields.Float(string='Plan this mounth')
+    plan = fields.Float(string='Plan this month')
     
     def _select(self):
 #                date_trunc('month',now())::timestamp at time zone 'Europe/Moscow' as date,
@@ -29,7 +29,7 @@ class EfficiencySalerReport(models.Model):
             SELECT
                 1 as id,
                 indicators.manager_id as manager_name,
-                indicators.partner_id as client_name,
+                client.name as client_name,
                 null as type_client,
                 date_trunc('month',now()) as date,
 
@@ -48,12 +48,9 @@ class EfficiencySalerReport(models.Model):
        """
 
     def _join(self):
-        return ''
-#        return """
-#            INNER JOIN voximplant_operator_phone ON imot.operator_phone = voximplant_operator_phone.operator_phone
-#            LEFT JOIN tmtr_exchange_1c_partner ON voximplant_operator_phone.ref_key = tmtr_exchange_1c_partner.main_manager_key
-#            RIGHT JOIN tmtr_exchange_1c_indicators ON tmtr_exchange_1c_partner.ref_key = tmtr_exchange_1c_indicators.ref_key
-#        """
+        return """
+            INNER JOIN res_partner as client ON indicators.partner_id = client.id
+        """
 
     def _where(self):
         return ''
