@@ -20,7 +20,10 @@
         <field name="model">tmtr.exchange.1c.contact</field>
         <field name="arch" type="xml">
             <tree multi_edit="1">
-                <field name="partner_id" optional="show"/>
+                <field name="ref_key"/>
+                <field name="owner_key"/>
+                <field name="description"/>
+                <field name="onec_partner_id"/>
             </tree>
         </field>
     </record>
@@ -33,11 +36,21 @@
                 <sheet>
                     <group>
                         <group>
-                            <field name="partner_id"/>
+                            <field name="ref_key"/>
+                            <field name="owner_key"/>
+                            <field name="description"/>
                         </group>
-                        <button name="test_button" string="Test" class="btn-primary"
-                        type="object"/>
+                        <group>
+                            <field name="communication_registration_date"/>
+                            <field name="partner_id"/>
+                            <field name="onec_partner_id"/>
+                        </group>
                     </group>
+                    <notebook>
+                    <page name="contacts_page" string="Contacts">
+                    <field name="contacts" type="html" options="{'collaborative': true, 'resizable': false}" placeholder="Contacts..."/>
+                    </page>
+                    </notebook>
                 </sheet>
             </form>
         </field>
@@ -48,7 +61,7 @@
         <field name="name">Contact 1C</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">tmtr.exchange.1c.contact</field>
-        <field name="view_mode">kanban,tree,form</field>
+        <field name="view_mode">tree,form</field>
         <field name="context">{}</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">

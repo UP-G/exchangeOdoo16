@@ -21,6 +21,20 @@
         <field name="arch" type="xml">
             <tree multi_edit="1">
                 <field name="partner_id" optional="show"/>
+                <field name="ref_key" optional="show"/>
+                <field name="data_version" optional="show"/>
+                <field name="parent_key" optional="show"/>
+                <field name="code" optional="show"/>
+                <field name="description" optional="show"/>
+                <field name="business_region_key" optional="show"/>
+                <field name="registration_date" optional="show"/>
+                <field name="is_client" optional="show"/>
+                <field name="is_provider" optional="show"/>
+                <field name="full_name" optional="show"/>
+                <field name="main_manager_key" optional="show"/>
+                <field name="is_competitor" optional="show"/>
+                <field name="other_relation" optional="show"/>
+                <field name="is_served_by_sales" optional="show"/>
             </tree>
         </field>
     </record>
@@ -33,10 +47,26 @@
                 <sheet>
                     <group>
                         <group>
-                            <field name="partner_id"/>
+                        <field name="partner_id" optional="show"/>
+                        <field name="ref_key" optional="show"/>
+                        <field name="data_version" optional="show"/>
+                        <field name="parent_key" optional="show"/>
+                        <field name="code" optional="show"/>
+                        <field name="description" optional="show"/>
+                        <field name="business_region_key" optional="show"/>
                         </group>
-                        <button name="test_button" string="Test" class="btn-primary"
-                        type="object"/>
+                        <group>
+                        <field name="registration_date" optional="show"/>
+                        <field name="is_client" optional="show"/>
+                        <field name="is_provider" optional="show"/>
+                        <field name="full_name" optional="show"/>
+                        <field name="main_manager_key" optional="show"/>
+                        <field name="is_competitor" optional="show"/>
+                        <field name="other_relation" optional="show"/>
+                        <field name="is_served_by_sales" optional="show"/>   
+                        </group>
+                        <!-- <button name="test_button" string="Test" class="btn-primary"
+                        type="object"/> -->
                     </group>
                 </sheet>
             </form>
@@ -48,7 +78,7 @@
         <field name="name">Partner 1C</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">tmtr.exchange.1c.partner</field>
-        <field name="view_mode">kanban,tree,form</field>
+        <field name="view_mode">tree,form</field>
         <field name="context">{}</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">

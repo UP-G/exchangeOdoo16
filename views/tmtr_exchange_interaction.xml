@@ -20,7 +20,13 @@
         <field name="model">tmtr.exchange.1c.interaction</field>
         <field name="arch" type="xml">
             <tree multi_edit="1">
-                <field name="partner_id" optional="show"/>
+                <field name="onec_member_id" optional="show"/>
+                <field name="ref" optional="show"/>
+                <field name="date" optional="show"/>
+                <field name="importance" optional="show"/>
+                <field name="tm_theme" optional="show"/>
+                <field name="members" optional="show"/>
+                <field name="author_key" optional="show"/>
             </tree>
         </field>
     </record>
@@ -33,10 +39,18 @@
                 <sheet>
                     <group>
                         <group>
-                            <field name="partner_id"/>
+                            <field name="onec_member_id" optional="show"/>
+                            <field name="ref" optional="show"/>
+                            <field name="date" optional="show"/>
+                            <field name="importance" optional="show"/>
+                        </group> 
+                        <group>
+                            <field name="tm_theme" optional="show"/>
+                            <field name="members" optional="show"/>
+                            <field name="author_key" optional="show"/>
                         </group>
-                        <button name="test_button" string="Test" class="btn-primary"
-                        type="object"/>
+<!--                        <button name="test_create_user" string="Test" class="btn-primary"
+                        type="object"/>     -->
                     </group>
                 </sheet>
             </form>
@@ -48,7 +62,7 @@
         <field name="name">Interaction 1C</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">tmtr.exchange.1c.interaction</field>
-        <field name="view_mode">kanban,tree,form</field>
+        <field name="view_mode">tree,form</field>
         <field name="context">{}</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">

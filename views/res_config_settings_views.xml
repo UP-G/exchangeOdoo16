@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="res_config_settings_view_form" model="ir.ui.view">
+            <field name="name">res.config.settings.view.tmtr_exchange</field>
+            <field name="model">res.config.settings</field>
+            <field name="priority" eval="90"/>
+            <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//div[hasclass('settings')]" position="inside">
+                    <div class="app_settings_block" data-string="tmtr_exchange" id="tmtr_exchange" string="Tmtr exchange"
+                         data-key="tmtr_exchange">
+                        <h2>Tmtr exchange</h2>
+                        <div class="row mt16 o_settings_container" name="companies_setting_container">
+                                <div class="col-12 col-lg-6 o_setting_box" id="company_details_settings">
+                                    <br/>
+                                    <div class="o_setting_right_pane">
+                                        <span class="o_form_label">Tags Contact-Partner</span>
+                                        <span class="fa fa-lg fa-building-o" title="Values set here are tags contact-partner" aria-label="Values set here are tags contact-partner"  groups="base.group_multi_company"  role="img"/>
+                                        <div class="text-muted">
+                                            Choose tags for 1c contacts
+                                        </div>
+                                        <div class="content-group">
+                                            <div class="mt16" groups="base.group_no_one">
+                                                <field name="tag_1c_contact" class="oe_inline"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <br/>
+                                </div>
+                            <div class="col-12 col-lg-6 o_setting_box" id="company_details_settings">
+                                    <br/>
+                                    <div class="o_setting_right_pane">
+                                        <span class="o_form_label">Tags Partner</span>
+                                        <span class="fa fa-lg fa-building-o" title="Values set here are tag contact-partner" aria-label="Values set here are tag contact-partner" groups="base.group_multi_company" role="img"/>
+                                        <div class="text-muted">
+                                            Choose tags for 1c partners
+                                        </div>
+                                        <div class="content-group">
+                                            <div class="mt16" groups="base.group_no_one">
+                                                <field name="tag_1c_partner" class="oe_inline"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <br/>
+                                </div>
+                            <div class="col-12 col-lg-6 o_setting_box" id="company_details_settings">
+                                    <br/>
+                                    <div class="o_setting_right_pane">
+                                        <span class="o_form_label">Tags counterparty</span>
+                                        <span class="fa fa-lg fa-building-o" title="Values set here are tags counterparty" aria-label="Values set here are tags counterparty" groups="base.group_multi_company" role="img"/>
+                                        <div class="text-muted">
+                                            Choose tags for 1c counterparty
+                                        </div>
+                                        <div class="content-group">
+                                            <div class="mt16" groups="base.group_no_one">
+                                                <field name="tag_1c_counterparty" class="oe_inline"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <br/>
+                                </div>
+                                <div class="col-12 col-lg-6 o_setting_box" id="company_details_settings">
+                                    <br/>
+                                    <div class="o_setting_right_pane">
+                                        <span class="o_form_label">Template 1c manager</span>
+                                        <span class="fa fa-lg fa-building-o" title="Values set here are tags counterparty" aria-label="Values set here are tags counterparty" groups="base.group_multi_company" role="img"/>
+                                        <div class="text-muted">
+                                            Choose template for 1c manager
+                                        </div>
+                                        <div class="content-group">
+                                            <div class="mt16" groups="base.group_no_one">
+                                                <field name="template_1c_manager" class="oe_inline"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <br/>
+                                </div>
+                                <div class="col-12 col-lg-6 o_setting_box" id="company_details_settings">
+                                    <br/>
+                                    <div class="o_setting_right_pane">
+                                        <span class="o_form_label">Tags saller</span>
+                                        <span class="fa fa-lg fa-building-o" title="Values set here are tags counterparty" aria-label="Values set here are tags counterparty" groups="base.group_multi_company" role="img"/>
+                                        <div class="text-muted">
+                                            Choose tags for 1c saller
+                                        </div>
+                                        <div class="content-group">
+                                            <div class="mt16" groups="base.group_no_one">
+                                                <field name="tag_1c_saler" class="oe_inline"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <br/>
+                                </div>
+                        </div>
+                    </div>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="tmtr_exchange_config_settings_action" model="ir.actions.act_window">
+            <field name="name">Settings</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">res.config.settings</field>
+            <field name="view_mode">form</field>
+            <field name="target">inline</field>
+            <field name="context">{'module' : 'tmtr_exchange', 'bin_size': False}</field>
+        </record>
+
+
+    </data>
+</odoo>

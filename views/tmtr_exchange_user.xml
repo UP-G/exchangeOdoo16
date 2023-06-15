@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="action_open_tmtr_exchange_user" model="ir.actions.act_window">
+        <field name="name">user 1C</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">tmtr.exchange.1c.user</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain"></field>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Client
+            </p>
+        </field>
+    </record>
+
+    <record id="view_tmtr_exchange_user_tree" model="ir.ui.view">
+        <field name="name">user 1C</field>
+        <field name="model">tmtr.exchange.1c.user</field>
+        <field name="arch" type="xml">
+            <tree multi_edit="1">
+                <field name="ref_key"/>
+                <field name="user_id"/>
+            </tree>
+        </field>
+    </record>
+
+     <record id="view_tmtr_exchange_user_form" model="ir.ui.view">
+        <field name="name">tmtr.exchange.1c.user.form</field>
+        <field name="model">tmtr.exchange.1c.user</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="ref_key"/>
+                            <field name="user_id"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+
+    </record>
+
+    <record id="action_tmtr_exchange_user" model="ir.actions.act_window">
+        <field name="name">user 1C</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">tmtr.exchange.1c.user</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create user
+            </p>
+        </field>
+    </record>
+
+</odoo>

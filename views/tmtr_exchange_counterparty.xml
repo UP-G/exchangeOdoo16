@@ -21,6 +21,14 @@
         <field name="arch" type="xml">
             <tree multi_edit="1">
                 <field name="partner_id" optional="show"/>
+                <field name="ref_key" optional="show"/>
+                <field name="data_version" optional="show"/>
+                <field name="description" optional="show"/>
+                <field name="full_name" optional="show"/>
+                <field name="partner_key" optional="show"/>
+                <field name="ur_fiz_face" optional="show"/>
+                <field name="tm_code" optional="show"/>
+                
             </tree>
         </field>
     </record>
@@ -33,10 +41,19 @@
                 <sheet>
                     <group>
                         <group>
-                            <field name="partner_id"/>
+                            <field name="partner_id" optional="show"/>
+                            <field name="ref_key" optional="show"/>
+                            <field name="data_version" optional="show"/>
+                            <field name="description" optional="show"/>
+                            <field name="full_name" optional="show"/>
+                            <field name="partner_key" optional="show"/>
+                            <field name="ur_fiz_face" optional="show"/>
+                            <field name="tm_code" optional="show"/>
+                            <field name="contact" optional="show"/>
+                            
+                        
                         </group>
-                        <button name="test_button" string="Test" class="btn-primary"
-                        type="object"/>
+                        
                     </group>
                 </sheet>
             </form>
