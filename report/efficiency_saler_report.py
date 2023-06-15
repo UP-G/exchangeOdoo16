@@ -14,24 +14,26 @@ class EfficiencySalerReport(models.Model):
     type_client = fields.Char('Type client')
     date = fields.Datetime('Date')
 
-    prediction = fields.Float('Forecast sale')
+    prediction = fields.Float('Prediction')
     turnover_this_mounth = fields.Float('Proceed now')
     turnover_previous_mounth = fields.Float('Proceed last')
     debt = fields.Float('Debt amount')
     overdue_debt = fields.Float('Overdue debt amount')
     task_count = fields.Integer('Task client')
-    plan = fields.Float(string='План на текущий месяц')
+    plan = fields.Float(string='Plan this mounth')
     
     def _select(self):
+#                date_trunc('month',now())::timestamp at time zone 'Europe/Moscow' as date,
+# timezone('Europe/Moscow',date_trunc('month',now())) as date,
         return """
             SELECT
                 1 as id,
-                'manager' as manager_name,
+                indicators.manager_id as manager_name,
                 indicators.partner_id as client_name,
                 null as type_client,
-                '2023-06-01' as date,
+                date_trunc('month',now()) as date,
 
-                null as prediction,
+                0 as prediction,
                 sum(indicators.proceeds_this_mounth) as turnover_this_mounth,
                 sum(indicators.proceeds_previous_mounth) as turnover_previous_mounth,
                 sum(indicators.debt) as debt,
@@ -62,7 +64,7 @@ class EfficiencySalerReport(models.Model):
 
     def _group(self):
         return """
-            GROUP BY client_name
+            GROUP BY manager_name, client_name
         """
 
     def init(self):

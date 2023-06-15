@@ -46,7 +46,6 @@
                             <field name="debt" optional="show"/>
                             <field name="overdue_debt" optional="show"/>
                             <field name="task_count" optional="show"/>
-                            <field name="ref_key" optional="show"/>
                         </group>          
                     </group>
                 </sheet>

@@ -16,4 +16,6 @@ class TmtrExchangeOneCIndicators(models.Model):
     debt=fields.Float(string="Размер долга")
     overdue_debt= fields.Float(string="Просроченный долг")
     task_count = fields.Integer(string="Задач по клиенту")
-    ref_key = fields.Char(string= 'Ref key')
+    company_ref_key = fields.Char(string= 'Ref key')
+    origin_id = fields.Char(string='origin id fron bitrix')
+    manager_id = fields.Char(string="manager id")
