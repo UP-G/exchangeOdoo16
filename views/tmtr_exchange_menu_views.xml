@@ -28,7 +28,7 @@
 
         <menuitem
             id="tmtr_saler_report"
-            name="Saler report"
+            name="Saller report"
             parent="menu_tmtr_exchange_1c"
             action="efficiency_saler_report_action"
             sequence="10"/>
@@ -55,11 +55,11 @@
             sequence="25"/>
 
         <menuitem
-        id="menu_tmtr_exchange_1c_indicators"
-        name="finance indicators"
-        parent="menu_tmtr_exchange_1c"
-        action="action_tmtr_exchange_indicators"
-        sequence="30"/>
+            id="menu_tmtr_exchange_1c_indicators"
+            name="Finance Indicators"
+            parent="menu_tmtr_exchange_1c"
+            action="action_tmtr_exchange_indicators"
+            sequence="30"/>
 
         <menuitem
             id="menu_tmtr_exchange_1c_delivery"

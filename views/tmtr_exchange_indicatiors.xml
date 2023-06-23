@@ -20,12 +20,16 @@
         <field name="model">tmtr.exchange.1c.indicators</field>
         <field name="arch" type="xml">
             <tree multi_edit="1">
+                <field name="identifier_ib" optional="show"/>
                 <field name="partner_id" optional="show"/>
+                <field name="task_count" optional="show"/>
                 <field name="debt" optional="show"/>
+                <field name="overdue_debt" optional="show"/>
                 <field name="plan" optional="show"/>
                 <field name="prediction" optional="show"/>
-                <field name="proceeds_this_mounth" optional="show"/>
-                
+                <field name="turnover_this_mounth" optional="show"/>
+                <field name="debs_percent" optional="show" widget="percentage"/>
+                <field name="turnover_percent" optional="show" widget="percentage"/>
             </tree>
         </field>
     </record>
@@ -38,15 +42,27 @@
                 <sheet>
                     <group>
                         <group>
-                            <field name="partner_id" optional="show"/>
-                            <field name="plan" optional="show"/>
-                            <field name="prediction" optional="show"/>
-                            <field name="proceeds_this_mounth" optional="show"/>
-                            <field name="proceeds_previous_mounth" optional="show"/>
+                            <field name="turnover_this_mounth" optional="show"/>
+                            <field name="turnover_previous_mounth" optional="show"/>
+                            <field name="turnover_last_30days" optional="show"/>
+                            <field name="turnover_last_3month" optional="show"/>
                             <field name="debt" optional="show"/>
                             <field name="overdue_debt" optional="show"/>
                             <field name="task_count" optional="show"/>
-                        </group>          
+                            <field name="plan" optional="show"/>
+                            <field name="prediction" optional="show"/>
+                            
+                        </group>
+                        <group>
+                            <field name="identifier_ib" optional="show"/>
+                            <field name="origin_id" optional="show"/>
+                            <field name="company_ref_key" optional="show"/>
+                            <field name="partner_id" optional="show"/>
+                            <field name="debs_percent" optional="show"/>
+                            <field name="turnover_percent" optional="show"/>
+                            
+                            
+                        </group>
                     </group>
                 </sheet>
             </form>
@@ -58,7 +74,7 @@
         <field name="name">indicators 1c</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">tmtr.exchange.1c.indicators</field>
-        <field name="view_mode">kanban,tree,form</field>
+        <field name="view_mode">tree,form</field>
         <field name="context">{}</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">

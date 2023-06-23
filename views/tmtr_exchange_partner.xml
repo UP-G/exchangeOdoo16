@@ -10,7 +10,7 @@
         <field name="context">{}</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
-                Config
+                Partner
             </p>
         </field>
     </record>
@@ -22,19 +22,12 @@
             <tree multi_edit="1">
                 <field name="partner_id" optional="show"/>
                 <field name="ref_key" optional="show"/>
-                <field name="data_version" optional="show"/>
                 <field name="parent_key" optional="show"/>
                 <field name="code" optional="show"/>
                 <field name="description" optional="show"/>
-                <field name="business_region_key" optional="show"/>
-                <field name="registration_date" optional="show"/>
-                <field name="is_client" optional="show"/>
-                <field name="is_provider" optional="show"/>
                 <field name="full_name" optional="show"/>
                 <field name="main_manager_key" optional="show"/>
-                <field name="is_competitor" optional="show"/>
-                <field name="other_relation" optional="show"/>
-                <field name="is_served_by_sales" optional="show"/>
+                <field name="date_of_registration" optional="show"/>
             </tree>
         </field>
     </record>
@@ -49,21 +42,15 @@
                         <group>
                         <field name="partner_id" optional="show"/>
                         <field name="ref_key" optional="show"/>
-                        <field name="data_version" optional="show"/>
                         <field name="parent_key" optional="show"/>
                         <field name="code" optional="show"/>
                         <field name="description" optional="show"/>
-                        <field name="business_region_key" optional="show"/>
                         </group>
                         <group>
-                        <field name="registration_date" optional="show"/>
-                        <field name="is_client" optional="show"/>
-                        <field name="is_provider" optional="show"/>
                         <field name="full_name" optional="show"/>
                         <field name="main_manager_key" optional="show"/>
-                        <field name="is_competitor" optional="show"/>
-                        <field name="other_relation" optional="show"/>
-                        <field name="is_served_by_sales" optional="show"/>   
+                        <field name="user_id" optional="show"/>
+                        <field name="date_of_registration" optional="show"/>
                         </group>
                         <!-- <button name="test_button" string="Test" class="btn-primary"
                         type="object"/> -->
@@ -82,7 +69,7 @@
         <field name="context">{}</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
-                Create Config
+                Create Partner
             </p>
         </field>
     </record>

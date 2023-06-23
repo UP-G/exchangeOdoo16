@@ -12,7 +12,3 @@ class TmtrExchangeOneCImplemention(models.Model):
     phone = fields.Char(string='Телефон')
     partner_key = fields.Many2one('tmtr.exchange.1c.partner', string='Контрагент key')
     order_id = fields.Many2one('tmtr.exchange.1c.purchase.order', string='Заказ id')
-
-
-
-

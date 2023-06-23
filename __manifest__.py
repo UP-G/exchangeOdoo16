@@ -10,6 +10,7 @@
     'data': [
         'security/ir.model.access.csv',
         'report/efficiency_saler_view.xml',
+        'report/efficiency_report_template.xml',
         'views/tmtr_exchange_contact.xml',
         'views/tmtr_exchange_user.xml',
         'views/tmtr_exchange_partner.xml',
@@ -22,6 +23,7 @@
         'views/tmtr_exchange_implemention.xml',
         'views/res_config_settings_views.xml',
         'views/tmtr_exchange_menu_views.xml',
+        'views/tmtr_exchange_report.xml',
     ],
     'installable': True,
     'application': True,

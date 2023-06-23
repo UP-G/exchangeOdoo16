@@ -80,13 +80,29 @@
                                     <br/>
                                     <div class="o_setting_right_pane">
                                         <span class="o_form_label">Tags saller</span>
-                                        <span class="fa fa-lg fa-building-o" title="Values set here are tags counterparty" aria-label="Values set here are tags counterparty" groups="base.group_multi_company" role="img"/>
+                                        <span class="fa fa-lg fa-building-o" title="Values set here are tags saller" aria-label="Values set here are tags counterparty" groups="base.group_multi_company" role="img"/>
                                         <div class="text-muted">
                                             Choose tags for 1c saller
                                         </div>
                                         <div class="content-group">
                                             <div class="mt16" groups="base.group_no_one">
                                                 <field name="tag_1c_saler" class="oe_inline"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <br/>
+                                </div>
+                                <div class="col-12 col-lg-6 o_setting_box" id="company_details_settings">
+                                    <br/>
+                                    <div class="o_setting_right_pane">
+                                        <span class="o_form_label">Default registration date</span>
+                                        <span class="fa fa-lg fa-building-o" title="Values set here are registration date 1C partner" aria-label="Values set here are tags counterparty" groups="base.group_multi_company" role="img"/>
+                                        <div class="text-muted">
+                                            Choose default registration date 1C partner 
+                                        </div>
+                                        <div class="content-group">
+                                            <div class="mt16" groups="base.group_no_one">
+                                                <field name="registration_date_partner" class="oe_inline"/>
                                             </div>
                                         </div>
                                     </div>

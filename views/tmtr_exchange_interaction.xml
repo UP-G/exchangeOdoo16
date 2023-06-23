@@ -27,6 +27,7 @@
                 <field name="tm_theme" optional="show"/>
                 <field name="members" optional="show"/>
                 <field name="author_key" optional="show"/>
+                <field name="user_id" optional="show"/>
             </tree>
         </field>
     </record>
@@ -48,6 +49,8 @@
                             <field name="tm_theme" optional="show"/>
                             <field name="members" optional="show"/>
                             <field name="author_key" optional="show"/>
+                            <field name="responsible_key" optional="show"/>
+                            <field name="user_id" optional="show"/>
                         </group>
 <!--                        <button name="test_create_user" string="Test" class="btn-primary"
                         type="object"/>     -->

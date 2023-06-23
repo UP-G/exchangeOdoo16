@@ -11,9 +11,10 @@ class TmtrExchangeOneCContact(models.Model):
     ref_key = fields.Char(string='Ref_key')
     owner_key = fields.Char(string='Owner_Key')
     description = fields.Char(string='Description')
-    communication_registration_date = fields.Datetime(string= 'Дата Регистрации Связи')
+    communication_registration_date = fields.Datetime(string='Date register') #Дата Регистрации Связи
+    code = fields.Char(string='Code')
 
-    contacts = fields.Text(string='Контактная информация')
+    contacts = fields.Text(string='Contacts info')
 
     onec_partner_id = fields.Many2one('tmtr.exchange.1c.partner', string='1C Partner')
     partner_id = fields.Many2one('res.partner', string = 'Partner')
@@ -33,20 +34,41 @@ class TmtrExchangeOneCContact(models.Model):
 
         contact_partner = data['value']
         for data_contact in contact_partner:
-                if data_contact['DeletionMark'] == True:
-                    continue
-                contact = self.env['tmtr.exchange.1c.contact'].search([("ref_key", "=", data_contact['Ref_Key'])])
-                if contact:
-                     continue
-                self.env['tmtr.exchange.1c.contact'].create({
+            self.create_by_odata_array(data_contact)
+
+    def create_by_odata_array(self, data_contact):
+        if data_contact['DeletionMark'] == True:
+            return 0
+        contact = self.env['tmtr.exchange.1c.contact'].search([("ref_key", "=", data_contact['Ref_Key'])])
+        if contact:
+            return 0
+        return self.env['tmtr.exchange.1c.contact'].create({
                         'ref_key' : data_contact['Ref_Key'],
                         'owner_key' : data_contact['Owner_Key'],
                         'description' : data_contact['Description'],
+                        'code': data_contact['Code'],
                         'communication_registration_date' : datetime.strptime(data_contact['ДатаРегистрацииСвязи'], '%Y-%m-%dT%H:%M:%S'),
                         'contacts': '\n'.join([f"{contact['Тип']}: {contact['Представление']}" for contact in data_contact['КонтактнаяИнформация']]),
                         'onec_partner_id': self.get_owner_contact_partner(owner_key = data_contact['Owner_Key']),
                     })
-    
+
+
+    def get_contact_by_name(self, names):
+        cnt = 0
+        for name in names:
+            data = self.env['odata.1c.route'].get_by_route(
+                 "1c_ut/get_contact_partner_by_name/",
+                 {
+                      "name": name,
+                      "top": 1,
+                      "skip": 0
+                      })
+            contact_partner = data['value']
+            for data_contact in contact_partner:
+                cnt += 1 if self.create_by_odata_array(data_contact) > 0 else 0
+        return cnt
+
+
     def get_owner_contact_partner(self, owner_key):
          onec_partner = self.env['tmtr.exchange.1c.partner'].search([("ref_key", "=", owner_key)])
          return onec_partner.id
@@ -55,10 +77,6 @@ class TmtrExchangeOneCContact(models.Model):
         contact_partner = self.env['tmtr.exchange.1c.contact'].search([("onec_partner_id", "=", None)], limit=limit)
         for data_contact in contact_partner:
             data_contact['onec_partner_id'] = self.get_owner_contact_partner(owner_key=data_contact['owner_key'])
-
-    def update_child_ids(self):
-         
-        return
 
     def create_contact_in_res_partner(self, limit):
 
@@ -88,8 +106,8 @@ class TmtrExchangeOneCContact(models.Model):
                     if type_contact == 'АдресЭлектроннойПочты':
                         obj.update({'email': line.split(":")[1].strip()})
 
-                        new_contact = self.env['res.partner'].create(obj)
-                        data_contact.partner_id = new_contact.id   
+                new_contact = self.env['res.partner'].create(obj)
+                data_contact.partner_id = new_contact.id   
 
                 obj = {}
 

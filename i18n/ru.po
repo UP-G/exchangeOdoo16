@@ -1,0 +1,1097 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* tmtr_exchange
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 16.0-20221202\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-06-22 05:18+0000\n"
+"PO-Revision-Date: 2023-06-22 05:18+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: tmtr_exchange
+#: model:ir.model,name:tmtr_exchange.model_tmtr_exchange_1c_contact
+#: model:ir.ui.menu,name:tmtr_exchange.menu_tmtr_exchange_1c_contact
+msgid "1C Contact"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.model,name:tmtr_exchange.model_tmtr_exchange_1c_counterparty
+#: model:ir.ui.menu,name:tmtr_exchange.menu_tmtr_exchange_1c_counterparty
+msgid "1C Counterparty"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.ui.menu,name:tmtr_exchange.menu_tmtr_exchange_1c_implemention
+msgid "1C Delive Order Point"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.model,name:tmtr_exchange.model_tmtr_exchange_1c_purchase_order
+#: model:ir.ui.menu,name:tmtr_exchange.menu_tmtr_exchange_1c_purchase_order
+msgid "1C Deliver Order"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.ui.menu,name:tmtr_exchange.menu_tmtr_exchange_1c_delivery
+msgid "1C Delivery"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.model,name:tmtr_exchange.model_tmtr_exchange_1c_implemention
+msgid "1C Implemention"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.model,name:tmtr_exchange.model_tmtr_exchange_1c_interaction
+#: model:ir.ui.menu,name:tmtr_exchange.menu_tmtr_exchange_1c_interaction
+msgid "1C Interaction"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.model,name:tmtr_exchange.model_tmtr_exchange_1c_partner
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_contact__onec_partner_id
+#: model:ir.ui.menu,name:tmtr_exchange.menu_tmtr_exchange_1c_partner
+msgid "1C Partner"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.model,name:tmtr_exchange.model_tmtr_exchange_1c_route
+#: model:ir.ui.menu,name:tmtr_exchange.menu_tmtr_exchange_1c_route
+msgid "1C Route"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.ui.menu,name:tmtr_exchange.menu_tmtr_exchange_1c_sales
+msgid "1C Sales Statistics"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.model,name:tmtr_exchange.model_tmtr_exchange_1c_user
+#: model:ir.ui.menu,name:tmtr_exchange.menu_tmtr_exchange_1c_user
+msgid "1C User"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.model,name:tmtr_exchange.model_tmtr_exchange_1c_sales
+msgid "1C sales statistics"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model_terms:ir.ui.view,arch_db:tmtr_exchange.res_config_settings_view_form
+msgid ""
+"<span class=\"o_form_label\">Default registration date</span>\n"
+"                                        <span class=\"fa fa-lg fa-building-o\" title=\"Values set here are registration date 1C partner\" aria-label=\"Values set here are tags counterparty\" groups=\"base.group_multi_company\" role=\"img\"/>"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model_terms:ir.ui.view,arch_db:tmtr_exchange.res_config_settings_view_form
+msgid ""
+"<span class=\"o_form_label\">Tags Contact-Partner</span>\n"
+"                                        <span class=\"fa fa-lg fa-building-o\" title=\"Values set here are tags contact-partner\" aria-label=\"Values set here are tags contact-partner\" groups=\"base.group_multi_company\" role=\"img\"/>"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model_terms:ir.ui.view,arch_db:tmtr_exchange.res_config_settings_view_form
+msgid ""
+"<span class=\"o_form_label\">Tags Partner</span>\n"
+"                                        <span class=\"fa fa-lg fa-building-o\" title=\"Values set here are tag contact-partner\" aria-label=\"Values set here are tag contact-partner\" groups=\"base.group_multi_company\" role=\"img\"/>"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model_terms:ir.ui.view,arch_db:tmtr_exchange.res_config_settings_view_form
+msgid ""
+"<span class=\"o_form_label\">Tags counterparty</span>\n"
+"                                        <span class=\"fa fa-lg fa-building-o\" title=\"Values set here are tags counterparty\" aria-label=\"Values set here are tags counterparty\" groups=\"base.group_multi_company\" role=\"img\"/>"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model_terms:ir.ui.view,arch_db:tmtr_exchange.res_config_settings_view_form
+msgid ""
+"<span class=\"o_form_label\">Tags saller</span>\n"
+"                                        <span class=\"fa fa-lg fa-building-o\" title=\"Values set here are tags saller\" aria-label=\"Values set here are tags counterparty\" groups=\"base.group_multi_company\" role=\"img\"/>"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model_terms:ir.ui.view,arch_db:tmtr_exchange.res_config_settings_view_form
+msgid ""
+"<span class=\"o_form_label\">Template 1c manager</span>\n"
+"                                        <span class=\"fa fa-lg fa-building-o\" title=\"Values set here are tags counterparty\" aria-label=\"Values set here are tags counterparty\" groups=\"base.group_multi_company\" role=\"img\"/>"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.model.fields.selection,name:tmtr_exchange.selection__efficiency_saler_report__type_client__6_other
+msgid "Active"
+msgstr "Активные"
+
+#. module: tmtr_exchange
+#: model_terms:ir.ui.view,arch_db:tmtr_exchange.efficiency_saler_report_view_pivot
+msgid "Analysis"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_interaction__author_key
+msgid "Author_Key"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_efficiency_saler_report__calls_in_count
+#: model_terms:ir.ui.view,arch_db:tmtr_exchange.efficiency_report_template
+msgid "Calls in count"
+msgstr "Входящие звонки"
+
+#. module: tmtr_exchange
+#: model_terms:ir.ui.view,arch_db:tmtr_exchange.efficiency_report_template
+msgid "Calls minute"
+msgstr "Общее количество минут"
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_efficiency_saler_report__calls_minute
+msgid "Calls minutes"
+msgstr "Общее количество минут"
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_efficiency_saler_report__calls_out_count
+#: model_terms:ir.ui.view,arch_db:tmtr_exchange.efficiency_report_template
+msgid "Calls out count"
+msgstr "Исходящие звонки"
+
+#. module: tmtr_exchange
+#: model_terms:ir.ui.view,arch_db:tmtr_exchange.res_config_settings_view_form
+msgid "Choose default registration date 1C partner"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model_terms:ir.ui.view,arch_db:tmtr_exchange.res_config_settings_view_form
+msgid "Choose tags for 1c contacts"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model_terms:ir.ui.view,arch_db:tmtr_exchange.res_config_settings_view_form
+msgid "Choose tags for 1c counterparty"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model_terms:ir.ui.view,arch_db:tmtr_exchange.res_config_settings_view_form
+msgid "Choose tags for 1c partners"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model_terms:ir.ui.view,arch_db:tmtr_exchange.res_config_settings_view_form
+msgid "Choose tags for 1c saller"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model_terms:ir.ui.view,arch_db:tmtr_exchange.res_config_settings_view_form
+msgid "Choose template for 1c manager"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model_terms:ir.actions.act_window,help:tmtr_exchange.action_open_tmtr_exchange_contact
+#: model_terms:ir.actions.act_window,help:tmtr_exchange.action_open_tmtr_exchange_user
+#: model_terms:ir.ui.view,arch_db:tmtr_exchange.efficiency_report_template
+msgid "Client"
+msgstr "Клиент"
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_efficiency_saler_report__client_1c_id
+msgid "Client 1C ID"
+msgstr "1С ИД клиента"
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_efficiency_saler_report__client_name
+msgid "Client Name"
+msgstr "Клиент"
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_contact__code
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_partner__code
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_user__code
+msgid "Code"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model_terms:ir.actions.act_window,help:tmtr_exchange.action_open_tmtr_exchange_counterparty
+#: model_terms:ir.actions.act_window,help:tmtr_exchange.action_open_tmtr_exchange_implemention
+#: model_terms:ir.actions.act_window,help:tmtr_exchange.action_open_tmtr_exchange_indicators
+#: model_terms:ir.actions.act_window,help:tmtr_exchange.action_open_tmtr_exchange_interaction
+#: model_terms:ir.actions.act_window,help:tmtr_exchange.action_open_tmtr_exchange_purchase_order
+#: model_terms:ir.actions.act_window,help:tmtr_exchange.action_open_tmtr_exchange_route
+#: model_terms:ir.actions.act_window,help:tmtr_exchange.action_open_tmtr_exchange_sales
+msgid "Config"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.model,name:tmtr_exchange.model_res_config_settings
+msgid "Config Settings"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.actions.act_window,name:tmtr_exchange.action_open_tmtr_exchange_contact
+#: model:ir.actions.act_window,name:tmtr_exchange.action_tmtr_exchange_contact
+msgid "Contact 1C"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_user__contacts
+#: model_terms:ir.ui.view,arch_db:tmtr_exchange.view_tmtr_exchange_contact_form
+msgid "Contacts"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_contact__contacts
+msgid "Contacts info"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model_terms:ir.ui.view,arch_db:tmtr_exchange.view_tmtr_exchange_contact_form
+msgid "Contacts..."
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.actions.act_window,name:tmtr_exchange.action_open_tmtr_exchange_counterparty
+#: model:ir.actions.act_window,name:tmtr_exchange.action_tmtr_exchange_counterparty
+msgid "Counterparty 1C"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model_terms:ir.actions.act_window,help:tmtr_exchange.action_tmtr_exchange_counterparty
+msgid "Create Counterparty"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model_terms:ir.actions.act_window,help:tmtr_exchange.action_tmtr_exchange_interaction
+msgid "Create Interaction"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model_terms:ir.actions.act_window,help:tmtr_exchange.action_tmtr_exchange_partner
+msgid "Create Partner"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model_terms:ir.actions.act_window,help:tmtr_exchange.action_tmtr_exchange_contact
+msgid "Create contact"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model_terms:ir.actions.act_window,help:tmtr_exchange.action_tmtr_exchange_purchase_order
+msgid "Create deliver order"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model_terms:ir.actions.act_window,help:tmtr_exchange.action_tmtr_exchange_indicators
+msgid "Create indicators"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model_terms:ir.actions.act_window,help:tmtr_exchange.action_tmtr_exchange_implemention
+#: model_terms:ir.actions.act_window,help:tmtr_exchange.action_tmtr_exchange_route
+msgid "Create purchase order"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model_terms:ir.actions.act_window,help:tmtr_exchange.action_tmtr_exchange_sales
+msgid "Create sales"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model_terms:ir.actions.act_window,help:tmtr_exchange.action_tmtr_exchange_user
+msgid "Create user"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_contact__create_uid
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_counterparty__create_uid
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_implemention__create_uid
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_indicators__create_uid
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_interaction__create_uid
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_partner__create_uid
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_purchase_order__create_uid
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_route__create_uid
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_sales__create_uid
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_user__create_uid
+msgid "Created by"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_contact__create_date
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_counterparty__create_date
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_implemention__create_date
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_indicators__create_date
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_interaction__create_date
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_partner__create_date
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_purchase_order__create_date
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_route__create_date
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_sales__create_date
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_user__create_date
+msgid "Created on"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_counterparty__data_version
+msgid "DataVersion"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_efficiency_saler_report__date
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_interaction__date
+#: model_terms:ir.ui.view,arch_db:tmtr_exchange.efficiency_report_template
+msgid "Date"
+msgstr "Дата"
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_partner__date_of_registration
+msgid "Date of Registration"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_contact__communication_registration_date
+msgid "Date register"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model_terms:ir.ui.view,arch_db:tmtr_exchange.efficiency_report_template
+msgid "Debt"
+msgstr "Долг"
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_efficiency_saler_report__debt
+msgid "Debt amount"
+msgstr "Размер долга"
+
+#. module: tmtr_exchange
+#: model:ir.actions.act_window,name:tmtr_exchange.action_open_tmtr_exchange_purchase_order
+msgid "Deliver order 1C"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_contact__description
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_counterparty__description
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_partner__description
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_user__description
+msgid "Description"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_efficiency_saler_report__display_name
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_contact__display_name
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_counterparty__display_name
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_implemention__display_name
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_indicators__display_name
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_interaction__display_name
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_partner__display_name
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_purchase_order__display_name
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_route__display_name
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_sales__display_name
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_user__display_name
+msgid "Display Name"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.actions.act_window,name:tmtr_exchange.efficiency_saler_report_action
+msgid "Efficiency Saler"
+msgstr "Эффективность продавцов"
+
+#. module: tmtr_exchange
+#: model:ir.model,name:tmtr_exchange.model_efficiency_saler_report
+msgid "Efficiency Saler Report"
+msgstr "Отчёт по эффективности продавцов"
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_partner__full_name
+msgid "Full client name"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_efficiency_saler_report__id
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_contact__id
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_counterparty__id
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_implemention__id
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_indicators__id
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_interaction__id
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_partner__id
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_purchase_order__id
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_route__id
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_sales__id
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_user__id
+msgid "ID"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_purchase_order__impl_id
+msgid "Implemention"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.actions.act_window,name:tmtr_exchange.action_open_tmtr_exchange_implemention
+msgid "Implemention 1C"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_interaction__importance
+msgid "Importance"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.actions.act_window,name:tmtr_exchange.action_open_tmtr_exchange_interaction
+#: model:ir.actions.act_window,name:tmtr_exchange.action_tmtr_exchange_interaction
+msgid "Interaction 1C"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model_terms:ir.ui.view,arch_db:tmtr_exchange.efficiency_report_template
+msgid "Interaction count"
+msgstr "Взаимодействий по клиенту"
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_efficiency_saler_report__interaction_count
+msgid "Interactions count"
+msgstr "Взаимодействий по клиенту"
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_efficiency_saler_report____last_update
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_contact____last_update
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_counterparty____last_update
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_implemention____last_update
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_indicators____last_update
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_interaction____last_update
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_partner____last_update
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_purchase_order____last_update
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_route____last_update
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_sales____last_update
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_user____last_update
+msgid "Last Modified on"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_contact__write_uid
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_counterparty__write_uid
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_implemention__write_uid
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_indicators__write_uid
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_interaction__write_uid
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_partner__write_uid
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_purchase_order__write_uid
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_route__write_uid
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_sales__write_uid
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_user__write_uid
+msgid "Last Updated by"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_contact__write_date
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_counterparty__write_date
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_implemention__write_date
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_indicators__write_date
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_interaction__write_date
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_partner__write_date
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_purchase_order__write_date
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_route__write_date
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_sales__write_date
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_user__write_date
+msgid "Last Updated on"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.model.fields.selection,name:tmtr_exchange.selection__efficiency_saler_report__type_client__4_main
+#: model:ir.model.fields.selection,name:tmtr_exchange.selection__efficiency_saler_report__type_debts__4_main
+msgid "Main"
+msgstr "Ключевые"
+
+#. module: tmtr_exchange
+#: model:ir.model.fields.selection,name:tmtr_exchange.selection__efficiency_saler_report__type_client__5_mean
+#: model:ir.model.fields.selection,name:tmtr_exchange.selection__efficiency_saler_report__type_debts__5_mean
+msgid "Meaningful"
+msgstr "Значимые"
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_partner__main_manager_key
+msgid "Main manager key"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_partner__user_id
+#: model_terms:ir.ui.view,arch_db:tmtr_exchange.efficiency_report_template
+msgid "Manager"
+msgstr "Менеджер"
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_efficiency_saler_report__manager_1c_id
+msgid "Manager 1C ID"
+msgstr "1С ИД безопасности"
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_efficiency_saler_report__manager_name
+msgid "Manager Name"
+msgstr "Менеджер"
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_interaction__onec_member_id
+msgid "Member (Partner)"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_interaction__members
+msgid "Members"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.model.fields.selection,name:tmtr_exchange.selection__efficiency_saler_report__type_client__2_new
+msgid "New"
+msgstr "Новые"
+
+#. module: tmtr_exchange
+#: model_terms:ir.actions.act_window,help:tmtr_exchange.efficiency_saler_report_action
+msgid "No data yet!"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.model.fields.selection,name:tmtr_exchange.selection__efficiency_saler_report__type_client__3_old
+msgid "Old"
+msgstr "ХКБ"
+
+#. module: tmtr_exchange
+#: model_terms:ir.ui.view,arch_db:tmtr_exchange.efficiency_report_template
+msgid "Overdue debt"
+msgstr "Просроченный долг"
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_efficiency_saler_report__overdue_debt
+msgid "Overdue debt amount"
+msgstr "Просроченный долг"
+
+#. module: tmtr_exchange
+#: model:ir.model.fields.selection,name:tmtr_exchange.selection__efficiency_saler_report__type_debts__5_other
+msgid "Overdued"
+msgstr "Просрочен"
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_contact__owner_key
+msgid "Owner_Key"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_partner__parent_key
+msgid "Parent key"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_contact__partner_id
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_counterparty__partner_id
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_indicators__partner_id
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_interaction__partner_id
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_partner__partner_id
+#: model_terms:ir.actions.act_window,help:tmtr_exchange.action_open_tmtr_exchange_partner
+msgid "Partner"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.actions.act_window,name:tmtr_exchange.action_open_tmtr_exchange_partner
+#: model:ir.actions.act_window,name:tmtr_exchange.action_tmtr_exchange_partner
+msgid "Partner 1C"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model_terms:ir.ui.view,arch_db:tmtr_exchange.efficiency_report_template
+msgid "Plan"
+msgstr "План на текущий месяц"
+
+#. module: tmtr_exchange
+#: model_terms:ir.ui.view,arch_db:tmtr_exchange.efficiency_report_template
+msgid "Plan predicted percentage"
+msgstr "Прогноз плана в процентах"
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_efficiency_saler_report__plan_predicted_percentage
+msgid "Plan prediction percantage"
+msgstr "Прогноз в процентах"
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_efficiency_saler_report__plan
+msgid "Plan this month"
+msgstr "План на текущий месяц"
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_efficiency_saler_report__prediction
+#: model_terms:ir.ui.view,arch_db:tmtr_exchange.efficiency_report_template
+msgid "Prediction"
+msgstr "Прогноз"
+
+#. module: tmtr_exchange
+#: model:ir.actions.act_window,name:tmtr_exchange.action_tmtr_exchange_implemention
+#: model:ir.actions.act_window,name:tmtr_exchange.action_tmtr_exchange_purchase_order
+#: model:ir.actions.act_window,name:tmtr_exchange.action_tmtr_exchange_route
+msgid "Purchase order 1C"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_interaction__ref
+msgid "Ref"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_implemention__ref_key
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_indicators__company_ref_key
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_purchase_order__ref_key
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_route__ref_key
+msgid "Ref key"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_interaction__ref_type
+msgid "Ref type"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_contact__ref_key
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_partner__ref_key
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_user__ref_key
+msgid "Ref_key"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_res_config_settings__registration_date_partner
+msgid "Registration Date Partner"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_interaction__user_id
+msgid "Responsible saller"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_interaction__responsible_key
+msgid "Responsible_Key"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_purchase_order__route_id
+msgid "Route"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.actions.act_window,name:tmtr_exchange.action_open_tmtr_exchange_route
+msgid "Route 1C"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.actions.client,name:tmtr_exchange.seller_efficiency_action
+#: model:ir.actions.report,name:tmtr_exchange.action_report_seller_efficiency
+msgid "Sales managers efficiency"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model_terms:ir.ui.view,arch_db:tmtr_exchange.efficiency_saler_report_view_graph
+msgid "Saller Report"
+msgstr "Отчёт по эффективности менеджеров"
+
+#. module: tmtr_exchange
+#: model:ir.ui.menu,name:tmtr_exchange.tmtr_saler_report
+msgid "Saller report"
+msgstr "Отчёт по эффективности менеджеров"
+
+#. module: tmtr_exchange
+#: model:ir.actions.act_window,name:tmtr_exchange.tmtr_exchange_config_settings_action
+msgid "Settings"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_efficiency_saler_report__sonder_calls_count
+#: model_terms:ir.ui.view,arch_db:tmtr_exchange.efficiency_report_template
+msgid "Sonder calls count"
+msgstr "Количество sonder звонков"
+
+#. module: tmtr_exchange
+#: model_terms:ir.actions.act_window,help:tmtr_exchange.efficiency_saler_report_action
+msgid "Start scheduling activities on your opportunities"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_interaction__tm_theme
+msgid "TM_theme"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_res_config_settings__tag_1c_contact
+msgid "Tag 1C Contact"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_res_config_settings__tag_1c_counterparty
+msgid "Tag 1C Counterparty"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_res_config_settings__tag_1c_partner
+msgid "Tag 1C Partner"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_res_config_settings__tag_1c_saler
+msgid "Tag 1C Saler"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_efficiency_saler_report__task_count
+#: model_terms:ir.ui.view,arch_db:tmtr_exchange.efficiency_report_template
+msgid "Task count"
+msgstr "Задач по клиенту"
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_res_config_settings__template_1c_manager
+msgid "Template 1C Manager"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.ui.menu,name:tmtr_exchange.menu_tmtr_exchange_1c
+#: model:ir.ui.menu,name:tmtr_exchange.menu_tmtr_exchange_root
+#: model_terms:ir.ui.view,arch_db:tmtr_exchange.res_config_settings_view_form
+msgid "Tmtr exchange"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_efficiency_saler_report__turnover_previous_mounth
+msgid "Turnover last month"
+msgstr "Выручка предыдущего месяца"
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_indicators__turnover_last_3month
+msgid "Turnover of last 3 month"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_indicators__turnover_last_30days
+msgid "Turnover of last 30 days"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model_terms:ir.ui.view,arch_db:tmtr_exchange.efficiency_report_template
+msgid "Turnover previous mounth"
+msgstr "Выручка за предыдущий месяц"
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_efficiency_saler_report__turnover_this_mounth
+msgid "Turnover this month"
+msgstr "Выручка текущего месяца"
+
+#. module: tmtr_exchange
+#: model_terms:ir.ui.view,arch_db:tmtr_exchange.efficiency_report_template
+msgid "Turnover this mounth"
+msgstr "Выручка текущего месяца"
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_efficiency_saler_report__type_client
+#: model_terms:ir.ui.view,arch_db:tmtr_exchange.efficiency_report_template
+msgid "Type client"
+msgstr "Тип клиента"
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_efficiency_saler_report__type_debts
+msgid "Type debts"
+msgstr "Тип долга"
+
+#. module: tmtr_exchange
+#: model:ir.model.fields.selection,name:tmtr_exchange.selection__efficiency_saler_report__type_client__1_unknown
+#: model:ir.model.fields.selection,name:tmtr_exchange.selection__efficiency_saler_report__type_debts__1_unknown
+msgid "Unknown"
+msgstr "Не известен"
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_route__description
+msgid "description"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_route__end_time
+msgid "end_time"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.ui.menu,name:tmtr_exchange.menu_tmtr_exchange_1c_indicators
+msgid "finance indicators"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.actions.act_window,name:tmtr_exchange.action_open_tmtr_exchange_indicators
+#: model:ir.model,name:tmtr_exchange.model_tmtr_exchange_1c_indicators
+msgid "finance indicators from bitrix"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_user__identifier_ib
+msgid "identifier user ib"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.actions.act_window,name:tmtr_exchange.action_tmtr_exchange_indicators
+msgid "indicators 1c"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_indicators__manager_id
+msgid "manager id"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_indicators__origin_id
+msgid "origin id from bitrix"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_counterparty__ref_key
+msgid "ref_key"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.actions.act_window,name:tmtr_exchange.action_open_tmtr_exchange_sales
+#: model:ir.actions.act_window,name:tmtr_exchange.action_tmtr_exchange_sales
+msgid "sales 1C"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_route__start_time
+msgid "start_time"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.actions.act_window,name:tmtr_exchange.action_open_tmtr_exchange_user
+#: model:ir.actions.act_window,name:tmtr_exchange.action_tmtr_exchange_user
+msgid "user 1C"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_user__user_id
+msgid "user id"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_implemention__address
+msgid "Адрес"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_sales__analytics_accounting_items_Key
+msgid "АналитикаУчетаНоменклатуры_Key"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_sales__analytics_accounting_partners_Key
+msgid "АналитикаУчетаПоПартнерам_Key"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_sales__stock_type_key
+msgid "ВидЗапасов_Key"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_route__driver_key
+msgid "Водитель key"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_route__car_out
+msgid "Время выезда"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_indicators__turnover_previous_mounth
+msgid "Выручка предыдущего месяца"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_indicators__turnover_this_mounth
+msgid "Выручка текущего месяца"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_purchase_order__date
+msgid "Дата"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_route__date_out
+msgid "Дата выезда"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_purchase_order__date_car_out
+msgid "Дата выезда машины"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_sales__date_sale
+msgid "Дата регистрации продажи"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_indicators__task_count
+msgid "Задач по клиенту"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_implemention__order_id
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_route__order_id
+msgid "Заказ id"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_purchase_order__is_load
+msgid "Заказ отгружен"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_sales__customer_order
+msgid "ЗаказКлиента"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_sales__turnover_count
+msgid "КоличествоTurnover"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_counterparty__contact
+msgid "КонтактнаяИнформация"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_implemention__partner_key
+msgid "Контрагент key"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_route__route_key
+msgid "Маршрут key"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_counterparty__full_name
+msgid "НаименованиеПолное"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_purchase_order__number
+msgid "Номер"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_implemention__impl_num
+msgid "Номер реализации"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_purchase_order__responsible_key
+msgid "Ответственный key"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_counterparty__partner_key
+msgid "Партнер_Key"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_indicators__plan
+msgid "План на текущий месяц"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_sales__departament_key
+msgid "Подразделение_Key"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_purchase_order__note
+msgid "Примечание"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_indicators__prediction
+msgid "Прогноз выручки на текущий месяц"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_indicators__overdue_debt
+msgid "Просроченный долг"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_indicators__debt
+msgid "Размер долга"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_sales__turnover_prime_cost
+msgid "СебестоимостьTurnover"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_sales__turnover_prime_cost_regl
+msgid "СебестоимостьРеглTurnover"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_purchase_order__store_key
+msgid "Склад key"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_sales__turnover_gain_summ
+msgid "СуммаВыручкиTurnover"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_sales__turnover_gain_regl
+msgid "СуммаВыручкиРеглTurnover"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_sales__turnover_additional_cost
+msgid "СуммаДополнительныхРасходовTurnover"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_counterparty__tm_code
+msgid "ТМ_Код"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_sales__tm_placement
+msgid "ТМ_Помещение_Key"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_sales__tm_turnover_prime_cost_sale
+msgid "ТМ_СебестоимостьПродажиTurnover"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_implemention__phone
+msgid "Телефон"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_counterparty__ur_fiz_face
+msgid "ЮрФизЛицо"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_indicators__in_work
+msgid "передана в работу"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_indicators__turnover_percent
+msgid "процент выручки за 3 месяца"
+msgstr ""
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_indicators__debs_percent
+msgid "процент долга"
+msgstr ""

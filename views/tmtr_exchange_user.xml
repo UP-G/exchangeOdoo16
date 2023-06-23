@@ -22,6 +22,10 @@
             <tree multi_edit="1">
                 <field name="ref_key"/>
                 <field name="user_id"/>
+                <field name="identifier_ib"/>
+                <field name="code"/>
+                <field name="description"/>
+                <field name="contacts"/>
             </tree>
         </field>
     </record>
@@ -36,6 +40,10 @@
                         <group>
                             <field name="ref_key"/>
                             <field name="user_id"/>
+                            <field name="identifier_ib"/>
+                            <field name="code"/>
+                            <field name="description"/>
+                            <field name="contacts"/>
                         </group>
                     </group>
                 </sheet>
