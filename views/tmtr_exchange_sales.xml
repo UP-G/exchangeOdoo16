@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="action_open_tmtr_exchange_sales" model="ir.actions.act_window">
+        <field name="name">sales 1C</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">tmtr.exchange.1c.sales</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain"></field>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Config
+            </p>
+        </field>
+    </record>
+
+    <record id="view_tmtr_exchange_sales_tree" model="ir.ui.view">
+        <field name="name">sales 1C</field>
+        <field name="model">tmtr.exchange.1c.sales</field>
+        <field name="arch" type="xml">
+            <tree multi_edit="1">
+                <field name="analytics_accounting_items_Key" optional="show"/>
+                <field name="customer_order" optional="show"/>
+                <field name="analytics_accounting_partners_Key" optional="show"/>
+                <field name="turnover_count" optional="show"/>
+                <field name="turnover_gain_summ" optional="show"/>
+                <field name="turnover_prime_cost" optional="show"/>
+                
+            </tree>
+        </field>
+    </record>
+
+     <record id="view_tmtr_exchange_sales_form" model="ir.ui.view">
+        <field name="name">tmtr.exchange.1c.form</field>
+        <field name="model">tmtr.exchange.1c.sales</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="analytics_accounting_items_Key" optional="show"/>
+                            <field name="customer_order" optional="show"/>
+                            <field name="analytics_accounting_partners_Key" optional="show"/>
+                            <field name="departament_key" optional="show"/>
+                            <field name="stock_type_key" optional="show"/>
+                            <field name="tm_placement" optional="show"/>
+                            <field name="turnover_count" optional="show"/>
+                            <field name="turnover_gain_summ" optional="show"/>
+                            <field name="turnover_prime_cost" optional="show"/>
+                            <field name="turnover_additional_cost" optional="show"/>
+                            <field name="turnover_prime_cost_regl" optional="show"/>
+                            <field name="turnover_gain_regl" optional="show"/>
+                            <field name="tm_turnover_prime_cost_sale" optional="show"/>
+                            <field name="date_sale" optional="show"/>
+                            
+                        </group>
+                        
+                    </group>
+                </sheet>
+            </form>
+        </field>
+
+    </record>
+
+    <record id="action_tmtr_exchange_sales" model="ir.actions.act_window">
+        <field name="name">sales 1C</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">tmtr.exchange.1c.sales</field>
+        <field name="view_mode">kanban,tree,form</field>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create sales
+            </p>
+        </field>
+    </record>
+
+</odoo>

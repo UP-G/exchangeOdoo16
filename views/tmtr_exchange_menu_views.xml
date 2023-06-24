@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <menuitem
+            id="menu_tmtr_exchange_root"
+            name="Tmtr exchange"
+            sequence="190"/>
+
+        <menuitem
+            id="menu_tmtr_exchange_1c"
+            name="Tmtr exchange"
+            parent="menu_tmtr_exchange_root"
+            sequence="0"/>   
+
+        <menuitem
+            id="menu_tmtr_exchange_1c_user"
+            name="1C User"
+            parent="menu_tmtr_exchange_1c"
+            action="action_tmtr_exchange_user"
+            sequence="5"/>
+
+        <menuitem
+            id="menu_tmtr_exchange_1c_contact"
+            name="1C Contact"
+            parent="menu_tmtr_exchange_1c"
+            action="action_tmtr_exchange_contact"
+            sequence="10"/>
+
+        <menuitem
+            id="tmtr_saler_report"
+            name="Saller report"
+            parent="menu_tmtr_exchange_1c"
+            action="efficiency_saler_report_action"
+            sequence="10"/>
+
+        <menuitem
+            id="menu_tmtr_exchange_1c_counterparty"
+            name="1C Counterparty"
+            parent="menu_tmtr_exchange_1c"
+            action="action_tmtr_exchange_counterparty"
+            sequence="15"/>
+
+        <menuitem
+            id="menu_tmtr_exchange_1c_partner"
+            name="1C Partner"
+            parent="menu_tmtr_exchange_1c"
+            action="action_tmtr_exchange_partner"
+            sequence="20"/>
+>
+        <menuitem
+            id="menu_tmtr_exchange_1c_interaction"
+            name="1C Interaction"
+            parent="menu_tmtr_exchange_1c"
+            action="action_tmtr_exchange_interaction"
+            sequence="25"/>
+
+        <menuitem
+            id="menu_tmtr_exchange_1c_indicators"
+            name="Finance Indicators"
+            parent="menu_tmtr_exchange_1c"
+            action="action_tmtr_exchange_indicators"
+            sequence="30"/>
+
+        <menuitem
+            id="menu_tmtr_exchange_1c_delivery"
+            name="1C Delivery"
+            parent="menu_tmtr_exchange_root"
+            sequence="5"/>
+
+        <menuitem
+            id="menu_tmtr_exchange_1c_purchase_order"
+            name="1C Deliver Order"
+            parent="menu_tmtr_exchange_1c_delivery"
+            action="action_tmtr_exchange_purchase_order"
+            sequence="5"/>
+
+        <menuitem
+            id="menu_tmtr_exchange_1c_route"
+            name="1C Route"
+            parent="menu_tmtr_exchange_1c_delivery"
+            action="action_tmtr_exchange_route"
+            sequence="5"/>
+
+        <menuitem
+            id="menu_tmtr_exchange_1c_implemention"
+            name="1C Delive Order Point"
+            parent="menu_tmtr_exchange_1c_delivery"
+            action="action_tmtr_exchange_implemention"
+            sequence="5"/> 
+
+        <menuitem
+            id="menu_tmtr_exchange_1c_sales"
+            name="1C Sales Statistics"
+            parent="menu_tmtr_exchange_1c_delivery"
+            action="action_tmtr_exchange_sales"
+            sequence="5"/> 
+                      
+    </data>
+</odoo>

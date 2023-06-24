@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <data>
+        <template id="efficiency_report_template">
+                <style>
+                .table-bordered {
+                    border: 1px solid #eaeaea;
+                    border-collapse: collapse;
+                }
+
+                .table th,
+                .table td {
+                    font-size: 15px;
+                    padding: 10px;
+                    border: 1px solid #eaeaea;
+                }
+
+                .table thead th {
+                    font-family: Arial, sans-serif;
+                    font-size: 16px;
+                    background-color: #f2f2f2;
+                    font-weight: bold;
+                    text-align: center;
+                }
+
+                .table tbody tr:nth-child(even) {
+                    background-color: #f9f9f9;
+                }
+
+                .table tbody tr:nth-child(odd) {
+                    background-color: #ffffff;
+                }
+
+                .ef-important {
+                    font-weight: bold;
+                }
+
+                .text-right{
+                    text-align: right;
+                }
+
+                .text-center{
+                    text-align: center;
+                }
+
+                
+            </style>
+            <div class="row">
+                <div class="col-12">
+                    <table class="table table-bordered" style="table-layout: fixed" id="hash_config_table">
+                    <thead style="display: table-row-group">
+                    <tr>
+                        <th class="text-center" style="width: 60%" scope="col">Manager</th>
+                        <th class="text-center" style="width: 50%" scope="col">Client</th>
+                        <th class="text-center" style="width: 30%" scope="col">Type client</th>
+                        <th class="text-center" style="width: 25%" scope="col">Task count</th>
+                        <th class="text-center" style="width: 25%" scope="col">Interaction count</th>
+                        <th class="text-center" style="width: 25%" scope="col">Calls in count</th>
+                        <th class="text-center" style="width: 25%" scope="col">Calls out count</th>
+                        <th class="text-center" style="width: 25%" scope="col">Sonder calls count</th>
+                        <th class="text-center" style="width: 35%" scope="col">Overdue debt</th>
+                        <th class="text-center" style="width: 35%" scope="col">Debt</th>
+                        <th class="text-center" style="width: 35%" scope="col">Plan</th>
+                        <th class="text-center" style="width: 35%" scope="col">Turnover this mounth</th>        
+                        <th class="text-center" style="width: 35%" scope="col">Prediction</th>
+                        <th class="text-center" style="width: 35%" scope="col">Plan predicted percentage</th>
+                        <th class="text-center" style="width: 35%" scope="col">Turnover previous mounth</th>
+                        <th class="text-center" style="width: 25%" scope="col">Calls minute</th>
+                        <th class="text-center" style="width: 40%" scope="col">Date</th>
+                        
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <t t-set='types2ru' t-value="{'4_main': 'Ключевые', '5_mean': 'Значимые', '6_other': 'Активные', '1_unknown':'Неизвестные'}"/>
+                    <t t-foreach="docs" t-as="doc">
+                    <tr>
+                        <td class="text-center"><span t-esc="doc['manager_name']"/></td>
+                        <td class="text-center"><span t-esc="doc['client_name']"/></td>
+                        <td class="text-center"><span t-esc="types2ru.get(doc['type_client'])"/></td>
+                        <!-- <td class="text-center"><t t-set='types2ru' t-value="doc['type_client']" t_esc="types2ru.get(type_client,'Другое')"></t></td> -->
+                        <td class="ef-important text-center"><span t-esc="doc['task_count']" t-options='{"widget": "float", "precision": 0}'/></td>
+                        <td class="ef-important text-center"><span t-esc="doc['interaction_count']" t-options='{"widget": "float", "precision": 0}'/></td>
+                        <td class="text-center"><span t-esc="doc['calls_in_count']" t-options='{"widget": "float", "precision": 0}'/></td>
+                        <td class="text-center"><span t-esc="doc['calls_out_count']" t-options='{"widget": "float", "precision": 0}'/></td>
+                        <td class="text-center"><span t-esc="doc['sonder_calls_count']" t-options='{"widget": "float", "precision": 0}'/></td>
+                        <td class="ef-important text-right"><span t-esc="doc['overdue_debt']" t-options='{"widget": "float", "precision": 2}' t-att-class="{'text-danger': doc['overdue_debt'] &gt; 0}"/></td>
+                        <td class="text-right"><span t-esc="doc['debt']" t-options='{"widget": "float", "precision": 2}'/></td>
+                         <td class="ef-important text-right"><span t-esc="doc['plan']" t-options='{"widget": "float", "precision": 2}'/></td>
+                         <td class="ef-important text-right"><span t-esc="doc['turnover_this_mounth']" t-options='{"widget": "float", "precision": 2}'/></td>
+                        <td class="text-right"><span t-esc="doc['prediction']" t-options='{"widget": "float", "precision": 2}'/></td>
+                        <td class="text-center"><span t-esc="doc['plan_predicted_percentage']*100" t-options='{"widget": "float", "precision": 2}'/>%</td>
+                        <td class="text-right"><span t-esc="doc['turnover_previous_mounth']" t-options='{"widget": "float", "precision": 2}'/></td>
+                        <td class="text-center"><span t-esc="doc['calls_minute']" t-options='{"widget": "float", "precision": 0}'/></td>
+                        <td class="text-center"><span t-esc="doc['date']" t-options='{"widget": "datetime","format": "dd.MM.yyyy"}'/></td>
+
+                    </tr>
+                    </t>
+                    </tbody>
+                    </table>
+                </div>
+            </div>
+        </template>
+            
+        <template id="report_efficiency_saler_web">
+            <t t-call="web.html_container">
+                <t t-call="web.external_layout">
+                    <t t-call="tmtr_exchange.efficiency_report_template"/>
+                </t>
+            </t>
+        </template>
+
+        <record id="action_report_seller_efficiency" model="ir.actions.report">
+            <field name="name">Sales managers efficiency</field>
+            <field name="model">efficiency.saler.report</field>
+            <field name="report_type">qweb-html</field>
+            <field name="report_name">tmtr_exchange.report_efficiency_saler_web</field>
+        </record>
+
+        <record id="seller_efficiency_action" model="ir.actions.client">
+            <field name="name">Sales managers efficiency</field>
+            <field name="tag">tmtr_exchange.report_efficiency_saler_web</field>
+            <field name="res_model">efficiency.saler.report</field>
+        </record>
+    </data>
+</odoo>

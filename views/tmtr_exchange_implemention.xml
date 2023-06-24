@@ -1,0 +1,64 @@
+<odoo>
+
+    <record id="action_open_tmtr_exchange_implemention" model="ir.actions.act_window">
+        <field name="name">Implemention 1C</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">tmtr.exchange.1c.implemention</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain"></field>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Config
+            </p>
+        </field>
+    </record>
+
+    <record id="view_tmtr_exchange_implemention_tree" model="ir.ui.view">
+        <field name="name">Implemention 1C</field>
+        <field name="model">tmtr.exchange.1c.implemention</field>
+        <field name="arch" type="xml">
+            <tree multi_edit="1">
+                <field name="ref_key" optional="show"/>
+                <field name="partner_key" optional="show"/>
+                <field name="impl_num" optional="show"/>
+                <field name="address" optional="show"/>
+                <field name="phone" optional="show"/>
+                <field name="order_id" optional="show"/>
+            </tree>
+        </field>
+    </record>
+
+     <record id="view_tmtr_exchange_implemention_form" model="ir.ui.view">
+        <field name="name">tmtr.exchange.1c.implemention.form</field>
+        <field name="model">tmtr.exchange.1c.implemention</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="ref_key" optional="show"/>
+                            <field name="partner_key" optional="show"/>
+                            <field name="impl_num" optional="show"/>
+                        </group>     
+                    </group>
+                </sheet>
+            </form>
+        </field>
+
+    </record>
+
+    <record id="action_tmtr_exchange_implemention" model="ir.actions.act_window">
+        <field name="name">Purchase order 1C</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">tmtr.exchange.1c.implemention</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create purchase order
+            </p>
+        </field>
+    </record>
+
+</odoo>

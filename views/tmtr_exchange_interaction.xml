@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="action_open_tmtr_exchange_interaction" model="ir.actions.act_window">
+        <field name="name">Interaction 1C</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">tmtr.exchange.1c.interaction</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain"></field>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Config
+            </p>
+        </field>
+    </record>
+
+    <record id="view_tmtr_exchange_interaction_tree" model="ir.ui.view">
+        <field name="name">Interaction 1C</field>
+        <field name="model">tmtr.exchange.1c.interaction</field>
+        <field name="arch" type="xml">
+            <tree multi_edit="1">
+                <field name="onec_member_id" optional="show"/>
+                <field name="ref" optional="show"/>
+                <field name="date" optional="show"/>
+                <field name="importance" optional="show"/>
+                <field name="tm_theme" optional="show"/>
+                <field name="members" optional="show"/>
+                <field name="author_key" optional="show"/>
+                <field name="user_id" optional="show"/>
+            </tree>
+        </field>
+    </record>
+
+     <record id="view_tmtr_exchange_interaction_form" model="ir.ui.view">
+        <field name="name">tmtr.exchange.1c.interaction.form</field>
+        <field name="model">tmtr.exchange.1c.interaction</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="onec_member_id" optional="show"/>
+                            <field name="ref" optional="show"/>
+                            <field name="date" optional="show"/>
+                            <field name="importance" optional="show"/>
+                        </group> 
+                        <group>
+                            <field name="tm_theme" optional="show"/>
+                            <field name="members" optional="show"/>
+                            <field name="author_key" optional="show"/>
+                            <field name="responsible_key" optional="show"/>
+                            <field name="user_id" optional="show"/>
+                        </group>
+<!--                        <button name="test_create_user" string="Test" class="btn-primary"
+                        type="object"/>     -->
+                    </group>
+                </sheet>
+            </form>
+        </field>
+
+    </record>
+
+    <record id="action_tmtr_exchange_interaction" model="ir.actions.act_window">
+        <field name="name">Interaction 1C</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">tmtr.exchange.1c.interaction</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create Interaction
+            </p>
+        </field>
+    </record>
+
+</odoo>
