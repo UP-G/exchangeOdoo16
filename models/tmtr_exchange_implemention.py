@@ -7,8 +7,8 @@ class TmtrExchangeOneCImplemention(models.Model):
     _description = '1C Implemention'
 
     ref_key = fields.Char(string='Ref key')
-    impl_num = fields.Char(string='Номер реализации')
-    address= fields.Char(string='Адрес')
-    phone = fields.Char(string='Телефон')
-    partner_key = fields.Many2one('tmtr.exchange.1c.partner', string='Контрагент key')
-    order_id = fields.Many2one('tmtr.exchange.1c.purchase.order', string='Заказ id')
+    impl_num = fields.Char(string='Implementation number') #Номер реализации
+    address= fields.Char(string='Address')
+    phone = fields.Char(string='Number phone')
+    partner_key = fields.Many2one('tmtr.exchange.1c.partner', string='Counterparty id')
+    order_id = fields.Many2one('tmtr.exchange.1c.purchase.order', string='Order id')

@@ -1,6 +1,6 @@
 from odoo import api, fields, models, _
 import logging
-from datetime import datetime 
+from datetime import datetime, timedelta
 from odoo import Command
 import time
 
@@ -13,57 +13,76 @@ class TmtrExchangeOneCCounterparty(models.Model):
     ref_key = fields.Char(string='ref_key')
     data_version= fields.Char(string="DataVersion")
     description=fields.Char(string="Description")
-    full_name = fields.Char(string="НаименованиеПолное")
-    partner_key=fields.Char(string="Партнер_Key")
-    ur_fiz_face= fields.Char(string="ЮрФизЛицо")
-    tm_code = fields.Char(string="ТМ_Код")
-    contact= fields.Text('КонтактнаяИнформация')
+    full_name = fields.Char(string="Full name counterparty")
+    partner_key=fields.Char(string="Partner Key")
+    ur_fiz_face= fields.Char(string="Legal entity (physical person)")
+    tm_code = fields.Char(string="TM_Code")
+    contact= fields.Text(string='Contact information')
 
-    def add_entry_cron(self):
-        start_time = time.time()
-        skip = 0
-        top = 100
-        while time.time() - start_time < 60:
+    def upload_new_counterparty(self, tm_code_max=None, top=100, skip=0):
+
+        finish_before = datetime.now() + timedelta(minutes=1) # ограничить время работы скрипта одной минутой
+        while datetime.now() < finish_before:
             try:
-                counterparty_list= self.env['tmtr.exchange.1c.counterparty'].search([('tm_code', "!=", None)],order="tm_code desc",limit=1)
-                maxCode = '0000000000'
-                if counterparty_list:
-                    maxCode = counterparty_list.tm_code
-                data = self.env['odata.1c.route'].get_by_route("1c_ut/get_catalog/", {"catalog_name": "Catalog_Контрагенты", "filter": f"DeletionMark eq false and ТМ_Код ge '{maxCode}'&$orderby=ТМ_Код&$top={top}&$skip={skip}"})["value"]
+                if not tm_code_max:
+                    counterparty_list= self.env['tmtr.exchange.1c.counterparty'].search([('tm_code', "!=", None)],order="tm_code desc",limit=1)
+                
+                    if not counterparty_list:
+                        return
+                    tm_code_max = counterparty_list.tm_code
+
+                data = self.env['odata.1c.route'].get_by_route(
+                    "1c_ut/get_counterparty/", 
+                    {
+                        "tm_code": tm_code_max, 
+                        "top": top,
+                        "skip": skip
+                        })["value"]
+
                 if not data:
-                    continue 
-                for json_data in data:
-                    counterparty = self.env['tmtr.exchange.1c.counterparty'].search([("ref_key", "=", json_data['Ref_Key'])])
-                    if not counterparty:
-                        self.env['tmtr.exchange.1c.counterparty'].create({
-                                'ref_key' : json_data['Ref_Key'],
-                                'data_version' : json_data['DataVersion'],
-                                'description' : json_data['Description'],
-                                'full_name' : json_data['НаименованиеПолное'],
-                                'partner_key' : json_data['Партнер_Key'],
-                                'ur_fiz_face' : json_data['ЮрФизЛицо'],
-                                'tm_code' : json_data['ТМ_Код'],
-                                'contact':'\n'.join([f"{contact['Тип']}: {contact['Представление']}" for contact in json_data['КонтактнаяИнформация']])
-                            })
+                    return
+
+                ref_key_ids = [r['Ref_Key'] for r in data]
+                counterparty_exists = dict((r.ref_key, r.ref_key) for r in self.search([("ref_key", "in", ref_key_ids)]))
+                for json_date in data:
+                    #counterparty = self.env['tmtr.exchange.1c.counterparty'].search([("ref_key", "=", json_data['Ref_Key'])])
+                    if json_date['Ref_Key'] in counterparty_exists:
+                        continue
+                    new_counterparty = self.create_new_counterparty(json_date)
+                skip += top
+
             except Exception as e:
                 _logger.info(e)
-            skip += top
-    def upload_parnter_ref(self):
-        limit = 1000
-        partners = self.env['tmtr.exchange.1c.partner'].search([("partner_id", "=", None)], limit=limit)
-        
-        for partner in partners:
-            counterparty = self.env['tmtr.exchange.1c.counterparty'].search([("partner_id", "=", partner['ref_key'])], limit=1)
-            if not counterparty:
-                continue
-            partner.update({
-                'partner_id': counterparty.id
-                })
+            
 
-    def add_res_partner(self):
+    def create_new_counterparty(self, json_date):
+        self.env['tmtr.exchange.1c.counterparty'].create({
+            'ref_key' : json_date['Ref_Key'],
+            'data_version' : json_date['DataVersion'],
+            'description' : json_date['Description'],
+            'full_name' : json_date['НаименованиеПолное'],
+            'partner_key' : json_date['Партнер_Key'],
+            'ur_fiz_face' : json_date['ЮрФизЛицо'],
+            'tm_code' : json_date['ТМ_Код'],
+            'contact':'\n'.join([f"{contact['Тип']}: {contact['Представление']}" for contact in json_date['КонтактнаяИнформация']])
+            })
+        return
+
+    # def upload_parnter_ref(self, limit=1000): #Непонятно, что делает данный метод: Андрей чурилов
+        
+    #     partners = self.env['tmtr.exchange.1c.partner'].search([("partner_id", "=", None)], limit=limit)
+        
+    #     for partner in partners:
+    #         counterparty = self.env['tmtr.exchange.1c.counterparty'].search([("partner_id", "=", partner['ref_key'])], limit=1)
+    #         if not counterparty:
+    #             continue
+    #         partner.update({
+    #             'partner_id': counterparty.id
+    #             })
+
+    def add_res_partner(self, limit=100):
         # obj = {}
         start_time = time.time()
-        limit = 100
         while time.time() - start_time < 60:
             counterparty_tag_id = int(self.env['ir.config_parameter'].sudo().get_param('tmtr_exchange.tag_1c_counterparty'))
             if not counterparty_tag_id:
