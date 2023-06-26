@@ -137,11 +137,15 @@ class TmtrExchangeOneCInteraction(models.Model):
                 updated += len(recs_to_update)
         return {'unknown': cnt, 'exists': len(members_to_update), 'updated': updated}
 
-    def get_unknown_1c_partners(self, recs = None, limit = None):
-        if not recs:
-            members_unknown = self.read_group([("onec_member_id", "=", None)], fields=['members', 'cnt:count(id)'], groupby=['members', 'cnt'])
+    def get_unknown_1c_partners(self, recs = None, limit = None, days = None):
+        search_filter = []
+        if recs:
+            search_filter = [("id", "in", recs.ids)]
+        elif days > 0:
+            search_filter = [("onec_member_id", "=", None),("date", "=>", datetime.now() - timedelta(days=days))]
         else:
-            members_unknown = self.read_group([("id", "in", recs.ids)], fields=['members', 'cnt:count(id)'], groupby=['members', 'cnt'])
+            search_filter = [("onec_member_id", "=", None)]
+        members_unknown = self.read_group(search_filter, fields=['members', 'cnt:count(id)'], groupby=['members', 'cnt'])
         if len(members_unknown) > 0:
             return self.env['tmtr.exchange.1c.partner'].get_partner_by_name([r['members'] for r in (members_unknown if limit == None else members_unknown[0:min(len(members_unknown),limit)])])
         else:
