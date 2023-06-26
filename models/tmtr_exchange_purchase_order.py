@@ -19,7 +19,7 @@ class TmtrExchangeOneCPurchaseOrder(models.Model):
     route_id = fields.Many2one('', string = 'Route')
     impl_id = fields.Many2one('', string = 'Implemention')
 
-    def update_orders(self, top, skip):
+    def upload_new_orders(self, top, skip):
     #url = "http://dcsrv-erpap-01:8080/StockTM_app/odata/standard.odata/Document_%D0%A9%D0%B5%D0%BF_%D0%97%D0%B0%D0%BA%D0%B0%D0%B7%D0%9D%D0%B0%D1%80%D1%8F%D0%B4?$format=json&$top=3&$skip=0&$orderby=Date desc"
         order_data = self.env['odata.1c.route'].get_by_route(
             "1c_ut/get_order/", 
@@ -49,7 +49,6 @@ class TmtrExchangeOneCPurchaseOrder(models.Model):
                 if not route:
                     new_route = self.env['tmtr.exchange.1c.route'].create({
                             'ref_key' : route_data['Ref_Key'],
-                            'driver_key': route_data['Водитель_Key'],
                             'route_key': route_data['Маршрут_Key'],
                             'order_id': order.id
                         })
@@ -70,7 +69,7 @@ class TmtrExchangeOneCPurchaseOrder(models.Model):
         return route.id
 
     def update_partner(self, partner_key):
-        partner = self.env['tmtr.exchange.1c.counterparty'].search([("ref_key", "=", partner_key)])
+        partner = self.env['tmtr.exchange.1c.partner'].search([("ref_key", "=", partner_key)])
         return partner.id
 
     def check_route_in_order(self,ref_key):
@@ -89,8 +88,9 @@ class TmtrExchangeOneCPurchaseOrder(models.Model):
         #         'order_num': order.number
         #     })
 
-        routes = self.env['tmtr.exchange.1c.route'].search([], limit=30)
+        routes = self.env['tmtr.exchange.1c.route'].search([])
         for route in routes:
+            # route = self.env['tms.route'].search([("id", "=", partner_key)])
             if route.description:
                 new_route_tms = self.env['tms.route'].create({
                 'name': route.description,
@@ -101,7 +101,7 @@ class TmtrExchangeOneCPurchaseOrder(models.Model):
                     'route_id': new_route_tms.id,
                     'order_num': route.order_id.number,
                 })
-        order_rows = self.env['tmtr.exchange.1c.implemention'].search([], limit=30)
+        order_rows = self.env['tmtr.exchange.1c.implemention'].search([])
         for row in order_rows:
             new_point = self.env['tms.route.point'].create({
                 

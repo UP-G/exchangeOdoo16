@@ -68,17 +68,18 @@ class TmtrExchangeOneCCounterparty(models.Model):
             })
         return
 
-    # def upload_parnter_ref(self, limit=1000): #Непонятно, что делает данный метод: Андрей чурилов
+    def upload_parnter_ref(self, limit=1000): #Непонятно, что делает данный метод: Андрей чурилов
         
-    #     partners = self.env['tmtr.exchange.1c.partner'].search([("partner_id", "=", None)], limit=limit)
+        partners = self.env['tmtr.exchange.1c.partner'].search([("partner_id", "=", None)], limit=limit)
         
-    #     for partner in partners:
-    #         counterparty = self.env['tmtr.exchange.1c.counterparty'].search([("partner_id", "=", partner['ref_key'])], limit=1)
-    #         if not counterparty:
-    #             continue
-    #         partner.update({
-    #             'partner_id': counterparty.id
-    #             })
+        for partner in partners:
+            counterpartys = self.env['tmtr.exchange.1c.counterparty'].search([("partner_id", "=", partner['ref_key'])])
+            if not counterpartys:
+                continue
+            for counterparty in counterpartys:
+                partner.update({
+                    'partner_id': counterparty.id
+                    })
 
     def add_res_partner(self, limit=100):
         # obj = {}

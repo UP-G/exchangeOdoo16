@@ -3,8 +3,8 @@ from odoo import api, fields, models, _
 import json
 
 class TmtrExchangeOneCPurchaseOrder(models.Model):
-    _name = 'tmtr.exchange.1c.purchase.order'
-    _description = '1C Purchase Order'
+    _name = 'tmtr.exchange.1c.order'
+    _description = '1C Order'
 
     ref_key = fields.Char(string='Ref key')
     date_car_out = fields.Datetime(string='Дата выезда машины')
@@ -15,7 +15,7 @@ class TmtrExchangeOneCPurchaseOrder(models.Model):
     number = fields.Char(string='Номер')
     note = fields.Char(string='Примечание')
 
-    def update_orders(self, top, skip):
+    def upload_new_orders(self, top, skip):
     #url = "http://dcsrv-erpap-01:8080/StockTM_app/odata/standard.odata/Document_%D0%A9%D0%B5%D0%BF_%D0%97%D0%B0%D0%BA%D0%B0%D0%B7%D0%9D%D0%B0%D1%80%D1%8F%D0%B4?$format=json&$top=3&$skip=0&$orderby=Date desc"
     
         order_data = self.env['odata.1c.route'].get_by_route(
@@ -40,5 +40,6 @@ class TmtrExchangeOneCPurchaseOrder(models.Model):
                         'is_load': json_data['ЗаказОтгружен'],
                         'number': json_data['Number'],
                     })
+        return             
 
         

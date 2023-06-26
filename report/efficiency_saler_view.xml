@@ -24,6 +24,7 @@
                     <field name="date" optional="show"/> 
                     <field name="plan_predicted_percentage" optional="show" widget="percentage"/>
                     <field name="prediction" optional="show"/>
+                    <field name="turnover_lacking" optional="show"/>
                     <field name="turnover_this_mounth" optional="show"/>
                     <field name="turnover_previous_mounth" optional="show"/> 
                     <field name="debt" optional="show"/>
@@ -70,6 +71,7 @@
                                 <field name="plan"/>
                                 <field name="prediction"/>
                                 <field name="plan_predicted_percentage" widget="percentage"/>
+                                <field name="turnover_lacking"/>
                                 <field name="turnover_this_mounth"/>
                                 <field name="turnover_previous_mounth"/>
                                 <field name="debt"/>
@@ -97,12 +99,13 @@
                     <field name="client_name" class="o_text_overflow" />
                     <field name="client_1c_id"/>
                     <separator/>
-                    <filter string="Main outside clients" name="filter_main_client_outsider" domain="[('type_client', '=', '4_main'),('plan_predicted_percentage','&lt;=','0.9')]"/>
-                    <filter string="Most outside clients" name="filter_client_outsider" domain="[('type_client', 'in', ['4_main','5_other']),('plan_predicted_percentage','&lt;=','0.9')]"/>
-                    <filter string="All outsiders" name="filter_main_client_outsider" domain="[('plan_predicted_percentage','&lt;=','0.9')]"/>
+                    <filter string="Key clients" name="filter_is_main" domain="[('type_client', '=', '4_main')]"/>
+                    <filter string="Key+meaningfull clients" name="filter_is_main_second" domain="[('type_client', 'in', ['4_main','5_mean'])]"/>
                     <separator/>
-                    <filter string="Main clients" name="filter_is_main" domain="[('type_client', '=', '4_main')]"/>
-                    <filter string="Main and second clients" name="filter_is_main_second" domain="[('type_client', 'in', ['4_main','5_other'])]"/>
+                    <filter string="Outsiders" name="filter_outsider" domain="[('plan_predicted_percentage','&lt;=','0.9')]"/>
+                    <separator/>
+                    <filter string="No communication" name="filter_no_communication" domain="[('task_count','=','0'),('interaction_count','=','0'),('calls_minute','=','0')]"/>
+                    <separator/>
                     <filter string="Overdued debts" name="filter_is_main" domain="[('overdue_debt', '>', '0')]"/>
                     <separator/>
                     <filter string="Last 31 days" name="filter_last_month_creation" domain="[('date','&gt;', (context_today() - datetime.timedelta(days=31)).strftime('%Y-%m-%d'))]"/>
@@ -121,12 +124,13 @@
             <field name="res_model">efficiency.saler.report</field>
             <field name="view_mode">pivot,graph,form,tree</field>
             <field name="context">{
-                'group_by': ['manager_name', 'type_client', 'client_name'], 
+                'group_by': ['type_client'],
                 'pivot_row_groupby': ['date:month', 'manager_name', 'type_client', 'client_name']
                 'pivot_measures':  ['__count', 'plan', 'prediction', 'plan_predicted_percentage', 'turnover_this_mounth', 'turnover_previous_mounth', 'debt', 'overdue_debt', 
                     'task_count', 'interaction_count', 'calls_in_count', 'calls_out_count', 'calls_minute', 'sonder_calls_count'],
                 'pivot_column_groupby': [],
-                'search_default_filter_main_client_outsider': 1,
+                'search_default_filter_outsider': 1,
+                'search_default_filter_no_communication': 1,
                 }</field>
             <field name="domain">[]</field>
         <field name="search_view_id" ref="efficiency_saler_report_search"/>

@@ -34,6 +34,7 @@ class EfficiencySalerReport(models.Model):
     # plan_percentage = fields.Float('Plan percantage') # Процент выполнения плана, поле долно быть вычисляемым, чтобы корректно работало при группировках
     prediction = fields.Float('Prediction') # Прогноз выручки на текущий месяц (среднее в день за 30 дней * количество дней в текущем месяце)
     plan_predicted_percentage = fields.Float('Plan prediction percantage') # >100% = Рост (зеленым)/ <100% = падение (красным) в % относительно плана
+    turnover_lacking = fields.Float('Lacking Turnover') # Недостающая выручка
     turnover_this_mounth = fields.Float('Turnover this month') # Выручка текущего месяца
     turnover_previous_mounth = fields.Float('Turnover last month') # Выручка предыдущего месяца
     debt = fields.Float('Debt amount') # Размер долга
@@ -71,16 +72,17 @@ class EfficiencySalerReport(models.Model):
                     sum(indicators.turnover_this_mounth) / (extract(day from now()) -1 ) * (DATE_PART('days', DATE_TRUNC('month', NOW())  + '1 MONTH'::INTERVAL - '1 DAY'::INTERVAL))
                 end as prediction,
                 case when sum(plan) > 0 then sum(prediction) / sum(plan) else 0 end as plan_predicted_percentage,
+                case when sum(plan) - sum(prediction) > 0 then sum(plan) - sum(prediction) else 0 end as turnover_lacking,
                 sum(indicators.turnover_this_mounth) as turnover_this_mounth,
                 sum(indicators.turnover_previous_mounth) as turnover_previous_mounth,
                 sum(indicators.debt) as debt,
                 sum(indicators.overdue_debt) as overdue_debt,
                 sum(indicators.task_count) as task_count,
-                sum(interaction.cnt) as interaction_count,
-                sum(imot.calls_in_count) as calls_in_count,
-                sum(imot.calls_out_count) as calls_out_count,
-                sum(imot.calls_minute) as calls_minute,
-                sum(imot.sonder_calls_count) as sonder_calls_count
+                sum(COALESCE(interaction.cnt, 0)) as interaction_count,
+                sum(COALESCE(imot.calls_in_count, 0)) as calls_in_count,
+                sum(COALESCE(imot.calls_out_count, 0)) as calls_out_count,
+                sum(COALESCE(imot.calls_minute, 0)) as calls_minute,
+                sum(COALESCE(imot.sonder_calls_count, 0)) as sonder_calls_count
         """
 
     def _from(self):
@@ -98,7 +100,7 @@ class EfficiencySalerReport(models.Model):
                 sum(case when timot.tags_rule_unique like '%Sonder%' then 1 else 0 end) as sonder_calls_count
                 FROM  voximplant_imot as timot
                 LEFT JOIN voximplant_operator_phone p2user on timot.operator_phone = p2user.operator_phone
-                WHERE date_trunc('month', cast(to_timestamp(timot.call_time) as timestamp)) = date_trunc('month',now()) 
+                WHERE date_trunc('month', cast(to_timestamp(timot.call_time) as timestamp)) = date_trunc('month',now())  and COALESCE(timot.duration,0) > 7
                 GROUP BY timot.client_origin_id, p2user.identifier_ib
                 ) as imot on imot.client_origin_id = indicators.origin_id and indicators.identifier_ib = imot.identifier_ib
             LEFT JOIN tmtr_exchange_1c_user as s1user ON s1user.identifier_ib = indicators.identifier_ib
