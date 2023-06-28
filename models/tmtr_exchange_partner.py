@@ -1,6 +1,6 @@
 from odoo import api, fields, models, _
 import logging
-from datetime import datetime
+from datetime import datetime, timedelta
 from odoo import Command
 import time
 
@@ -20,22 +20,31 @@ class TmtrExchangeOneCPartner(models.Model):
 
     user_id = fields.Many2one('res.users', string='Manager')
 
-    def upload_new_partner(self, skip=0, top=100):
+    def upload_new_partner(self, code=None, skip=0, top=100):
         try:
-            start_time = time.time()
-            while time.time() - start_time > 60:
-                break
-            partner_list= self.env['tmtr.exchange.1c.partner'].search([('code', 'not like', '%УТ')],order="code desc",limit=1)
-            if not partner_list:
-                maxCode = '00-00000000'
-            else:
-                maxCode = partner_list.code
-            data = self.env['odata.1c.route'].get_by_route("1c_ut/get_catalog/", {"catalog_name": "Catalog_Партнеры", "filter": f"DeletionMark eq false and Code ge '{maxCode}'&$orderby=Code&$top={top}&$skip={skip}"})["value"]
-            if not data:
-                return 
-            for json_data in data:
-                self.create_by_odata_array(json_data)
-            skip += top
+            finish_before = datetime.now() + timedelta(minutes=1) # ограничить время работы скрипта одной минутой
+
+            if not code: #Если не указан с какого code начинаем выкачиваем
+                partner_list= self.env['tmtr.exchange.1c.partner'].search([('code', 'not like', '%УТ')],
+                                                                      order="code desc",limit=1) #Берем максимальный code
+                if not partner_list:
+                    code = '00-00000000'
+                else:
+                    code = partner_list.code
+            while datetime.now() < finish_before:
+                data = self.env['odata.1c.route'].get_by_route(
+                    "1c_ut/get_partner/", 
+                    {
+                        "code": code,
+                        "skip": skip,
+                        "top": top
+                    })["value"]
+                
+                if not data:
+                    return 
+                for json_data in data:
+                    self.create_by_odata_array(json_data)
+                skip += top
         except Exception as e:
             _logger.info(e)
             return
@@ -87,7 +96,7 @@ class TmtrExchangeOneCPartner(models.Model):
         
         return datetime.strptime(string_date, '%Y-%m-%dT%H:%M:%S')
         
-    def add_partner_in_res_partner(self, limit):
+    def add_partner_in_res_partner(self, limit=50):
 
         partner_tag_id = int(self.env['ir.config_parameter'].sudo().get_param('tmtr_exchange.tag_1c_partner'))
 

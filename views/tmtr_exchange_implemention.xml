@@ -40,6 +40,9 @@
                             <field name="ref_key" optional="show"/>
                             <field name="partner_key" optional="show"/>
                             <field name="impl_num" optional="show"/>
+                            <field name="address" optional="show"/>
+                            <field name="phone" optional="show"/>
+                            <field name="order_id" optional="show"/>
                         </group>     
                     </group>
                 </sheet>

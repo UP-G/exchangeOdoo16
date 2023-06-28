@@ -108,6 +108,23 @@
                                     </div>
                                     <br/>
                                 </div>
+                                <div class="col-12 col-lg-6 o_setting_box" id="best_one_filter">
+                                    <br/>
+                                    <div class="o_setting_right_pane">
+                                        <span class="o_form_label">Best one algorithm and filters</span>
+                                        <span class="fa fa-lg fa-building-o" title="Set Best one algorithm and filters" aria-label="[{'days': 31, 'filter': [], order=''}]" groups="base.group_multi_company" role="img"/>
+                                        <div class="text-muted">
+                                            Describe Best one algorithm and filters in format:
+                                            [{'days': 31, 'filter': [], order=''}]
+                                        </div>
+                                        <div class="content-group">
+                                            <div class="mt16" groups="base.group_no_one">
+                                                <field name="best_one_filter" class="oe_inline"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <br/>
+                                </div>
                         </div>
                     </div>
                 </xpath>
