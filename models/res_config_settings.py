@@ -14,3 +14,5 @@ class ResConfigSettings(models.TransientModel):
     registration_date_partner = fields.Datetime(config_parameter='tmtr_exchange.registration_date_partner')
 
     template_1c_manager = fields.Many2one('res.users', config_parameter='tmtr_exchange.template_1c_manager')
+
+    best_one_filter = fields.Char(config_parameter='tmtr_exchange.best_one_filters')

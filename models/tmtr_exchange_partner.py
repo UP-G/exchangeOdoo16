@@ -96,7 +96,7 @@ class TmtrExchangeOneCPartner(models.Model):
         
         return datetime.strptime(string_date, '%Y-%m-%dT%H:%M:%S')
         
-    def add_partner_in_res_partner(self, limit):
+    def add_partner_in_res_partner(self, limit=50):
 
         partner_tag_id = int(self.env['ir.config_parameter'].sudo().get_param('tmtr_exchange.tag_1c_partner'))
 

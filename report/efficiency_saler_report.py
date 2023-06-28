@@ -1,5 +1,8 @@
 from odoo import fields, models, tools, api
 import logging
+from datetime import datetime, timedelta
+from odoo import Command
+import json
 
 _logger = logging.getLogger(__name__)
 
@@ -18,14 +21,15 @@ class EfficiencySalerReport(models.Model):
         ('1_unknown','Unknown'), # Не известен - не запонена связь
         ('2_new','New'), # Новые (появились в течение Y месяцев)
         ('3_old','Old'), # ХКБ (не было продаж предыдущих Х месяцев)
-        ('4_main','Main'), # АКБ основные (80% выручки за Х месяцев)
-        ('5_mean','Meaningful'), # АКБ значимые (80-90% выручки за Х месяцев)
+        ('4_main','Key'), # АКБ основные (80% выручки за Х месяцев)
+        ('5_mean','Meaningful'), # АКБ значимые (следующие 10% выручки за Х месяцев)
         ('6_other','Active'), # АКБ прочие
         ], 'Type client')
     type_debts = fields.Selection([ # Тип клиента
         ('1_unknown','Unknown'), # Не известен - не запонена связь
-        ('4_main','Main'), # АКБ основные (80% просроченного долга)
-        ('5_other','Overdued'), # АКБ прочие
+        ('4_main','Key'), # Должники ключевые (80% просроченного долга)
+        ('5_mean','Meaningful'), # Должники значимые (следующие 10% долга)
+        ('6_other','Overdued'), # Должники прочие
         ], 'Type debts')
     client_name = fields.Char('Client Name') # Клиент (+"не известный" в первой строке - все клиенты, чьи телефоны не найдены в контактах)
     client_1c_id = fields.Char('Client 1C ID') # origin_id
@@ -39,12 +43,15 @@ class EfficiencySalerReport(models.Model):
     turnover_previous_mounth = fields.Float('Turnover last month') # Выручка предыдущего месяца
     debt = fields.Float('Debt amount') # Размер долга
     overdue_debt = fields.Float('Overdue debt amount') # Просроченный долг
+    turnover_lacking_percent = fields.Float('Accumulated percent on Lacking Turnover') # Размер долга
     task_count = fields.Float('Task count') # Задач по клиенту
     interaction_count = fields.Float('Interactions count') # Взаимодействий по клиенту
+    interaction_last_date = fields.Datetime('Last Interaction Date') # Дата последнего Взаимодействия
     calls_in_count = fields.Float('Calls in count') # Вх.звонков (шт разных клиентов) из реч.аналитики
     calls_out_count = fields.Float('Calls out count') # исх.звонков (шт разных клиентов) из реч.аналитики
     calls_minute = fields.Float('Calls minutes') # Вх+исх.звонков (минут) из реч.аналитики
     sonder_calls_count = fields.Float('Sonder calls count') # Sonder (шт разных клиентов) из реч.аналитики
+    calls_out_last_date = fields.Datetime('Last out call Date') # Дата последнего исходящего звонка
 
     def _select(self):
         return """
@@ -58,8 +65,10 @@ class EfficiencySalerReport(models.Model):
                     when min(indicators.turnover_percent) <= 0.8 then '4_main'
                     when min(indicators.turnover_percent) <= 0.9 then '5_mean'
                     else '6_other' end,'1_unknown') as type_client,
-                COALESCE(case when min(indicators.debs_percent) <= 0.8 then '4_main' else '5_other' end,'1_unknown') as type_debts,
-
+                COALESCE(case
+                    when min(indicators.debs_percent) <= 0.8 then '4_main'
+                    when min(indicators.debs_percent) <= 0.8 then '5_mean'
+                    else '6_other' end,'1_unknown') as type_debts,
                 COALESCE(client.full_name,'Unknown client') as client_name,
 
                 GREATEST(
@@ -71,6 +80,7 @@ class EfficiencySalerReport(models.Model):
                     sum(indicators.turnover_last_30days) else
                     sum(indicators.turnover_this_mounth) / (extract(day from now()) -1 ) * (DATE_PART('days', DATE_TRUNC('month', NOW())  + '1 MONTH'::INTERVAL - '1 DAY'::INTERVAL))
                 end as prediction,
+                sum(indicators.turnover_lacking_percent) as turnover_lacking_percent,
                 case when sum(plan) > 0 then sum(prediction) / sum(plan) else 0 end as plan_predicted_percentage,
                 case when sum(plan) - sum(prediction) > 0 then sum(plan) - sum(prediction) else 0 end as turnover_lacking,
                 sum(indicators.turnover_this_mounth) as turnover_this_mounth,
@@ -79,10 +89,12 @@ class EfficiencySalerReport(models.Model):
                 sum(indicators.overdue_debt) as overdue_debt,
                 sum(indicators.task_count) as task_count,
                 sum(COALESCE(interaction.cnt, 0)) as interaction_count,
+                timezone('Europe/Moscow',max(COALESCE(interaction.interaction_last_date, date_trunc('month',now() - '31 DAY'::INTERVAL)))) as interaction_last_date,
                 sum(COALESCE(imot.calls_in_count, 0)) as calls_in_count,
                 sum(COALESCE(imot.calls_out_count, 0)) as calls_out_count,
                 sum(COALESCE(imot.calls_minute, 0)) as calls_minute,
-                sum(COALESCE(imot.sonder_calls_count, 0)) as sonder_calls_count
+                sum(COALESCE(imot.sonder_calls_count, 0)) as sonder_calls_count,
+                timezone('Europe/Moscow',max(COALESCE(imot.calls_out_last_date, date_trunc('month',now() - '31 DAY'::INTERVAL)))) as calls_out_last_date
         """
 
     def _from(self):
@@ -97,14 +109,16 @@ class EfficiencySalerReport(models.Model):
                 sum(case when timot.type_call = 'Входящий'  then 1 else 0 end) as calls_in_count,
                 sum(case when timot.type_call = 'Исходящий' then 1 when timot.type_call = 'Входящий' then 0 when COALESCE(timot.type_call, 'null') = 'null' then 1 else 0 end) as calls_out_count,
                 sum(COALESCE(timot.duration,0)) / 60 as calls_minute,
-                sum(case when timot.tags_rule_unique like '%Sonder%' then 1 else 0 end) as sonder_calls_count
+                sum(case when timot.tags_rule_unique like '%Sonder%' then 1 else 0 end) as sonder_calls_count,
+                max(case when timot.type_call = 'Исходящий' or COALESCE(timot.type_call, 'null') = 'null' then cast(to_timestamp(timot.call_time) as timestamp) 
+                    else date_trunc('month',now() - '31 DAY'::INTERVAL) end) as calls_out_last_date
                 FROM  voximplant_imot as timot
                 LEFT JOIN voximplant_operator_phone p2user on timot.operator_phone = p2user.operator_phone
                 WHERE date_trunc('month', cast(to_timestamp(timot.call_time) as timestamp)) = date_trunc('month',now())  and COALESCE(timot.duration,0) > 7
                 GROUP BY timot.client_origin_id, p2user.identifier_ib
                 ) as imot on imot.client_origin_id = indicators.origin_id and indicators.identifier_ib = imot.identifier_ib
             LEFT JOIN tmtr_exchange_1c_user as s1user ON s1user.identifier_ib = indicators.identifier_ib
-            LEFT JOIN (SELECT tinteraction.onec_member_id, tinteraction.responsible_key, count(tinteraction.responsible_key) as cnt
+            LEFT JOIN (SELECT tinteraction.onec_member_id, tinteraction.responsible_key, count(tinteraction.responsible_key) as cnt, max(tinteraction.date) as interaction_last_date
                 FROM tmtr_exchange_1c_interaction as tinteraction
                 WHERE date_trunc('month',tinteraction.date) = date_trunc('month',now())
                 GROUP BY tinteraction.onec_member_id, tinteraction.responsible_key
@@ -181,3 +195,45 @@ class EfficiencySalerReport(models.Model):
             return self.env['tmtr.exchange.1c.partner'].get_partner_by_origin_id(client_1c_ids)
         else:
             return {'result': 'OK', 'message': 'nothing to upload'}
+
+    def get_best_one(self, manager_1c_id, exclude_client_1c_ids):
+        best_one_filters = json.loads(self.env['ir.config_parameter'].sudo().get_param('tmtr_exchange.best_one_filters',json.dumps([
+            {'days': '30', # 1. смотрим всех должников, нет коммуникаций за 30 дней
+                'filter': [('type_debts','in',['4_main','5_mean','6_other']),('overdue_debt','>','0')],
+                'order': 'overdue_debt DESC'},
+            {'days': '30', # 2. смотрим среди всей АКБ отстающие на 20% и более
+                'filter': [('type_client','in',['4_main','5_mean','6_other']),('plan_predicted_percentage','<','0.8'),('turnover_lacking_percent','<','0.97')],
+                'order': 'turnover_lacking DESC'},
+            {'days': '14', # 3. смотрим ключевых и значимых должников, нет коммуникаций за 14 дней
+                'filter': [('type_debts','in',['4_main','5_mean']),('overdue_debt','>','0')],
+                'order': 'overdue_debt DESC'},
+            {'days': '14', # 4. смотрим среди ключевых и значимых отстающих на 10% и более от плана
+                'filter': [('type_client','in',['4_main','5_mean']),('plan_predicted_percentage','<','0.9')],
+                'order': 'turnover_lacking DESC'},
+            {'days': '7',  # 5. смотрим ключевых должников, нет коммуникаций за 7 дней
+                'filter': [('type_debts','in',['4_main']),('overdue_debt','>','0')],
+                'order': 'overdue_debt DESC'},
+            {'days': '7',  # 6. смотрим среди ключевых отстающих с максимальным отставанием продаж от плана
+                'filter': [('type_client','in',['4_main']),('plan_predicted_percentage','<','1')],
+                'order': 'turnover_lacking DESC'}, 
+            {'days': '30', # 7. смотрим среди всей АКБ отстающие на 20% и более
+                'filter': [('type_client','in',['4_main','5_mean','6_other']),('turnover_lacking_percent','<','0.9')],
+                'order': 'turnover_lacking DESC'},
+                           # 8. сообщаем об отсутствии задач
+        ])))
+        best_client_1c_id = ''
+        step = 0
+        for best_one_filter in best_one_filters:
+            if not best_client_1c_id:
+                step += 1
+                before = datetime.now() + timedelta(days=int(best_one_filter.get('days','7')))
+                best_task = self.search([
+                    ('manager_1c_id', '=', manager_1c_id),
+                    ('client_1c_id','not in', exclude_client_1c_ids),
+                    ('interaction_last_date', '<', before),
+                    ('calls_out_last_date', '<', before),
+                    ] + best_one_filter.get('filter',[]),
+                    order=best_one_filter.get('order','turnover_lacking DESC'))
+                if best_task:
+                    best_client_1c_id = best_task[0].client_1c_id
+        return {'origin_id': best_client_1c_id, 'step': step, 'message': 'nothing to do' if not best_client_1c_id else ''}
