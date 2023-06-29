@@ -10,5 +10,6 @@ class TmtrExchangeOneCImplemention(models.Model):
     impl_num = fields.Char(string='Implementation number') #Номер реализации
     address= fields.Char(string='Address')
     phone = fields.Char(string='Number phone')
-    partner_key = fields.Many2one('tmtr.exchange.1c.partner', string='Counterparty id')
+    route_id = fields.Many2one('tmtr.exchange.1c.route', string='route')
+    partner_key = fields.Many2one('res.parnter', string='partner')# заменить на модуль наследуемый от контрагента
     order_id = fields.Many2one('tmtr.exchange.1c.purchase.order', string='Order id')

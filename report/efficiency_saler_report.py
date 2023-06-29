@@ -236,4 +236,4 @@ class EfficiencySalerReport(models.Model):
                     order=best_one_filter.get('order','turnover_lacking DESC'))
                 if best_task:
                     best_client_1c_id = best_task[0].client_1c_id
-        return {'origin_id': best_client_1c_id, 'step': step, 'message': 'nothing to do' if not best_client_1c_id else ''}
+        return {'origin_id': best_client_1c_id, 'step': step, 'message': 'nothing to do' if not best_client_1c_id else '', 'manager_1c_id': manager_1c_id}
