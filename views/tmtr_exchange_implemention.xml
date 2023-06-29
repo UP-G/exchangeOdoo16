@@ -20,7 +20,7 @@
         <field name="arch" type="xml">
             <tree multi_edit="1">
                 <field name="ref_key" optional="show"/>
-                <field name="partner_key" optional="show"/>
+                <!-- <field name="counterparty_key" optional="show"/> -->
                 <field name="impl_num" optional="show"/>
                 <field name="address" optional="show"/>
                 <field name="phone" optional="show"/>
@@ -38,7 +38,7 @@
                     <group>
                         <group>
                             <field name="ref_key" optional="show"/>
-                            <field name="partner_key" optional="show"/>
+                            <!-- <field name="counterparty_key" optional="show"/> -->
                             <field name="impl_num" optional="show"/>
                             <field name="address" optional="show"/>
                             <field name="phone" optional="show"/>
