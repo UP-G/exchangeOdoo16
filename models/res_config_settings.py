@@ -16,3 +16,5 @@ class ResConfigSettings(models.TransientModel):
     template_1c_manager = fields.Many2one('res.users', config_parameter='tmtr_exchange.template_1c_manager')
 
     best_one_filter = fields.Char(config_parameter='tmtr_exchange.best_one_filters')
+
+    purchase_order_last_date = fields.Datetime(config_parameter='tmtr_exchange.last_order_date')

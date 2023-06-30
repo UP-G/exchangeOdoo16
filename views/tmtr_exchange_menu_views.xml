@@ -34,6 +34,13 @@
             sequence="10"/>
 
         <menuitem
+            id="tmtr_saler_report_history"
+            name="Saller report History"
+            parent="menu_tmtr_exchange_1c"
+            action="efficiency_saler_report_history_action"
+            sequence="12"/>
+
+        <menuitem
             id="menu_tmtr_exchange_1c_counterparty"
             name="1C Counterparty"
             parent="menu_tmtr_exchange_1c"

@@ -5,30 +5,29 @@ from datetime import datetime, timedelta
 
 
 _logger = logging.getLogger(__name__)
-class TmtrExchangeOneCPurchaseOrder(models.Model):
-    _name = 'tmtr.exchange.1c.purchase.order'
+class TmtrExchangeOneCDeliveryOrder(models.Model):
+    _name = 'tmtr.exchange.1c.delivery.order'
     _description = '1C Deliver Order'
 
     ref_key = fields.Char(string='Ref key')
-    date_car_out = fields.Char(string='Departure date of the car') #Дата выезда машины
-    is_load = fields.Boolean(string='The order has been shipped') #Был ли отправлен заказ
+    date_car_out = fields.Char(string='Date car out')
+    is_load = fields.Boolean(string='Order is loading')
     date = fields.Char(string='Date')
     responsible_key = fields.Char(string='Responsible key')
-    store_key = fields.Char(string='Warehouse key') #Склад key
+    store_key = fields.Char(string='Store key')
     number = fields.Char(string='Number')
     note = fields.Char(string='Note')
     route_ids = fields.One2many('tmtr.exchange.1c.route', 'order_id', string = 'Routes')
     impl_ids = fields.One2many('tmtr.exchange.1c.implemention', 'order_id', string = 'Implementions')
 
     def upload_new_orders(self, top = 50, skip = 0, from_date = None):
-        if not from_date:
-            from_date = fields.Date.to_date(self.env['ir.config_parameter'].sudo().get_param('tmtr_exchange.last_order_date','2021-06-20T00:00:00'))
+        from_date = fields.Date.to_date(self.env['ir.config_parameter'].sudo().get_param('tmtr_exchange.last_order_date','2021-06-20T00:00:00')) if not from_date else from_date
         date = from_date.strftime("%Y-%m-%dT%H:%M:%S")
         date_till = datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
         finish_before = datetime.now() + timedelta(minutes=1)
         stop_import = False
+        cnt = 0
         total_cnt = 0
-
         while datetime.now() < finish_before and not stop_import:
             order_data = self.env['odata.1c.route'].get_by_route(
                 "1c_ut/get_order/", 
@@ -37,17 +36,22 @@ class TmtrExchangeOneCPurchaseOrder(models.Model):
                 "skip": skip,
                 "date": date,
                 })['value']
-            ref_key_ids = [r['Ref_Key'] for r in order_data if r['DeletionMark'] != True]
-            order_exists = dict((r.ref_key, r.ref_key) for r in self.search([("ref_key", "in", ref_key_ids)]))
-            cnt = 0
+        
             for json_data in order_data:
-                if json_data['Ref_Key'] in order_exists:
-                    continue
-
-                cnt += 1
-                order = self.create_purchase_order(json_data)
-
-                routes_data = json_data['Маршруты']
+                order = self.env['tmtr.exchange.1c.delivery.order'].search([("ref_key", "=", json_data['Ref_Key'])])
+                if not order:
+                    order = self.env['tmtr.exchange.1c.delivery.order'].create({
+                            'ref_key' : json_data['Ref_Key'],
+                            'date_car_out' : json_data['ДатаВыездаМашины'],
+                            'date' : json_data['Date'],
+                            'responsible_key' : json_data['Ответственный_Key'],
+                            'store_key' : json_data['Склад_Key'],
+                            'note': json_data['Примичание'],
+                            'is_load': json_data['ЗаказОтгружен'],
+                            'number': json_data['Number'],
+                        })
+                    cnt+=1
+                routes_data= json_data['Маршруты']
                 for route_data in routes_data:
                     route = self.env['tmtr.exchange.1c.route'].search([('route_key','=', route_data['Маршрут_Key'])])
                     if not route:
@@ -83,110 +87,43 @@ class TmtrExchangeOneCPurchaseOrder(models.Model):
         # Сохранить день, на котором остановился импорт
         if date <= date_till:
             self.env['ir.config_parameter'].set_param('tmtr.exchange.last_order_date', from_date)
-        return {'cnt': total_cnt, 'data': from_date}        
-
-    def create_purchase_order(self, json_date):
-        new_purchase_order = self.create({
-                            'ref_key' : json_date['Ref_Key'],
-                            'date_car_out' : json_date['ДатаВыездаМашины'],
-                            'date' : json_date['Date'],
-                            'responsible_key' : json_date['Ответственный_Key'],
-                            'store_key' : json_date['Склад_Key'],
-                            'note': json_date['Примичание'],
-                            'is_load': json_date['ЗаказОтгружен'],
-                            'number': json_date['Number'],
-                        })
-        return new_purchase_order
+        return {'cnt': total_cnt, 'data': from_date}          
 
 
-    def upload_order_by_number(self, order_numbers):
-        cnt = 0
-        for order_number in order_numbers:
-            orders_data = self.env['odata.1c.route'].get_by_route(
-                "1c_ut/get_catalog/", 
-                {
-                    "catalog_name": "Document_Щеп_ЗаказНаряд",
-                    "filter": f"endswith(Number,%20%27{order_number}%27)%20eq%20true",
-                })['value']
-            if not orders_data:
-                _logger.info(f"order with number {order_number} not found")
-            else:
-                for order_data in orders_data:
-                    cnt += 1
-                    order_tms = self.env['tms.order'].search([('order_num','=',order_data['Number'])])
-                    if not order_tms:
-# Пока маршруты игнорируем
-#            route_tms = self.env['tms.route'].create({
-#                'name': order_data['МаршрутыДоставки'],
-#                'start_time': datetime.strptime(order_data['ДатаВыездаМашины'], "%Y-%m-%dT%H:%M:%S"),
-#            })
-                        order_tms = self.env['tms.order'].create({
-#                'route_id': route_tms.id,
-                            'order_num': order_data['Number'],
-                            'departed_on_route': datetime.strptime(order_data['Date'], '%Y-%m-%dT%H:%M:%S'),
-#                'departed_on_route': f"{route_tms.start_time.date()} {datetime.strptime(order_data['Маршруты'][0]['ВремяВыезда'], '%Y-%m-%dT%H:%M:%S').time()}",
-                        })
-#            point_tms = self.env['tms.route.point'].create({})
-                    if not order_tms.order_row_ids and not order_data['Реализации'] or not order_data['ДопУслуги']:
-                        for item in order_data['Реализации']:
-                            self.env['tms.order.row'].create({
-                                'order_id': order_tms.id,
-                        #'route_point_id': point_tms.id,
-                                'impl_num': item['Номер'],
-                                'comment': "{phone};{address}".format(phone=item['Телефон'], address=item['АдресДоставки']),
-                                #'partner_key': self.update_partner(item['Контрагент_Key']),
-                            })
-                        for item in order_data['ДопУслуги']:
-                            self.env['tms.order.row'].create({
-                                'order_id': order_tms.id,
-                        #'route_point_id': point_tms.id,
-                                'impl_num': "Возврат {number}".format(number=item['LineNumber']),
-                                'comment': "{phone};{address}".format(phone='-',address=item['Адрес']),
-                                #'partner_key': self.update_partner_by_name(impl['Контрагент']),
-                            })
-        return cnt
-
-
-    def upload_order_by_number2(self, order_number):
+    def upload_order_by_number(self, order_number, date=None):
+        document_filter = f"endswith(Number,%20%27{order_number}%27)%20eq%20true"
         orders_data = self.env['odata.1c.route'].get_by_route(
             "1c_ut/get_catalog/", 
             {
-                "catalog_name": "Document_Щеп_ЗаказНаряд",
+                "catalog_name": document_filter,
                 "filter": f"endswith(Number,%20%27{order_number}%27)%20eq%20true",
             })['value']
-        cnt = 0
         if not orders_data:
             _logger.info(f"order with number {order_number} not found")
-            return cnt
+            return
         for order_data in orders_data:
-            cnt += 1
-            order_tms = self.env['tms.order'].search([('order_num','=',order_data['Number'])])
-            if not order_tms:
-# Пока маршруты игнорируем
-#            route_tms = self.env['tms.route'].create({
-#                'name': order_data['МаршрутыДоставки'],
-#                'start_time': datetime.strptime(order_data['ДатаВыездаМашины'], "%Y-%m-%dT%H:%M:%S"),
-#            })
-                order_tms = self.env['tms.order'].create({
-#                'route_id': route_tms.id,
-                    'order_num': order_data['Number'],
-                    'departed_on_route': datetime.strptime(order_data['Date'], '%Y-%m-%dT%H:%M:%S'),
-#                'departed_on_route': f"{route_tms.start_time.date()} {datetime.strptime(order_data['Маршруты'][0]['ВремяВыезда'], '%Y-%m-%dT%H:%M:%S').time()}",
+            route_tms = self.env['tms.route'].create({
+                'name': order_data['МаршрутыДоставки'],
+                'start_time': datetime.strptime(order_data['ДатаВыездаМашины'], "%Y-%m-%dT%H:%M:%S"),
+            })
+            order_tms = self.env['tms.order'].create({
+                'route_id': route_tms.id,
+                'order_num': order_data['Number'],
+                'departed_on_route': f"{route_tms.start_time.date()} {datetime.strptime(order_data['Маршруты'][0]['ВремяВыезда'], '%Y-%m-%dT%H:%M:%S').time()}",
+            })
+            point_tms = self.env['tms.route.point'].create({})
+            for impl in order_data['Реализации']:
+                self.env['tms.order.row'].create({
+                    'order_id': order_tms.id,
+                    'route_point_id': point_tms.id,
+                    'impl_num': impl['Номер'],
+                    'comment': f"{impl['Телефон']};{impl['АдресДоставки']}",
+                    'partner_key': self.update_partner(impl['Контрагент_Key']),
                 })
-#            point_tms = self.env['tms.route.point'].create({})
-            if not order_tms.order_row_ids and not order_data['Реализации']:
-                for item in order_data['Реализации']:
-                    self.env['tms.order.row'].create({
-                        'order_id': order_tms.id,
-                        #'route_point_id': point_tms.id,
-                        'impl_num': item['Номер'],
-                        'comment': "{phone};{address}".format(phone=item['Телефон'], address=item['АдресДоставки']),
-                        'partner_key': self.update_partner(item['Контрагент_Key']),
-                    })
 
     def update_order(self, ref_key):
-        route = self.env['tmtr.exchange.1c.purchase.order'].search([("ref_key", "=", ref_key)])
-        return route.id if route else False
+        route = self.env['tmtr.exchange.1c.delivery.order'].search([("ref_key", "=", ref_key)])
+        return route.id
 
     def update_partner(self, counterparty_key):
         counterparty = self.env['tmtr.exchange.1c.counterparty'].search([("ref_key", "=", counterparty_key)])#заменить на модуль наследуемый от контрагента
@@ -200,7 +137,7 @@ class TmtrExchangeOneCPurchaseOrder(models.Model):
             return False       
 
     def update_tms(self):#учитывать в будующей версии множество реализаций на одну точку 
-        orders = self.env['tmtr.exchange.1c.purchase.order'].search([])
+        orders = self.env['tmtr.exchange.1c.delivery.order'].search([])
         for order in orders:
             
             route = self.env['tmtr.exchange.1c.route'].search([('ref_key','=', order.ref_key)])

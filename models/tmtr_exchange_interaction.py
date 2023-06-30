@@ -23,7 +23,6 @@ class TmtrExchangeOneCInteraction(models.Model):
     def test_button(self):
         return
 
-
     def upload_new_interaction(self, from_date = None, top = 100, skip = 0):
         finish_before = datetime.now() + timedelta(minutes=1) # ограничить время работы скрипта одной минутой
         if not from_date:
