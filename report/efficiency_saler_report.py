@@ -63,11 +63,11 @@ class EfficiencySalerReport(models.Model):
                 COALESCE(indicators.origin_id, 'Unknown_ID') as client_1c_id,
                 COALESCE(case
                     when min(indicators.turnover_percent) <= 0.8 then '4_main'
-                    when min(indicators.turnover_percent) <= 0.9 then '5_mean'
+                    when min(indicators.turnover_percent) <= 0.95 then '5_mean'
                     else '6_other' end,'1_unknown') as type_client,
                 COALESCE(case
                     when min(indicators.debs_percent) <= 0.8 then '4_main'
-                    when min(indicators.debs_percent) <= 0.8 then '5_mean'
+                    when min(indicators.debs_percent) <= 0.95 then '5_mean'
                     else '6_other' end,'1_unknown') as type_debts,
                 COALESCE(client.full_name,'Unknown client') as client_name,
 
@@ -202,13 +202,13 @@ class EfficiencySalerReport(models.Model):
                 'filter': [('type_debts','in',['4_main','5_mean','6_other']),('overdue_debt','>','0')],
                 'order': 'overdue_debt DESC'},
             {'days': '30', # 2. смотрим среди всей АКБ отстающие на 20% и более
-                'filter': [('type_client','in',['4_main','5_mean','6_other']),('plan_predicted_percentage','<','0.8'),('turnover_lacking_percent','<','0.97')],
+                'filter': [('type_client','in',['4_main','5_mean','6_other']),('plan_predicted_percentage','<','0.8'),('turnover_lacking_percent','<','0.95')],
                 'order': 'turnover_lacking DESC'},
             {'days': '14', # 3. смотрим ключевых и значимых должников, нет коммуникаций за 14 дней
                 'filter': [('type_debts','in',['4_main','5_mean']),('overdue_debt','>','0')],
                 'order': 'overdue_debt DESC'},
             {'days': '14', # 4. смотрим среди ключевых и значимых отстающих на 10% и более от плана
-                'filter': [('type_client','in',['4_main','5_mean']),('plan_predicted_percentage','<','0.9')],
+                'filter': [('type_client','in',['4_main','5_mean']),('plan_predicted_percentage','<','0.95')],
                 'order': 'turnover_lacking DESC'},
             {'days': '7',  # 5. смотрим ключевых должников, нет коммуникаций за 7 дней
                 'filter': [('type_debts','in',['4_main']),('overdue_debt','>','0')],
@@ -217,7 +217,7 @@ class EfficiencySalerReport(models.Model):
                 'filter': [('type_client','in',['4_main']),('plan_predicted_percentage','<','1')],
                 'order': 'turnover_lacking DESC'}, 
             {'days': '30', # 7. смотрим среди всей АКБ отстающие на 20% и более
-                'filter': [('type_client','in',['4_main','5_mean','6_other']),('turnover_lacking_percent','<','0.9')],
+                'filter': [('type_client','in',['4_main','5_mean','6_other']),('turnover_lacking_percent','<','0.95')],
                 'order': 'turnover_lacking DESC'},
                            # 8. сообщаем об отсутствии задач
         ])))
