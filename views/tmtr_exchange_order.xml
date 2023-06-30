@@ -52,6 +52,44 @@
                             <field name="note" optional="show"/>
                         </group>     
                     </group>
+                    <!-- <notebook>
+                        <page string="routes on order">
+                            <field name="route_ids">
+                                <tree string="Tree String">
+                                    <field name="ref_key" string="ref_key"/>
+                                    <field name="route_key" string="route_key"/>
+                                    <field name="car_out" string="Date car_out"/>
+                                    <field name="description" string="route name"/>
+                                </tree>
+                                <from>
+                                <group>
+                                    <field name="ref_key" string="ref_key"/>
+                                    <field name="route_key" string="route_key"/>
+                                    <field name="car_out" string="Date car_out"/>
+                                    <field name="description" string="route name"/>
+                                    </group>
+                                </from>
+                            </field>
+                        </page>
+                        <page string="implementions on order">
+                            <field name="impl_ids">
+                                <tree string="Tree String">
+                                    <field name="impl_num" string="impl_num"/>
+                                    <field name="address" string="address"/>
+                                    <field name="phone" string="phone"/>
+                                    <field name="route_id" string="route_id"/>
+                                </tree>
+                                <from>
+                                <group>
+                                    <field name="impl_num" string="impl_num"/>
+                                    <field name="address" string="address"/>
+                                    <field name="phone" string="phone"/>
+                                    <field name="route_id" string="route_id"/>
+                                    </group>
+                                </from>
+                            </field>
+                        </page>
+                    </notebook> -->
                 </sheet>
             </form>
         </field>

@@ -10,6 +10,7 @@
     'data': [
         'security/ir.model.access.csv',
         'report/efficiency_saler_view.xml',
+        'report/efficiency_saler_history_view.xml',
         'report/efficiency_report_template.xml',
         'views/tmtr_exchange_contact.xml',
         'views/tmtr_exchange_user.xml',

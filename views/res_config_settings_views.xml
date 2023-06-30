@@ -125,6 +125,22 @@
                                     </div>
                                     <br/>
                                 </div>
+                                <div class="col-12 col-lg-6 o_setting_box" id="last_order_date">
+                                    <br/>
+                                    <div class="o_setting_right_pane">
+                                        <span class="o_form_label">last uploaded purchase order date</span>
+                                        <span class="fa fa-lg fa-building-o" title="Values set here are registration date 1C partner" aria-label="Values set here are tags counterparty" groups="base.group_multi_company" role="img"/>
+                                        <div class="text-muted">
+                                            Choose default purchase order date
+                                        </div>
+                                        <div class="content-group">
+                                            <div class="mt16" groups="base.group_no_one">
+                                                <field name="registration_date_partner" class="oe_inline"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <br/>
+                                </div>
                         </div>
                     </div>
                 </xpath>

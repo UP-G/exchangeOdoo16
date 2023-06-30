@@ -13,7 +13,7 @@ class TmtrExchangeOneCRoute(models.Model):
     car_out = fields.Char(string='Время выезда')
     description = fields.Char(string='description')
     order_id = fields.Many2one('tmtr.exchange.1c.purchase.order', string='Заказ id')
-    impl_ids = fields.One2many('tmtr.exchange.1c.implemention', 'route_id', string='implemintations')
+    # impl_ids = fields.One2many('tmtr.exchange.1c.implemention', 'route_id', string='implemintations')
 
     # def update_routes(self, top, skip):
     #     tms_route_data = self.env['odata.1c.route'].get_by_route(
