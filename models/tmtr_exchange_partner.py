@@ -10,13 +10,15 @@ class TmtrExchangeOneCPartner(models.Model):
     _description = '1C Partner'
 
     partner_id = fields.Many2one('res.partner', string='Partner')
-    ref_key = fields.Char(string='Ref_key')
-    parent_key = fields.Char(string='Parent key')
-    code = fields.Char(string='Code')
-    description = fields.Char(string='Description')
-    full_name = fields.Char(string='Full client name')
-    main_manager_key = fields.Char(string='Main manager key')
-    date_of_registration = fields.Datetime(string='Date of Registration')
+    ref_key = fields.Char(string='Ref_key') # Ref_Key
+    parent_key = fields.Char(string='Parent key') # Parent_Key
+    code = fields.Char(string='Code') # Code
+    description = fields.Char(string='Description') # Description
+    full_name = fields.Char(string='Full client name') # НаименованиеПолное
+    main_manager_key = fields.Char(string='Main manager key') # ОсновнойМенеджер_Key
+    date_of_registration = fields.Datetime(string='Date of Registration') # ДатаРегистрации
+    capacity = fields.Float(string='Client capacity') # ТМ_ЕмкостьКлиента
+    our_share = fields.Float(string="Our share in client's purchases") # ТМ_ПроцентЗакупокНашаДоля
 
     user_id = fields.Many2one('res.users', string='Manager')
 
@@ -25,13 +27,16 @@ class TmtrExchangeOneCPartner(models.Model):
             finish_before = datetime.now() + timedelta(minutes=1) # ограничить время работы скрипта одной минутой
 
             if not code: #Если не указан с какого code начинаем выкачиваем
-                partner_list= self.env['tmtr.exchange.1c.partner'].search([('code', 'not like', '%УТ')],
-                                                                      order="code desc",limit=1) #Берем максимальный code
+                partner_list= self.env['tmtr.exchange.1c.partner'].search([('code', 'like', '00-')],
+                          order="code desc",limit=1) #Берем максимальный code
                 if not partner_list:
                     code = '00-00000000'
                 else:
                     code = partner_list.code
-            while datetime.now() < finish_before:
+            cnt = 0
+            last_created = ''
+            empty_result = 0
+            while datetime.now() < finish_before and empty_result < 3:
                 data = self.env['odata.1c.route'].get_by_route(
                     "1c_ut/get_partner/", 
                     {
@@ -39,12 +44,48 @@ class TmtrExchangeOneCPartner(models.Model):
                         "skip": skip,
                         "top": top
                     })["value"]
-                
-                if not data:
-                    return 
-                for json_data in data:
-                    self.create_by_odata_array(json_data)
+                if data:
+                    for json_data in data:
+                        cnt += self.create_by_odata_array(json_data)
+                        last_created = json_data['Code']
+                else:
+                    empty_result += 1
                 skip += top
+            return {'count': cnt, 'last_code': code, 'last_created': last_created}
+        except Exception as e:
+            _logger.info(e)
+            return
+
+    def update_partner(self, model_fields=['capacity', 'our_share'], code=None, skip=0, top=100):
+        try:
+            finish_before = datetime.now() + timedelta(minutes=1) # ограничить время работы скрипта одной минутой
+
+            if not code: #Если не указан с какого code начинаем выкачиваем
+                partner_list= self.env['tmtr.exchange.1c.partner'].search([('code', 'like', '00-')],
+                          order="write_date asc",limit=1) #Берем последний обновленный code
+                if not partner_list:
+                    code = '00-00000000'
+                else:
+                    code = partner_list.code
+            cnt = 0
+            last_updated = ''
+            empty_result = 0
+            while datetime.now() < finish_before and empty_result < 3:
+                data = self.env['odata.1c.route'].get_by_route(
+                    "1c_ut/get_partner/", 
+                    {
+                        "code": code,
+                        "skip": skip,
+                        "top": top
+                    })["value"]
+                if data:
+                    for json_data in data:
+                        cnt += self.update_by_odata_array(json_data, model_fields=model_fields)
+                        last_updated = json_data['Code']
+                else:
+                    empty_result += 1
+                skip += top
+            return {'count': cnt, 'last_code': code, 'last_updated': last_updated}
         except Exception as e:
             _logger.info(e)
             return
@@ -60,9 +101,41 @@ class TmtrExchangeOneCPartner(models.Model):
                             'full_name' : json_data['НаименованиеПолное'],
                             'main_manager_key' : json_data['ОсновнойМенеджер_Key'],
                             'date_of_registration' : self.parse_date(json_data['ДатаРегистрации']),
+                            'capacity' : json_data['ТМ_ЕмкостьКлиента'],
+                            'our_share' : json_data['ТМ_ПроцентЗакупокНашаДоля'],
                         }) else 0
         else:
             return 0
+
+
+    def odata_array_to_model(self, json_data, model_fields=[]):
+        odata2model = {
+            'ref_key': 'Ref_Key',
+            'parent_key': 'Parent_Key',
+            'code': 'Code',
+            'description': 'Description',
+            'full_name': 'НаименованиеПолное',
+            'main_manager_key': 'ОсновнойМенеджер_Key',
+            'date_of_registration' : ('ДатаРегистрации', self.parse_date),
+            'capacity' : 'ТМ_ЕмкостьКлиента',
+            'our_share' : 'ТМ_ПроцентЗакупокНашаДоля',
+        }
+        data = {}
+        for field in model_fields:
+            odata_src = odata2model.get(field, '')
+            if odata_src:
+                data.update({field: json_data.get(odata_src,'') if isinstance(odata_src, str) else odata_src[1](json_data.get(odata_src[0],''))})
+        return data
+
+
+    def update_by_odata_array(self, json_data, model_fields=[]):
+        partner = self.env['tmtr.exchange.1c.partner'].search([("ref_key", "=", json_data['Ref_Key'])])
+        if model_fields and partner:
+            self.env['tmtr.exchange.1c.partner'].update(self.odata_array_to_model(json_data,model_fields))
+            return 1
+        else:
+            return 0
+
 
     def get_partner_by_name(self, names):
         cnt = 0

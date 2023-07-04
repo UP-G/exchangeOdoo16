@@ -51,6 +51,8 @@
                         <field name="main_manager_key" optional="show"/>
                         <field name="user_id" optional="show"/>
                         <field name="date_of_registration" optional="show"/>
+                        <field name="capacity"/>
+                        <field name="our_share"/>
                         </group>
                         <!-- <button name="test_button" string="Test" class="btn-primary"
                         type="object"/> -->
