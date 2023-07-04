@@ -36,6 +36,9 @@
                     <field name="calls_out_count" optional="show"/>
                     <field name="calls_minute" optional="show"/>
                     <field name="sonder_calls_count" optional="show"/>
+                    <field name="capacity" optional="show"/>
+                    <field name="capacity_percentage" optional="show"/>
+                    <field name="our_share" optional="show"/>
 
                 </tree>
             </field>
@@ -82,6 +85,9 @@
                                 <field name="calls_out_count"/>
                                 <field name="calls_minute"/>
                                 <field name="sonder_calls_count"/>
+                                <field name="capacity"/>
+                                <field name="capacity_percentage"/>
+                                <field name="our_share"/>
                             </group>
                         </group>
                     </sheet>

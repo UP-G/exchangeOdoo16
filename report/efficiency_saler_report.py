@@ -53,6 +53,10 @@ class EfficiencySalerReport(models.Model):
     sonder_calls_count = fields.Float('Sonder calls count') # Sonder (шт разных клиентов) из реч.аналитики
     calls_out_last_date = fields.Datetime('Last out call Date') # Дата последнего исходящего звонка
 
+    capacity = fields.Float(string='Client capacity') # Емкость клиента в Евро
+    capacity_percentage = fields.Float(string='Client capacity ratio') # Доля фактических отгрузок ТМ в емкости клиента
+    our_share = fields.Float(string="Our share in client's purchases") # Доля ТМ в закупках клиентом запчастей
+
     def _select(self):
         return """
             SELECT
@@ -94,7 +98,10 @@ class EfficiencySalerReport(models.Model):
                 sum(COALESCE(imot.calls_out_count, 0)) as calls_out_count,
                 sum(COALESCE(imot.calls_minute, 0)) as calls_minute,
                 sum(COALESCE(imot.sonder_calls_count, 0)) as sonder_calls_count,
-                timezone('Europe/Moscow',max(COALESCE(imot.calls_out_last_date, date_trunc('month',now() - '31 DAY'::INTERVAL)))) as calls_out_last_date
+                timezone('Europe/Moscow',max(COALESCE(imot.calls_out_last_date, date_trunc('month',now() - '31 DAY'::INTERVAL)))) as calls_out_last_date,
+                max(client.capacity) as capacity,
+                case when max(client.capacity) > 1 then max(prediction) / max(client.capacity) else 0 end as capacity_percentage,
+                max(client.our_share) as our_share
         """
 
     def _from(self):

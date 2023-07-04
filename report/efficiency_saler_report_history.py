@@ -51,9 +51,13 @@ class EfficiencySalerReport(models.Model):
     sonder_calls_count = fields.Float('Sonder calls count') # Sonder (шт разных клиентов) из реч.аналитики
     calls_out_last_date = fields.Datetime('Last out call Date') # Дата последнего исходящего звонка
 
+    capacity = fields.Float(string='Client capacity') # Емкость клиента в Евро
+    capacity_percentage = fields.Float(string='Client capacity ratio') # Доля фактических отгрузок ТМ в емкости клиента
+    our_share = fields.Float(string="Our share in client's purchases") # Доля ТМ в закупках клиентом запчастей
+
     @api.model
     def makeDayHistoryCron(self):
-        field_names = [r for r in self.env['ir.model.fields'].search([('model_id.model','=',"efficiency.saler.report"),('readonly','=',False)]).mapped('name') if r != 'date']
+        field_names = [r for r in self.env['ir.model.fields'].search([('model_id.model','=',"efficiency.saler.report"),('readonly','=',False)]).mapped('name') if r not in ['date']]
         cnt = 0
         shot_date = fields.Datetime.now()
         # self.search([('date','=',shot_date)]).unlink() # delete old records for this day
