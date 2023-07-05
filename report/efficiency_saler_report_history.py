@@ -54,6 +54,13 @@ class EfficiencySalerReport(models.Model):
     capacity = fields.Float(string='Client capacity') # Емкость клиента в Евро
     capacity_percentage = fields.Float(string='Client capacity ratio') # Доля фактических отгрузок ТМ в емкости клиента
     our_share = fields.Float(string="Our share in client's purchases") # Доля ТМ в закупках клиентом запчастей
+    capacity_lacking = fields.Float('Lacking Capacity Turnover') # Недостающая выручка до 30% доли
+    type_capacity = fields.Selection([ # Тип клиента по емкости
+        ('1_unknown','Unknown'), # Не известен - не запонена связь
+        ('4_main','Key'), # Ключевые по емкости (80% по емкости в рамках менеджера)
+        ('5_mean','Meaningful'), # Значимые по емкости (следующие 15%)
+        ('6_other','Other'), # Прочие по емкости
+        ], 'Type capacity')
 
     @api.model
     def makeDayHistoryCron(self):

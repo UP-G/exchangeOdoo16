@@ -22,13 +22,13 @@ class EfficiencySalerReport(models.Model):
         ('2_new','New'), # Новые (появились в течение Y месяцев)
         ('3_old','Old'), # ХКБ (не было продаж предыдущих Х месяцев)
         ('4_main','Key'), # АКБ основные (80% выручки за Х месяцев)
-        ('5_mean','Meaningful'), # АКБ значимые (следующие 10% выручки за Х месяцев)
+        ('5_mean','Meaningful'), # АКБ значимые (следующие 15% выручки за Х месяцев)
         ('6_other','Active'), # АКБ прочие
         ], 'Type client')
     type_debts = fields.Selection([ # Тип клиента
         ('1_unknown','Unknown'), # Не известен - не запонена связь
         ('4_main','Key'), # Должники ключевые (80% просроченного долга)
-        ('5_mean','Meaningful'), # Должники значимые (следующие 10% долга)
+        ('5_mean','Meaningful'), # Должники значимые (следующие 15% долга)
         ('6_other','Overdued'), # Должники прочие
         ], 'Type debts')
     client_name = fields.Char('Client Name') # Клиент (+"не известный" в первой строке - все клиенты, чьи телефоны не найдены в контактах)
@@ -56,6 +56,13 @@ class EfficiencySalerReport(models.Model):
     capacity = fields.Float(string='Client capacity') # Емкость клиента в Евро
     capacity_percentage = fields.Float(string='Client capacity ratio') # Доля фактических отгрузок ТМ в емкости клиента
     our_share = fields.Float(string="Our share in client's purchases") # Доля ТМ в закупках клиентом запчастей
+    capacity_lacking = fields.Float('Lacking Capacity Turnover') # Недостающая выручка до 30% доли
+    type_capacity = fields.Selection([ # Тип клиента по емкости
+        ('1_unknown','Unknown'), # Не известен - не запонена связь
+        ('4_main','Key'), # Ключевые по емкости (80% по емкости в рамках менеджера)
+        ('5_mean','Meaningful'), # Значимые по емкости (следующие 15%)
+        ('6_other','Other'), # Прочие по емкости
+        ], 'Type capacity')
 
     def _select(self):
         return """
@@ -73,6 +80,10 @@ class EfficiencySalerReport(models.Model):
                     when min(indicators.debs_percent) <= 0.8 then '4_main'
                     when min(indicators.debs_percent) <= 0.95 then '5_mean'
                     else '6_other' end,'1_unknown') as type_debts,
+                COALESCE(case
+                    when min(indicators.capacity_percent) <= 0.8 then '4_main'
+                    when min(indicators.capacity_percent) <= 0.95 then '5_mean'
+                    else '6_other' end,'1_unknown') as type_capacity,
                 COALESCE(client.full_name,'Unknown client') as client_name,
 
                 GREATEST(
@@ -101,7 +112,7 @@ class EfficiencySalerReport(models.Model):
                 timezone('Europe/Moscow',max(COALESCE(imot.calls_out_last_date, date_trunc('month',now() - '31 DAY'::INTERVAL)))) as calls_out_last_date,
                 max(client.capacity) as capacity,
                 case when max(client.capacity) > 1 then max(prediction) / max(client.capacity) else 0 end as capacity_percentage,
-                max(client.our_share) as our_share
+                max(client.our_share / 100) as our_share
         """
 
     def _from(self):

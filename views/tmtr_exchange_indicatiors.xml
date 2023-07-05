@@ -30,6 +30,8 @@
                 <field name="turnover_this_mounth" optional="show"/>
                 <field name="debs_percent" optional="show" widget="percentage"/>
                 <field name="turnover_percent" optional="show" widget="percentage"/>
+                <field name="capacity" optional="show"/>
+                <field name="capacity_percent" optional="show" widget="percentage"/>
             </tree>
         </field>
     </record>
@@ -60,6 +62,8 @@
                             <field name="partner_id" optional="show"/>
                             <field name="debs_percent" optional="show"/>
                             <field name="turnover_percent" optional="show"/>
+                            <field name="capacity" optional="show"/>
+                            <field name="capacity_percent" optional="show" widget="percentage"/>
                             
                             
                         </group>

@@ -131,7 +131,7 @@ class TmtrExchangeOneCPartner(models.Model):
     def update_by_odata_array(self, json_data, model_fields=[]):
         partner = self.env['tmtr.exchange.1c.partner'].search([("ref_key", "=", json_data['Ref_Key'])])
         if model_fields and partner:
-            self.env['tmtr.exchange.1c.partner'].update(self.odata_array_to_model(json_data,model_fields))
+            partner.update(self.odata_array_to_model(json_data,model_fields))
             return 1
         else:
             return 0
