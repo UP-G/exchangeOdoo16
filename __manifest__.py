@@ -15,6 +15,7 @@
         'views/tmtr_exchange_contact.xml',
         'views/tmtr_exchange_user.xml',
         'views/tmtr_exchange_partner.xml',
+        'views/tmtr_exchange_business_type.xml',
         'views/tmtr_exchange_counterparty.xml',
         'views/tmtr_exchange_sales.xml',
         'views/tmtr_exchange_indicatiors.xml',

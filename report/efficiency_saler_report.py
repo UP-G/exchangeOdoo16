@@ -33,6 +33,7 @@ class EfficiencySalerReport(models.Model):
         ], 'Type debts')
     client_name = fields.Char('Client Name') # Клиент (+"не известный" в первой строке - все клиенты, чьи телефоны не найдены в контактах)
     client_1c_id = fields.Char('Client 1C ID') # origin_id
+    business_type = fields.Char('Client Business Type') # ДИТ_ВидДеятельности_Key.Description
 
     plan = fields.Float(string='Plan this month') # План на текущий месяц (макс(среднее в день за предыдущий месяц; среднее в день за 3 месяца) * кол-во дней в текущем месяце)
     # plan_percentage = fields.Float('Plan percantage') # Процент выполнения плана, поле долно быть вычисляемым, чтобы корректно работало при группировках
@@ -85,6 +86,7 @@ class EfficiencySalerReport(models.Model):
                     when min(indicators.capacity_percent) <= 0.95 then '5_mean'
                     else '6_other' end,'1_unknown') as type_capacity,
                 COALESCE(client.full_name,'Unknown client') as client_name,
+                COALESCE(business_type.name,'Unknown type') as business_type,
 
                 GREATEST(
                     sum(indicators.turnover_previous_mounth),
@@ -123,6 +125,7 @@ class EfficiencySalerReport(models.Model):
     def _join(self):
         return """
             LEFT JOIN tmtr_exchange_1c_partner as client ON indicators.origin_id = client.code
+            LEFT JOIN tmtr_exchange_1c_business_type as business_type ON business_type.ref = client.business_type_key
             LEFT JOIN (SELECT timot.client_origin_id, p2user.identifier_ib,
                 sum(case when timot.type_call = 'Входящий'  then 1 else 0 end) as calls_in_count,
                 sum(case when timot.type_call = 'Исходящий' then 1 when timot.type_call = 'Входящий' then 0 when COALESCE(timot.type_call, 'null') = 'null' then 1 else 0 end) as calls_out_count,
@@ -152,7 +155,7 @@ class EfficiencySalerReport(models.Model):
 
     def _group(self):
         return """
-            GROUP BY manager_name, manager_1c_id, client_name, client_1c_id
+            GROUP BY manager_name, manager_1c_id, client_name, client_1c_id, business_type
         """
 
     def init(self):

@@ -7,7 +7,7 @@
             <field name="arch" type="xml">
                 <pivot string="Analysis" sample="1">
                     <field name="manager_name" type="row"/>
-                    <field name="client_name" type="col"/>
+                    <field name="client_name" type="row"/>
                     <field name="plan_predicted_percentage" type="measure" widget="percentage"/>
                     <field name="capacity_percentage" type="measure" widget="percentage"/>
                     <field name="our_share" type="measure" widget="percentage"/>
@@ -24,9 +24,10 @@
                     <field name="manager_name" optional="show"/>
                     <field name="client_name" optional="show"/>
                     <field name="type_client" optional="show"/>
-                    <field name="type_debts" optional="show"/>
+                    <field name="type_debts" optional="hide"/>
                     <field name="type_capacity" optional="show"/>
-                    <field name="date" optional="show"/> 
+                    <field name="business_type" optional="hide" />
+                    <field name="date" optional="hide"/> 
                     <field name="plan_predicted_percentage" optional="show" widget="percentage"/>
                     <field name="prediction" optional="show"/>
                     <field name="turnover_lacking" optional="show"/>
@@ -74,6 +75,7 @@
                                 <field name="type_client"/>
                                 <field name="type_debts"/>
                                 <field name="client_name" class="o_text_overflow" />
+                                <field name="business_type" class="o_text_overflow" />
                             </group> 
                             <group>
                                 <field name="plan"/>
@@ -111,6 +113,7 @@
                     <field name="manager_name" class="o_text_overflow" />
                     <field name="client_name" class="o_text_overflow" />
                     <field name="client_1c_id"/>
+                    <field name="business_type"/>
                     <separator/>
                     <filter string="Key clients" name="filter_is_main" domain="[('type_client', '=', '4_main')]"/>
                     <filter string="Key+meaningfull clients" name="filter_is_main_second" domain="[('type_client', 'in', ['4_main','5_mean'])]"/>
@@ -130,6 +133,7 @@
                         <filter string="Client" name="client" domain="[]" context="{'group_by':'client_name'}"/>
                         <filter string="Client Type" name="client_type" domain="[]" context="{'group_by':'type_client'}"/>
                         <filter string="Capacity Type" name="capacity_type" domain="[]" context="{'group_by':'type_capacity'}"/>
+                        <filter string="Business Type" name="business_type" domain="[]" context="{'group_by':'business_type'}"/>
                         <filter string="Period" name="date" domain="[]" context="{'group_by':'date:month'}"/>
                    </group>
                 </search>
@@ -159,6 +163,4 @@
                 </p>
             </field>
         </record>
-
 </odoo>
- 

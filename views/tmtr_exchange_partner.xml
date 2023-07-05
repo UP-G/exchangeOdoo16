@@ -53,9 +53,8 @@
                         <field name="date_of_registration" optional="show"/>
                         <field name="capacity"/>
                         <field name="our_share"/>
+                        <field name="business_type_key"/>
                         </group>
-                        <!-- <button name="test_button" string="Test" class="btn-primary"
-                        type="object"/> -->
                     </group>
                 </sheet>
             </form>
