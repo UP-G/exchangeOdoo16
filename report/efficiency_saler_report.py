@@ -113,6 +113,7 @@ class EfficiencySalerReport(models.Model):
                 sum(COALESCE(imot.sonder_calls_count, 0)) as sonder_calls_count,
                 timezone('Europe/Moscow',max(COALESCE(imot.calls_out_last_date, date_trunc('month',now() - '31 DAY'::INTERVAL)))) as calls_out_last_date,
                 max(client.capacity) as capacity,
+                case when (max(client.capacity)-max(plan))>0 then max(client.capacity)-max(plan) else 0 end as capacity_lacking,
                 case when max(client.capacity) > 1 then max(prediction) / max(client.capacity) else 0 end as capacity_percentage,
                 max(client.our_share / 100) as our_share
         """
