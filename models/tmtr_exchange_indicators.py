@@ -25,7 +25,7 @@ class TmtrExchangeOneCIndicators(models.Model):
     debs_percent = fields.Float(string="Accumulated percent on Debts") # Накопленный процент просроченного долга
     turnover_percent = fields.Float(string="Accumulated percent of Turnover") # Накопленный процент выручки за 3 месяца
     turnover_lacking_percent = fields.Float('Accumulated percent on Lacking Turnover') # Накопленный процент недостающей выручки
-    capacity = fields.Float('Client Capacity', computed="_compute_capacity", store=True) # Емкость клиента
+    capacity = fields.Float('Client Capacity', compute="_compute_capacity", store=True) # Емкость клиента
     capacity_percent = fields.Float('Accumulated percent on Client Capacity') # Накопленный процент емкости клиента
     in_work_date = fields.Date(string='Date of commencement') #дата передачи в работу
 
