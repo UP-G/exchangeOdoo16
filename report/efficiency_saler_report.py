@@ -30,6 +30,7 @@ class EfficiencySalerReport(models.Model):
         ('4_main','Key'), # Должники ключевые (80% просроченного долга)
         ('5_mean','Meaningful'), # Должники значимые (следующие 15% долга)
         ('6_other','Overdued'), # Должники прочие
+        ('7_ok','No debts'), # Нет просроченного долга
         ], 'Type debts')
     client_name = fields.Char('Client Name') # Клиент (+"не известный" в первой строке - все клиенты, чьи телефоны не найдены в контактах)
     client_1c_id = fields.Char('Client 1C ID') # origin_id
@@ -80,6 +81,7 @@ class EfficiencySalerReport(models.Model):
                 COALESCE(case
                     when min(indicators.debs_percent) <= 0.8 then '4_main'
                     when min(indicators.debs_percent) <= 0.95 then '5_mean'
+                    when min(indicators.debs_percent) = 0 then '7_ok'
                     else '6_other' end,'1_unknown') as type_debts,
                 COALESCE(case
                     when min(indicators.capacity_percent) <= 0.8 then '4_main'

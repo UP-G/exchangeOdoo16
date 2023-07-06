@@ -2,6 +2,66 @@
 <odoo>
     <data>
         <template id="efficiency_report_template">
+            <t t-call="tmtr_exchange.report_efficiency_styles"/>
+            <t t-set='types2ru'    t-value="{'4_main': 'Ключевые', '5_mean': 'Значимые', '6_other': 'Активные', '1_unknown':'Неизвестные', '2_new': 'Новые', '3_old': 'Старые'}"/>
+            <t t-set='debts2ru'    t-value="{'4_main': 'Ключевые', '5_mean': 'Значимые', '6_other': 'Прочие', '7_ok': 'Нет просрочек', '1_unknown':'Неизвестные'}"/>
+            <t t-set='capacity2ru' t-value="{'4_main': 'Ключевые', '5_mean': 'Значимые', '6_other': 'Прочие', '1_unknown':'Неизвестные'}"/>
+            <div class="row">
+                <div class="col-12">
+                    <table class="table table-bordered" style="table-layout: fixed" id="hash_config_table">
+                    <thead style="display: table-row-group">
+                    <tr>
+                        <th class="text-center" style="width: 60%" scope="col">Manager</th>
+                        <th class="text-center" style="width: 50%" scope="col">Client</th>
+                        <th class="text-center" style="width: 30%" scope="col">Type client</th>
+                        <th class="text-center" style="width: 25%" scope="col">Task count</th>
+                        <th class="text-center" style="width: 25%" scope="col">Interaction count</th>
+                        <th class="text-center" style="width: 25%" scope="col">Calls in count</th>
+                        <th class="text-center" style="width: 25%" scope="col">Calls out count</th>
+                        <th class="text-center" style="width: 25%" scope="col">Sonder calls count</th>
+                        <th class="text-center" style="width: 35%" scope="col">Overdue debt</th>
+                        <th class="text-center" style="width: 35%" scope="col">Debt</th>
+                        <th class="text-center" style="width: 35%" scope="col">Plan</th>
+                        <th class="text-center" style="width: 35%" scope="col">Turnover this mounth</th>        
+                        <th class="text-center" style="width: 35%" scope="col">Prediction</th>
+                        <th class="text-center" style="width: 35%" scope="col">Plan predicted percentage</th>
+                        <th class="text-center" style="width: 35%" scope="col">Turnover previous mounth</th>
+                        <th class="text-center" style="width: 25%" scope="col">Calls minute</th>
+                        <th class="text-center" style="width: 40%" scope="col">Date</th>
+                        
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <t t-foreach="docs" t-as="doc">
+                    <tr>
+                        <td class="text-center"><span t-esc="doc['manager_name']"/></td>
+                        <td class="text-center"><span t-esc="doc['client_name']"/></td>
+                        <td class="text-center"><span t-esc="types2ru.get(doc['type_client'])"/></td>
+                        <!-- <td class="text-center"><t t-set='types2ru' t-value="doc['type_client']" t_esc="types2ru.get(type_client,'Другое')"></t></td> -->
+                        <td class="ef-important text-center"><span t-esc="doc['task_count']" t-options='{"widget": "float", "precision": 0}'/></td>
+                        <td class="ef-important text-center"><span t-esc="doc['interaction_count']" t-options='{"widget": "float", "precision": 0}'/></td>
+                        <td class="text-center"><span t-esc="doc['calls_in_count']" t-options='{"widget": "float", "precision": 0}'/></td>
+                        <td class="text-center"><span t-esc="doc['calls_out_count']" t-options='{"widget": "float", "precision": 0}'/></td>
+                        <td class="text-center"><span t-esc="doc['sonder_calls_count']" t-options='{"widget": "float", "precision": 0}'/></td>
+                        <td class="ef-important text-right"><span t-esc="doc['overdue_debt']" t-options='{"widget": "float", "precision": 2}' t-att-class="{'text-danger': doc['overdue_debt'] &gt; 0}"/></td>
+                        <td class="text-right"><span t-esc="doc['debt']" t-options='{"widget": "float", "precision": 2}'/></td>
+                         <td class="ef-important text-right"><span t-esc="doc['plan']" t-options='{"widget": "float", "precision": 2}'/></td>
+                         <td class="ef-important text-right"><span t-esc="doc['turnover_this_mounth']" t-options='{"widget": "float", "precision": 2}'/></td>
+                        <td class="text-right"><span t-esc="doc['prediction']" t-options='{"widget": "float", "precision": 2}'/></td>
+                        <td class="text-center"><span t-esc="doc['plan_predicted_percentage']*100" t-options='{"widget": "float", "precision": 2}'/>%</td>
+                        <td class="text-right"><span t-esc="doc['turnover_previous_mounth']" t-options='{"widget": "float", "precision": 2}'/></td>
+                        <td class="text-center"><span t-esc="doc['calls_minute']" t-options='{"widget": "float", "precision": 0}'/></td>
+                        <td class="text-center"><span t-esc="doc['date']" t-options='{"widget": "datetime","format": "dd.MM.yyyy"}'/></td>
+
+                    </tr>
+                    </t>
+                    </tbody>
+                    </table>
+                </div>
+            </div>
+        </template>
+            
+        <template id="report_efficiency_styles">
                 <style>
                 .table-bordered {
                     border: 1px solid #eaeaea;
@@ -45,62 +105,8 @@
 
                 
             </style>
-            <div class="row">
-                <div class="col-12">
-                    <table class="table table-bordered" style="table-layout: fixed" id="hash_config_table">
-                    <thead style="display: table-row-group">
-                    <tr>
-                        <th class="text-center" style="width: 60%" scope="col">Manager</th>
-                        <th class="text-center" style="width: 50%" scope="col">Client</th>
-                        <th class="text-center" style="width: 30%" scope="col">Type client</th>
-                        <th class="text-center" style="width: 25%" scope="col">Task count</th>
-                        <th class="text-center" style="width: 25%" scope="col">Interaction count</th>
-                        <th class="text-center" style="width: 25%" scope="col">Calls in count</th>
-                        <th class="text-center" style="width: 25%" scope="col">Calls out count</th>
-                        <th class="text-center" style="width: 25%" scope="col">Sonder calls count</th>
-                        <th class="text-center" style="width: 35%" scope="col">Overdue debt</th>
-                        <th class="text-center" style="width: 35%" scope="col">Debt</th>
-                        <th class="text-center" style="width: 35%" scope="col">Plan</th>
-                        <th class="text-center" style="width: 35%" scope="col">Turnover this mounth</th>        
-                        <th class="text-center" style="width: 35%" scope="col">Prediction</th>
-                        <th class="text-center" style="width: 35%" scope="col">Plan predicted percentage</th>
-                        <th class="text-center" style="width: 35%" scope="col">Turnover previous mounth</th>
-                        <th class="text-center" style="width: 25%" scope="col">Calls minute</th>
-                        <th class="text-center" style="width: 40%" scope="col">Date</th>
-                        
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <t t-set='types2ru' t-value="{'4_main': 'Ключевые', '5_mean': 'Значимые', '6_other': 'Активные', '1_unknown':'Неизвестные'}"/>
-                    <t t-foreach="docs" t-as="doc">
-                    <tr>
-                        <td class="text-center"><span t-esc="doc['manager_name']"/></td>
-                        <td class="text-center"><span t-esc="doc['client_name']"/></td>
-                        <td class="text-center"><span t-esc="types2ru.get(doc['type_client'])"/></td>
-                        <!-- <td class="text-center"><t t-set='types2ru' t-value="doc['type_client']" t_esc="types2ru.get(type_client,'Другое')"></t></td> -->
-                        <td class="ef-important text-center"><span t-esc="doc['task_count']" t-options='{"widget": "float", "precision": 0}'/></td>
-                        <td class="ef-important text-center"><span t-esc="doc['interaction_count']" t-options='{"widget": "float", "precision": 0}'/></td>
-                        <td class="text-center"><span t-esc="doc['calls_in_count']" t-options='{"widget": "float", "precision": 0}'/></td>
-                        <td class="text-center"><span t-esc="doc['calls_out_count']" t-options='{"widget": "float", "precision": 0}'/></td>
-                        <td class="text-center"><span t-esc="doc['sonder_calls_count']" t-options='{"widget": "float", "precision": 0}'/></td>
-                        <td class="ef-important text-right"><span t-esc="doc['overdue_debt']" t-options='{"widget": "float", "precision": 2}' t-att-class="{'text-danger': doc['overdue_debt'] &gt; 0}"/></td>
-                        <td class="text-right"><span t-esc="doc['debt']" t-options='{"widget": "float", "precision": 2}'/></td>
-                         <td class="ef-important text-right"><span t-esc="doc['plan']" t-options='{"widget": "float", "precision": 2}'/></td>
-                         <td class="ef-important text-right"><span t-esc="doc['turnover_this_mounth']" t-options='{"widget": "float", "precision": 2}'/></td>
-                        <td class="text-right"><span t-esc="doc['prediction']" t-options='{"widget": "float", "precision": 2}'/></td>
-                        <td class="text-center"><span t-esc="doc['plan_predicted_percentage']*100" t-options='{"widget": "float", "precision": 2}'/>%</td>
-                        <td class="text-right"><span t-esc="doc['turnover_previous_mounth']" t-options='{"widget": "float", "precision": 2}'/></td>
-                        <td class="text-center"><span t-esc="doc['calls_minute']" t-options='{"widget": "float", "precision": 0}'/></td>
-                        <td class="text-center"><span t-esc="doc['date']" t-options='{"widget": "datetime","format": "dd.MM.yyyy"}'/></td>
-
-                    </tr>
-                    </t>
-                    </tbody>
-                    </table>
-                </div>
-            </div>
         </template>
-            
+
         <template id="report_efficiency_saler_web">
             <t t-call="web.html_container">
                 <t t-call="web.external_layout">
