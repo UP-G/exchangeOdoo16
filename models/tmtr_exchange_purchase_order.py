@@ -123,7 +123,7 @@ class TmtrExchangeOneCPurchaseOrder(models.Model):
                         order_tms = self.env['tms.order'].create({
 #                'route_id': route_tms.id,
                             'order_num': order_data['Number'],
-                            'departed_on_route': datetime.strptime(order_data['Date'], '%Y-%m-%dT%H:%M:%S'),
+                            #'departed_on_route': datetime.strptime(order_data['Date'], '%Y-%m-%dT%H:%M:%S'),
 #                'departed_on_route': f"{route_tms.start_time.date()} {datetime.strptime(order_data['Маршруты'][0]['ВремяВыезда'], '%Y-%m-%dT%H:%M:%S').time()}",
                         })
 #            point_tms = self.env['tms.route.point'].create({})
