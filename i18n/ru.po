@@ -714,7 +714,7 @@ msgstr "Ключевые + значимые клиенты по Емкости"
 #: model:ir.model.fields,field_description:tmtr_exchange.field_efficiency_saler_report__capacity_lacking
 #: model:ir.model.fields,field_description:tmtr_exchange.field_efficiency_saler_report_history__capacity_lacking
 msgid "Lacking Capacity Turnover"
-msgstr "Упущенная выручка по Емкости"
+msgstr "Упущенная по Емкости"
 
 #. module: tmtr_exchange
 #: model:ir.model.fields,field_description:tmtr_exchange.field_efficiency_saler_report__turnover_lacking
@@ -972,7 +972,7 @@ msgstr "Период"
 #. module: tmtr_exchange
 #: model_terms:ir.ui.view,arch_db:tmtr_exchange.efficiency_report_template
 msgid "Plan"
-msgstr "План на текущий месяц"
+msgstr "План на месяц"
 
 #. module: tmtr_exchange
 #: model_terms:ir.ui.view,arch_db:tmtr_exchange.efficiency_saler_report_history_search
@@ -1000,7 +1000,7 @@ msgstr "Прогноз в процентах"
 #: model:ir.model.fields,field_description:tmtr_exchange.field_efficiency_saler_report__plan
 #: model:ir.model.fields,field_description:tmtr_exchange.field_efficiency_saler_report_history__plan
 msgid "Plan this month"
-msgstr "План на текущий месяц"
+msgstr "План на месяц"
 
 #. module: tmtr_exchange
 #: model:ir.model.fields,field_description:tmtr_exchange.field_efficiency_saler_report__prediction
@@ -1205,7 +1205,7 @@ msgstr "Прогноз"
 #: model:ir.model.fields,field_description:tmtr_exchange.field_efficiency_saler_report__turnover_previous_mounth
 #: model:ir.model.fields,field_description:tmtr_exchange.field_efficiency_saler_report_history__turnover_previous_mounth
 msgid "Turnover last month"
-msgstr "Выручка предыдущего месяца"
+msgstr "Выручка предыдущего"
 
 #. module: tmtr_exchange
 #: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_indicators__turnover_last_3month
@@ -1226,12 +1226,12 @@ msgstr "Выручка за предыдущий месяц"
 #: model:ir.model.fields,field_description:tmtr_exchange.field_efficiency_saler_report__turnover_this_mounth
 #: model:ir.model.fields,field_description:tmtr_exchange.field_efficiency_saler_report_history__turnover_this_mounth
 msgid "Turnover this month"
-msgstr "Выручка текущего месяца"
+msgstr "Выручка текущего"
 
 #. module: tmtr_exchange
 #: model_terms:ir.ui.view,arch_db:tmtr_exchange.efficiency_report_template
 msgid "Turnover this mounth"
-msgstr "Выручка текущего месяца"
+msgstr "Выручка текущего"
 
 #. module: tmtr_exchange
 #: model:ir.model.fields,field_description:tmtr_exchange.field_efficiency_saler_report__type_capacity

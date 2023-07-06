@@ -7,7 +7,11 @@
             <field name="arch" type="xml">
                 <pivot string="Analysis" sample="1">
                     <field name="manager_name" type="row"/>
-                    <field name="client_name" type="col"/>
+                    <field name="client_name" type="row"/>
+                    <field name="plan_predicted_percentage" type="measure" widget="percentage"/>
+                    <field name="capacity_percentage" type="measure" widget="percentage"/>
+                    <field name="our_share" type="measure" widget="percentage"/>
+                    <field name="turnover_lacking_percent" invisible="1"/>
                 </pivot>
             </field>
         </record>
@@ -20,26 +24,29 @@
                     <field name="manager_name" optional="show"/>
                     <field name="client_name" optional="show"/>
                     <field name="type_client" optional="show"/>
-                    <field name="type_debts" optional="show"/>
+                    <field name="type_debts" optional="hide"/>
+                    <field name="type_capacity" optional="show"/>
                     <field name="business_type" optional="hide" />
-                    <field name="date" optional="show"/> 
-                    <field name="plan_predicted_percentage" optional="show" widget="percentage"/>
+                    <field name="date" optional="hide"/> 
+                    <field name="plan" optional="show"/>
                     <field name="prediction" optional="show"/>
+                    <field name="plan_predicted_percentage" optional="hide" widget="percentage"/>
                     <field name="turnover_lacking" optional="show"/>
+                    <field name="turnover_lacking_percent" optional="hide"/>
+                    <field name="capacity" optional="show"/>
+                    <field name="capacity_percentage" optional="hide" widget="percentage"/>
+                    <field name="our_share" optional="hide" widget="percentage"/>
+                    <field name="capacity_lacking" optional="show"/>
                     <field name="turnover_this_mounth" optional="show"/>
                     <field name="turnover_previous_mounth" optional="show"/> 
                     <field name="debt" optional="show"/>
                     <field name="overdue_debt" optional="show"/>
                     <field name="task_count" optional="show"/> 
-                    <field name="plan" optional="show"/>
                     <field name="interaction_count" optional="show"/>
                     <field name="calls_in_count" optional="show"/>
                     <field name="calls_out_count" optional="show"/>
                     <field name="calls_minute" optional="show"/>
                     <field name="sonder_calls_count" optional="show"/>
-                    <field name="capacity" optional="show"/>
-                    <field name="capacity_percentage" optional="show"/>
-                    <field name="our_share" optional="hide"/>
                 </tree>
             </field>
         </record>
@@ -76,6 +83,7 @@
                                 <field name="prediction"/>
                                 <field name="plan_predicted_percentage" widget="percentage"/>
                                 <field name="turnover_lacking"/>
+                                <field name="turnover_lacking_percent"/>
                                 <field name="turnover_this_mounth"/>
                                 <field name="turnover_previous_mounth"/>
                                 <field name="debt"/>
@@ -141,7 +149,7 @@
             <field name="context">{
                 'group_by': ['type_client'],
                 'pivot_row_groupby': ['date:month', 'manager_name', 'type_client', 'client_name']
-                'pivot_measures':  ['__count', 'plan', 'prediction', 'plan_predicted_percentage', 'turnover_lacking', 'capacity', 'capacity_percentage', 'turnover_this_mounth', 'turnover_previous_mounth', 'debt', 'overdue_debt', 
+                'pivot_measures':  ['__count', 'plan', 'prediction', 'turnover_lacking', 'capacity', 'capacity_lacking', 'turnover_this_mounth', 'turnover_previous_mounth', 'debt', 'overdue_debt', 
                     'task_count', 'interaction_count', 'calls_in_count', 'calls_out_count', 'calls_minute', 'sonder_calls_count'],
                 'pivot_column_groupby': [],
                 'search_default_filter_outsider': 1,
