@@ -177,8 +177,9 @@ class EfficiencySalerReport(models.Model):
     @api.model
     def _get_report_values(self, docids, data=None):
         records = self.browse(docids)
-        sorted_records = sorted(records, key=lambda r: r.overdue_debt, reverse=True)
-        _logger.info(sorted_records)
+        sorted_records = records
+        #sorted_records = records.sorted(lambda r: r.overdue_debt, reverse=True)
+        #_logger.info(sorted_records)
         return {
             'doc_ids' : docids,
             'doc_model' : 'efficiency.saler.report',
@@ -187,17 +188,17 @@ class EfficiencySalerReport(models.Model):
         }
 
     @api.model
-    def _render_html_by_manager(self, manager_1c_ids):
+    def _render_html_by_manager(self, manager_1c_ids, data=None):
         docids = self.search([('manager_1c_id','in',manager_1c_ids)]).ids
         return self.env['ir.ui.view'].with_context(lang='ru_RU')._render_template('tmtr_exchange.efficiency_report_template',
-            self._get_report_values(docids,{})
+            self._get_report_values(docids, data)
         )
 
     @api.model
-    def _render_html_all(self):
+    def _render_html_all(self, data=None):
         docids = self.search([]).ids
         return self.env['ir.ui.view'].with_context(lang='ru_RU')._render_template('tmtr_exchange.efficiency_report_template',
-            self._get_report_values(docids,{})
+            self._get_report_values(docids, data)
         )
 
     @api.model

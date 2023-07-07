@@ -18,6 +18,7 @@
         'views/tmtr_exchange_business_type.xml',
         'views/tmtr_exchange_counterparty.xml',
         'views/tmtr_exchange_sales.xml',
+        'views/tms_route_view.xml',
         'views/tmtr_exchange_indicatiors.xml',
         'views/tmtr_exchange_interaction.xml',
         'views/tmtr_exchange_order.xml',

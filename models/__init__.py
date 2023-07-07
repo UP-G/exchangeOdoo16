@@ -10,3 +10,4 @@ from . import res_config_settings
 from . import tmtr_exchange_sales
 from . import tmtr_exchange_indicators
 from . import tmtr_exchange_business_type
+from . import tmtr_exchange_tms_route
