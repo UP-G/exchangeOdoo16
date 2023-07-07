@@ -16,6 +16,10 @@ class TmtrExchangeTmsRoute(models.Model):
             })
         return stock
 
+    def have_stock(self, json_value):
+        stock = self.search([('stock_1c_key','=',json_value['Склад_Key'])])
+        result = True if stock else False
+        return result
 
     def upload_new_route(self, json_value):
         new_routes = []

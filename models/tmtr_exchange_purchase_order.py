@@ -114,13 +114,17 @@ class TmtrExchangeOneCPurchaseOrder(models.Model):
                 return cnt
             
             for purchase_data in purchases_data:
-                cnt += 1
+                if  not self.env['tms.route'].have_stock(purchase_data):
+                    _logger.info(f"order {purchase_data['Number']} dosent have a stock in DB")
+                    continue
 
-                stock = self.env['tms.route'].upload_new_stock(purchase_data)
+                cnt += 1
+                #подождать до следующей версии
+                #stock = self.env['tms.route'].upload_new_stock(purchase_data) 
                 routes = self.env['tms.route'].upload_new_route(purchase_data)
 
                 order_tms = self.env['tms.order'].search([('order_num','=',purchase_data['Number'])])
-                if not order_tms:
+                if not order_tms and routes:
                     order_tms = self.upload_purchase_order(purchase_data, routes[0])#предполагаем, что в заказ наряде только 1 маршрут
 
                 if not order_tms.order_row_ids and not purchase_data['Реализации'] or not purchase_data['ДопУслуги']:
@@ -132,9 +136,9 @@ class TmtrExchangeOneCPurchaseOrder(models.Model):
 
         return cnt
 
-    def upload_purchase_order(self, json_value):
+    def upload_purchase_order(self, json_value, route_tms):
         order = self.env['tms.order'].create({
-#                'route_id': route_tms.id,
+                        'route_id': route_tms.id,
                             'order_num': json_value['Number'],
                             #'departed_on_route': datetime.strptime(order_data['Date'], '%Y-%m-%dT%H:%M:%S'),
 #                'departed_on_route': f"{route_tms.start_time.date()} {datetime.strptime(order_data['Маршруты'][0]['ВремяВыезда'], '%Y-%m-%dT%H:%M:%S').time()}",
