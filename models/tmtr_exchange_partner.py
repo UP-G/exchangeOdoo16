@@ -12,7 +12,7 @@ class TmtrExchangeOneCPartner(models.Model):
     partner_id = fields.Many2one('res.partner', string='Partner')
     ref_key = fields.Char(string='Ref_key') # Ref_Key
     parent_key = fields.Char(string='Parent key') # Parent_Key
-    code = fields.Char(string='Code') # Code
+    code = fields.Char(string='Code', index=True) # Code
     description = fields.Char(string='Description') # Description
     full_name = fields.Char(string='Full client name') # НаименованиеПолное
     main_manager_key = fields.Char(string='Main manager key') # ОсновнойМенеджер_Key
