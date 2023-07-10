@@ -12,6 +12,35 @@
                     <field name="capacity_percentage" type="measure" widget="percentage"/>
                     <field name="our_share" type="measure" widget="percentage"/>
                     <field name="turnover_lacking_percent" invisible="1"/>
+<!--                    <field name="our_share" type="computed measure" widget="percentage"/>
+        const $target = $(ev.target).closest("#add_computed_measure_wrapper");
+        const id = new Date().getTime();
+        const field1 = $target.find("#computed_measure_field_1").val();
+        const field2 = $target.find("#computed_measure_field_2").val();
+        let operation = $target.find("#computed_measure_operation").val();
+        if (operation === "custom") {
+            operation = $target.find("#computed_measure_operation_custom").val();
+        }
+        const name = $target.find("#computed_measure_name").val();
+        const format = $target.find("#computed_measure_format").val();
+
+You have the follow options to create a 'computed measure':
+ - Measure 1: Used in 'operation formula' as 'm1'
+ - Measure 2: Used in 'operation formula' as 'm2'
+ - Operation: The formula
+    - Sum: m1 + m2
+    - Sub: m1 - m2
+    - Mult: m1 * m2
+    - Div: m1 / m2 (Format: Float)
+    - Perc m1 / m2 (Format: Percentage)
+    - Custom: Special option only visible in debug mode to write a custom formula.
+ - Name: The name of the new measure (emtpy = auto-generated)
+ - Format: How will the value be printed
+    - Integer
+    - Float
+    - Percentage (value * 100)
+ - Formula*: Custom operation formula
+-->
 
                 </pivot>
             </field>

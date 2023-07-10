@@ -22,11 +22,11 @@ class TmtrComtrollers(http.Controller):
         return http.request.env["efficiency.saler.report"].get_best_one(identifier_ib, exclude_client_ids)
 
     @http.route('/tmtr_odoo/report/sale_efficiency/', type='http', auth="user", methods=['POST','GET'], csrf=False) 
-    def sale_efficiency(self, manager_ids, view='', **args):
+    def sale_efficiency(self, manager_ids, view='view=grouped_by_manager', **args):
         return http.request.env["efficiency.saler.report"]._render_html_by_manager(manager_ids if type(manager_ids) is list else [], data={'view': view})
 
     @http.route('/tmtr_odoo/report/sale_efficiency_no_auth/', type='json', auth="public", methods=['POST','GET'], csrf=False)
-    def sale_efficiency_no_auth(self, manager_ids, view='', **args):
+    def sale_efficiency_no_auth(self, manager_ids, view='view=grouped_by_manager', **args):
         return http.request.env["efficiency.saler.report"]._render_html_by_manager(manager_ids if type(manager_ids) is list else [], data={'view': view})
 
     @http.route('/tmtr_odoo/report/sale_efficiency_test/<string:manager_ids>', type='http', auth="public", methods=['POST','GET'], csrf=False)
