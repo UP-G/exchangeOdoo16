@@ -7,7 +7,11 @@
             <field name="arch" type="xml">
                 <pivot string="Analysis" sample="1">
                     <field name="manager_name" type="row"/>
-                    <field name="client_name" type="col"/>
+                    <field name="client_name" type="row"/>
+                    <field name="plan_predicted_percentage" type="measure" widget="percentage"/>
+                    <field name="capacity_percentage" type="measure" widget="percentage"/>
+                    <field name="our_share" type="measure" widget="percentage"/>
+                    <field name="turnover_lacking_percent" invisible="1"/>
                 </pivot>
             </field>
         </record>
@@ -20,23 +24,29 @@
                     <field name="manager_name" optional="show"/>
                     <field name="client_name" optional="show"/>
                     <field name="type_client" optional="show"/>
-                    <field name="type_debts" optional="show"/>
-                    <field name="date" optional="show"/> 
-                    <field name="plan_predicted_percentage" optional="show" widget="percentage"/>
+                    <field name="type_debts" optional="hide"/>
+                    <field name="type_capacity" optional="show"/>
+                    <field name="business_type" optional="hide" />
+                    <field name="date" optional="hide"/> 
+                    <field name="plan" optional="show"/>
                     <field name="prediction" optional="show"/>
+                    <field name="plan_predicted_percentage" optional="hide" widget="percentage"/>
                     <field name="turnover_lacking" optional="show"/>
+                    <field name="turnover_lacking_percent" optional="hide"/>
+                    <field name="capacity" optional="show"/>
+                    <field name="capacity_percentage" optional="hide" widget="percentage"/>
+                    <field name="our_share" optional="hide" widget="percentage"/>
+                    <field name="capacity_lacking" optional="show"/>
                     <field name="turnover_this_mounth" optional="show"/>
                     <field name="turnover_previous_mounth" optional="show"/> 
                     <field name="debt" optional="show"/>
                     <field name="overdue_debt" optional="show"/>
                     <field name="task_count" optional="show"/> 
-                    <field name="plan" optional="show"/>
                     <field name="interaction_count" optional="show"/>
                     <field name="calls_in_count" optional="show"/>
                     <field name="calls_out_count" optional="show"/>
                     <field name="calls_minute" optional="show"/>
                     <field name="sonder_calls_count" optional="show"/>
-
                 </tree>
             </field>
         </record>
@@ -66,12 +76,14 @@
                                 <field name="type_client"/>
                                 <field name="type_debts"/>
                                 <field name="client_name" class="o_text_overflow" />
+                                <field name="business_type" class="o_text_overflow" />
                             </group> 
                             <group>
                                 <field name="plan"/>
                                 <field name="prediction"/>
                                 <field name="plan_predicted_percentage" widget="percentage"/>
                                 <field name="turnover_lacking"/>
+                                <field name="turnover_lacking_percent"/>
                                 <field name="turnover_this_mounth"/>
                                 <field name="turnover_previous_mounth"/>
                                 <field name="debt"/>
@@ -82,6 +94,11 @@
                                 <field name="calls_out_count"/>
                                 <field name="calls_minute"/>
                                 <field name="sonder_calls_count"/>
+                                <field name="capacity"/>
+                                <field name="capacity_percentage" widget="percentage"/>
+                                <field name="our_share" widget="percentage"/>
+                                <field name="capacity_lacking"/>
+                                <field name="type_capacity" optional="show"/>
                             </group>
                         </group>
                     </sheet>
@@ -98,11 +115,15 @@
                     <field name="manager_name" class="o_text_overflow" />
                     <field name="client_name" class="o_text_overflow" />
                     <field name="client_1c_id"/>
+                    <field name="business_type"/>
                     <separator/>
                     <filter string="Key clients" name="filter_is_main" domain="[('type_client', '=', '4_main')]"/>
                     <filter string="Key+meaningfull clients" name="filter_is_main_second" domain="[('type_client', 'in', ['4_main','5_mean'])]"/>
+                    <filter string="Key+meaningfull clients by capacity" name="filter_is_key_capacity" domain="[('type_capacity', 'in', ['4_main','5_mean'])]"/>
                     <separator/>
-                    <filter string="Outsiders" name="filter_outsider" domain="[('plan_predicted_percentage','&lt;=','0.9')]"/>
+                    <filter string="Plan Outsiders" name="filter_outsider" domain="[('plan_predicted_percentage','&lt;=','0.9')]"/>
+                    <filter string="Capacity Outsiders" name="filter_capacity_outsider" domain="[('capacity_percentage','&lt;=','0.3')]"/>
+                    <filter string="Our Share Outsiders" name="filter_capacity_outsider" domain="[('our_share','&lt;=','0.3')]"/>
                     <separator/>
                     <filter string="No communication" name="filter_no_communication" domain="[('task_count','=','0'),('interaction_count','=','0'),('calls_minute','=','0')]"/>
                     <separator/>
@@ -113,6 +134,8 @@
                         <filter string="Manager" name="manager" domain="[]" context="{'group_by':'manager_name'}"/>
                         <filter string="Client" name="client" domain="[]" context="{'group_by':'client_name'}"/>
                         <filter string="Client Type" name="client_type" domain="[]" context="{'group_by':'type_client'}"/>
+                        <filter string="Capacity Type" name="capacity_type" domain="[]" context="{'group_by':'type_capacity'}"/>
+                        <filter string="Business Type" name="business_type" domain="[]" context="{'group_by':'business_type'}"/>
                         <filter string="Period" name="date" domain="[]" context="{'group_by':'date:month'}"/>
                    </group>
                 </search>
@@ -126,7 +149,7 @@
             <field name="context">{
                 'group_by': ['type_client'],
                 'pivot_row_groupby': ['date:month', 'manager_name', 'type_client', 'client_name']
-                'pivot_measures':  ['__count', 'plan', 'prediction', 'plan_predicted_percentage', 'turnover_this_mounth', 'turnover_previous_mounth', 'debt', 'overdue_debt', 
+                'pivot_measures':  ['__count', 'plan', 'prediction', 'turnover_lacking', 'capacity', 'capacity_lacking', 'turnover_this_mounth', 'turnover_previous_mounth', 'debt', 'overdue_debt', 
                     'task_count', 'interaction_count', 'calls_in_count', 'calls_out_count', 'calls_minute', 'sonder_calls_count'],
                 'pivot_column_groupby': [],
                 'search_default_filter_outsider': 1,
@@ -142,6 +165,5 @@
                 </p>
             </field>
         </record>
-
 </odoo>
  

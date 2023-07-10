@@ -53,7 +53,14 @@
             parent="menu_tmtr_exchange_1c"
             action="action_tmtr_exchange_partner"
             sequence="20"/>
->
+
+        <menuitem
+            id="menu_tmtr_exchange_1c_business_type"
+            name="1C business_type"
+            parent="menu_tmtr_exchange_1c"
+            action="action_tmtr_exchange_business_type"
+            sequence="23"/>
+
         <menuitem
             id="menu_tmtr_exchange_1c_interaction"
             name="1C Interaction"

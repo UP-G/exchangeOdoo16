@@ -102,50 +102,66 @@ class TmtrExchangeOneCPurchaseOrder(models.Model):
     def upload_order_by_number(self, order_numbers):
         cnt = 0
         for order_number in order_numbers:
-            orders_data = self.env['odata.1c.route'].get_by_route(
+            purchases_data = self.env['odata.1c.route'].get_by_route(
                 "1c_ut/get_catalog/", 
                 {
                     "catalog_name": "Document_Щеп_ЗаказНаряд",
                     "filter": f"endswith(Number,%20%27{order_number}%27)%20eq%20true",
                 })['value']
-            if not orders_data:
+            
+            if not purchases_data:
                 _logger.info(f"order with number {order_number} not found")
-            else:
-                for order_data in orders_data:
-                    cnt += 1
-                    order_tms = self.env['tms.order'].search([('order_num','=',order_data['Number'])])
-                    if not order_tms:
-# Пока маршруты игнорируем
-#            route_tms = self.env['tms.route'].create({
-#                'name': order_data['МаршрутыДоставки'],
-#                'start_time': datetime.strptime(order_data['ДатаВыездаМашины'], "%Y-%m-%dT%H:%M:%S"),
-#            })
-                        order_tms = self.env['tms.order'].create({
-#                'route_id': route_tms.id,
-                            'order_num': order_data['Number'],
-                            'departed_on_route': datetime.strptime(order_data['Date'], '%Y-%m-%dT%H:%M:%S'),
-#                'departed_on_route': f"{route_tms.start_time.date()} {datetime.strptime(order_data['Маршруты'][0]['ВремяВыезда'], '%Y-%m-%dT%H:%M:%S').time()}",
-                        })
-#            point_tms = self.env['tms.route.point'].create({})
-                    if not order_tms.order_row_ids and not order_data['Реализации'] or not order_data['ДопУслуги']:
-                        for item in order_data['Реализации']:
-                            self.env['tms.order.row'].create({
-                                'order_id': order_tms.id,
-                        #'route_point_id': point_tms.id,
-                                'impl_num': item['Номер'],
-                                'comment': "{phone};{address}".format(phone=item['Телефон'], address=item['АдресДоставки']),
-                                #'partner_key': self.update_partner(item['Контрагент_Key']),
-                            })
-                        for item in order_data['ДопУслуги']:
-                            self.env['tms.order.row'].create({
-                                'order_id': order_tms.id,
-                        #'route_point_id': point_tms.id,
-                                'impl_num': "Возврат {number}".format(number=item['LineNumber']),
-                                'comment': "{phone};{address}".format(phone='-',address=item['Адрес']),
-                                #'partner_key': self.update_partner_by_name(impl['Контрагент']),
-                            })
+                return cnt
+            
+            for purchase_data in purchases_data:
+                if  not self.env['tms.route'].have_stock(purchase_data):
+                    _logger.info(f"order {purchase_data['Number']} dosent have a stock in DB")
+                    continue
+
+                cnt += 1
+                #подождать до следующей версии
+                #stock = self.env['tms.route'].upload_new_stock(purchase_data) 
+                routes = self.env['tms.route'].upload_new_route(purchase_data)
+
+                order_tms = self.env['tms.order'].search([('order_num','=',purchase_data['Number'])])
+                if not order_tms and routes:
+                    order_tms = self.upload_purchase_order(purchase_data, routes[0])#предполагаем, что в заказ наряде только 1 маршрут
+
+                if not order_tms.order_row_ids and not purchase_data['Реализации'] or not purchase_data['ДопУслуги']:
+                    for item in purchase_data['Реализации']:
+                        self.upload_order_row(item, order_tms)
+
+                    for item in purchase_data['ДопУслуги']:
+                        self.upload_returns_row(item, order_tms)
+
         return cnt
 
+    def upload_purchase_order(self, json_value, route_tms):
+        order = self.env['tms.order'].create({
+                        'route_id': route_tms.id,
+                            'order_num': json_value['Number'],
+                            #'departed_on_route': datetime.strptime(order_data['Date'], '%Y-%m-%dT%H:%M:%S'),
+#                'departed_on_route': f"{route_tms.start_time.date()} {datetime.strptime(order_data['Маршруты'][0]['ВремяВыезда'], '%Y-%m-%dT%H:%M:%S').time()}",
+                        })
+        return order
+    
+    def upload_returns_row(self, impl_json_value, order_tms):
+        self.env['tms.order.row'].create({
+                            'order_id': order_tms.id,
+                    #'route_point_id': point_tms.id,
+                            'impl_num': "Возврат {number}".format(number=impl_json_value['LineNumber']),
+                            'comment': "{phone};{address}".format(phone='-',address=impl_json_value['Адрес']),
+                            #'partner_key': self.update_partner_by_name(impl['Контрагент']),
+                        })
+
+    def upload_order_row(self, impl_json_value, order_tms):
+        self.env['tms.order.row'].create({
+                                'order_id': order_tms.id,
+                        #'route_point_id': point_tms.id,
+                                'impl_num': impl_json_value['Номер'],
+                                'comment': "{phone};{address}".format(phone=impl_json_value['Телефон'], address=impl_json_value['АдресДоставки']),
+                                #'partner_key': self.update_partner(item['Контрагент_Key']),
+                            })
 
     def upload_order_by_number2(self, order_number):
         orders_data = self.env['odata.1c.route'].get_by_route(

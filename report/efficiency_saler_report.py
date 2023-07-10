@@ -22,28 +22,30 @@ class EfficiencySalerReport(models.Model):
         ('2_new','New'), # Новые (появились в течение Y месяцев)
         ('3_old','Old'), # ХКБ (не было продаж предыдущих Х месяцев)
         ('4_main','Key'), # АКБ основные (80% выручки за Х месяцев)
-        ('5_mean','Meaningful'), # АКБ значимые (следующие 10% выручки за Х месяцев)
+        ('5_mean','Meaningful'), # АКБ значимые (следующие 15% выручки за Х месяцев)
         ('6_other','Active'), # АКБ прочие
         ], 'Type client')
     type_debts = fields.Selection([ # Тип клиента
         ('1_unknown','Unknown'), # Не известен - не запонена связь
         ('4_main','Key'), # Должники ключевые (80% просроченного долга)
-        ('5_mean','Meaningful'), # Должники значимые (следующие 10% долга)
+        ('5_mean','Meaningful'), # Должники значимые (следующие 15% долга)
         ('6_other','Overdued'), # Должники прочие
+        ('7_ok','No debts'), # Нет просроченного долга
         ], 'Type debts')
     client_name = fields.Char('Client Name') # Клиент (+"не известный" в первой строке - все клиенты, чьи телефоны не найдены в контактах)
     client_1c_id = fields.Char('Client 1C ID') # origin_id
+    business_type = fields.Char('Client Business Type') # ДИТ_ВидДеятельности_Key.Description
 
     plan = fields.Float(string='Plan this month') # План на текущий месяц (макс(среднее в день за предыдущий месяц; среднее в день за 3 месяца) * кол-во дней в текущем месяце)
     # plan_percentage = fields.Float('Plan percantage') # Процент выполнения плана, поле долно быть вычисляемым, чтобы корректно работало при группировках
     prediction = fields.Float('Prediction') # Прогноз выручки на текущий месяц (среднее в день за 30 дней * количество дней в текущем месяце)
-    plan_predicted_percentage = fields.Float('Plan prediction percantage') # >100% = Рост (зеленым)/ <100% = падение (красным) в % относительно плана
+    plan_predicted_percentage = fields.Float('Plan prediction percantage', group_operator="avg") # >100% = Рост (зеленым)/ <100% = падение (красным) в % относительно плана
     turnover_lacking = fields.Float('Lacking Turnover') # Недостающая выручка
     turnover_this_mounth = fields.Float('Turnover this month') # Выручка текущего месяца
     turnover_previous_mounth = fields.Float('Turnover last month') # Выручка предыдущего месяца
     debt = fields.Float('Debt amount') # Размер долга
     overdue_debt = fields.Float('Overdue debt amount') # Просроченный долг
-    turnover_lacking_percent = fields.Float('Accumulated percent on Lacking Turnover') # Размер долга
+    turnover_lacking_percent = fields.Float('Accumulated percent on Lacking Turnover', group_operator="avg") # Накопленный процент упущенной выручки
     task_count = fields.Float('Task count') # Задач по клиенту
     interaction_count = fields.Float('Interactions count') # Взаимодействий по клиенту
     interaction_last_date = fields.Datetime('Last Interaction Date') # Дата последнего Взаимодействия
@@ -52,6 +54,17 @@ class EfficiencySalerReport(models.Model):
     calls_minute = fields.Float('Calls minutes') # Вх+исх.звонков (минут) из реч.аналитики
     sonder_calls_count = fields.Float('Sonder calls count') # Sonder (шт разных клиентов) из реч.аналитики
     calls_out_last_date = fields.Datetime('Last out call Date') # Дата последнего исходящего звонка
+
+    capacity = fields.Float(string='Client capacity') # Емкость клиента в Евро
+    capacity_percentage = fields.Float(string='Client capacity ratio', group_operator="avg") # Доля фактических отгрузок ТМ в емкости клиента
+    our_share = fields.Float(string="Our share in client's purchases") # Доля ТМ в закупках клиентом запчастей
+    capacity_lacking = fields.Float('Lacking Capacity Turnover') # Недостающая выручка до 30% доли
+    type_capacity = fields.Selection([ # Тип клиента по емкости
+        ('1_unknown','Unknown'), # Не известен - не запонена связь
+        ('4_main','Key'), # Ключевые по емкости (80% по емкости в рамках менеджера)
+        ('5_mean','Meaningful'), # Значимые по емкости (следующие 15%)
+        ('6_other','Other'), # Прочие по емкости
+        ], 'Type capacity')
 
     def _select(self):
         return """
@@ -68,8 +81,14 @@ class EfficiencySalerReport(models.Model):
                 COALESCE(case
                     when min(indicators.debs_percent) <= 0.8 then '4_main'
                     when min(indicators.debs_percent) <= 0.95 then '5_mean'
+                    when min(indicators.debs_percent) = 0 then '7_ok'
                     else '6_other' end,'1_unknown') as type_debts,
+                COALESCE(case
+                    when min(indicators.capacity_percent) <= 0.8 then '4_main'
+                    when min(indicators.capacity_percent) <= 0.95 then '5_mean'
+                    else '6_other' end,'1_unknown') as type_capacity,
                 COALESCE(client.full_name,'Unknown client') as client_name,
+                COALESCE(business_type.name,'Unknown type') as business_type,
 
                 GREATEST(
                     sum(indicators.turnover_previous_mounth),
@@ -94,7 +113,11 @@ class EfficiencySalerReport(models.Model):
                 sum(COALESCE(imot.calls_out_count, 0)) as calls_out_count,
                 sum(COALESCE(imot.calls_minute, 0)) as calls_minute,
                 sum(COALESCE(imot.sonder_calls_count, 0)) as sonder_calls_count,
-                timezone('Europe/Moscow',max(COALESCE(imot.calls_out_last_date, date_trunc('month',now() - '31 DAY'::INTERVAL)))) as calls_out_last_date
+                timezone('Europe/Moscow',max(COALESCE(imot.calls_out_last_date, date_trunc('month',now() - '31 DAY'::INTERVAL)))) as calls_out_last_date,
+                max(client.capacity) as capacity,
+                case when (max(client.capacity)*0.3-max(plan))>0 then max(client.capacity)*0.3-max(plan) else 0 end as capacity_lacking,
+                case when max(client.capacity) > 1 then max(prediction) / max(client.capacity) else 0 end as capacity_percentage,
+                max(client.our_share / 100) as our_share
         """
 
     def _from(self):
@@ -105,6 +128,7 @@ class EfficiencySalerReport(models.Model):
     def _join(self):
         return """
             LEFT JOIN tmtr_exchange_1c_partner as client ON indicators.origin_id = client.code
+            LEFT JOIN tmtr_exchange_1c_business_type as business_type ON business_type.ref = client.business_type_key
             LEFT JOIN (SELECT timot.client_origin_id, p2user.identifier_ib,
                 sum(case when timot.type_call = 'Входящий'  then 1 else 0 end) as calls_in_count,
                 sum(case when timot.type_call = 'Исходящий' then 1 when timot.type_call = 'Входящий' then 0 when COALESCE(timot.type_call, 'null') = 'null' then 1 else 0 end) as calls_out_count,
@@ -134,7 +158,7 @@ class EfficiencySalerReport(models.Model):
 
     def _group(self):
         return """
-            GROUP BY manager_name, manager_1c_id, client_name, client_1c_id
+            GROUP BY manager_name, manager_1c_id, client_name, client_1c_id, business_type
         """
 
     def init(self):
@@ -153,8 +177,9 @@ class EfficiencySalerReport(models.Model):
     @api.model
     def _get_report_values(self, docids, data=None):
         records = self.browse(docids)
-        sorted_records = sorted(records, key=lambda r: r.overdue_debt, reverse=True)
-        _logger.info(sorted_records)
+        sorted_records = records
+        #sorted_records = records.sorted(lambda r: r.overdue_debt, reverse=True)
+        #_logger.info(sorted_records)
         return {
             'doc_ids' : docids,
             'doc_model' : 'efficiency.saler.report',
@@ -163,17 +188,17 @@ class EfficiencySalerReport(models.Model):
         }
 
     @api.model
-    def _render_html_by_manager(self, manager_1c_ids):
+    def _render_html_by_manager(self, manager_1c_ids, data=None):
         docids = self.search([('manager_1c_id','in',manager_1c_ids)]).ids
         return self.env['ir.ui.view'].with_context(lang='ru_RU')._render_template('tmtr_exchange.efficiency_report_template',
-            self._get_report_values(docids,{})
+            self._get_report_values(docids, data)
         )
 
     @api.model
-    def _render_html_all(self):
+    def _render_html_all(self, data=None):
         docids = self.search([]).ids
         return self.env['ir.ui.view'].with_context(lang='ru_RU')._render_template('tmtr_exchange.efficiency_report_template',
-            self._get_report_values(docids,{})
+            self._get_report_values(docids, data)
         )
 
     @api.model

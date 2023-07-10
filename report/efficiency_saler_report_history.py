@@ -31,17 +31,18 @@ class EfficiencySalerReport(models.Model):
         ], 'Type debts')
     client_name = fields.Char('Client Name') # Клиент (+"не известный" в первой строке - все клиенты, чьи телефоны не найдены в контактах)
     client_1c_id = fields.Char('Client 1C ID') # origin_id
+    business_type = fields.Char('Client Business Type') # ДИТ_ВидДеятельности_Key.Description
 
     plan = fields.Float(string='Plan this month') # План на текущий месяц (макс(среднее в день за предыдущий месяц; среднее в день за 3 месяца) * кол-во дней в текущем месяце)
     # plan_percentage = fields.Float('Plan percantage') # Процент выполнения плана, поле долно быть вычисляемым, чтобы корректно работало при группировках
     prediction = fields.Float('Prediction') # Прогноз выручки на текущий месяц (среднее в день за 30 дней * количество дней в текущем месяце)
-    plan_predicted_percentage = fields.Float('Plan prediction percantage') # >100% = Рост (зеленым)/ <100% = падение (красным) в % относительно плана
+    plan_predicted_percentage = fields.Float('Plan prediction percantage', group_operator="avg") # >100% = Рост (зеленым)/ <100% = падение (красным) в % относительно плана
     turnover_lacking = fields.Float('Lacking Turnover') # Недостающая выручка
     turnover_this_mounth = fields.Float('Turnover this month') # Выручка текущего месяца
     turnover_previous_mounth = fields.Float('Turnover last month') # Выручка предыдущего месяца
     debt = fields.Float('Debt amount') # Размер долга
     overdue_debt = fields.Float('Overdue debt amount') # Просроченный долг
-    turnover_lacking_percent = fields.Float('Accumulated percent on Lacking Turnover') # Размер долга
+    turnover_lacking_percent = fields.Float('Accumulated percent on Lacking Turnover', group_operator="avg") # Размер долга
     task_count = fields.Float('Task count') # Задач по клиенту
     interaction_count = fields.Float('Interactions count') # Взаимодействий по клиенту
     interaction_last_date = fields.Datetime('Last Interaction Date') # Дата последнего Взаимодействия
@@ -51,9 +52,20 @@ class EfficiencySalerReport(models.Model):
     sonder_calls_count = fields.Float('Sonder calls count') # Sonder (шт разных клиентов) из реч.аналитики
     calls_out_last_date = fields.Datetime('Last out call Date') # Дата последнего исходящего звонка
 
+    capacity = fields.Float(string='Client capacity') # Емкость клиента в Евро
+    capacity_percentage = fields.Float(string='Client capacity ratio', group_operator="avg") # Доля фактических отгрузок ТМ в емкости клиента
+    our_share = fields.Float(string="Our share in client's purchases") # Доля ТМ в закупках клиентом запчастей
+    capacity_lacking = fields.Float('Lacking Capacity Turnover') # Недостающая выручка до 30% доли
+    type_capacity = fields.Selection([ # Тип клиента по емкости
+        ('1_unknown','Unknown'), # Не известен - не запонена связь
+        ('4_main','Key'), # Ключевые по емкости (80% по емкости в рамках менеджера)
+        ('5_mean','Meaningful'), # Значимые по емкости (следующие 15%)
+        ('6_other','Other'), # Прочие по емкости
+        ], 'Type capacity')
+
     @api.model
     def makeDayHistoryCron(self):
-        field_names = [r for r in self.env['ir.model.fields'].search([('model_id.model','=',"efficiency.saler.report"),('readonly','=',False)]).mapped('name') if r != 'date']
+        field_names = [r for r in self.env['ir.model.fields'].search([('model_id.model','=',"efficiency.saler.report"),('readonly','=',False)]).mapped('name') if r not in ['date']]
         cnt = 0
         shot_date = fields.Datetime.now()
         # self.search([('date','=',shot_date)]).unlink() # delete old records for this day

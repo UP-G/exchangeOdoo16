@@ -2,6 +2,229 @@
 <odoo>
     <data>
         <template id="efficiency_report_template">
+            <t t-call="tmtr_exchange.report_efficiency_styles"/>
+            <t t-set='types2ru'    t-value="{'4_main': 'Ключевые', '5_mean': 'Значимые', '6_other': 'Активные', '1_unknown':'Неизвестные', '2_new': 'Новые', '3_old': 'Старые'}"/>
+            <t t-set='debts2ru'    t-value="{'4_main': 'Ключевые', '5_mean': 'Значимые', '6_other': 'Прочие', '7_ok': 'Нет просрочек', '1_unknown':'Неизвестные'}"/>
+            <t t-set='capacity2ru' t-value="{'4_main': 'Ключевые', '5_mean': 'Значимые', '6_other': 'Прочие', '1_unknown':'Неизвестные'}"/>
+            <t t-set='month_start' t-value="docs[0].date"/>
+            <t t-set='headers' t-value="[
+                'manager_type_client_business',
+                'capacity',
+                'plan',
+                'prediction_and_percentage',
+                'turnover_lacking',
+                'capacity_lacking',
+                'overdue_debt',
+                'debt',
+                'turnover_this_mounth',
+                'turnover_previous_mounth',
+                'task_count',
+                'interaction_count',
+                'calls_in_count',
+                'calls_out_count',
+                'sonder_calls_count',
+                'calls_minute',
+            ]"/>
+<!--
+                'manager_name',
+                'client_name',
+                'type_client',
+                'prediction',
+                'plan_predicted_percentage',
+-->
+            <div class="row">
+                <div class="col-12">
+                    <table class="table table-bordered" style="table-layout: fixed" id="hash_config_table">
+                    <t t-call="tmtr_exchange.report_efficiency_header"/>
+                    <tbody>
+                    <t t-if="data.get('view') == 'grouped_by_manager'" t-call="tmtr_exchange.report_efficiency_grouped_by_manager"/>
+                    <t t-if="data.get('view') not in ['grouped_by_manager']" t-call="tmtr_exchange.report_efficiency_rows_plain"/>
+                    </tbody>
+                    </table>
+                </div>
+            </div>
+        </template>
+
+        <template id="report_efficiency_rows_plain">
+            <t t-foreach="docs.sorted(lambda r: (r.manager_name, r.type_client, min(-r.capacity_lacking, -r.turnover_lacking), -r.plan))" t-as="doc">
+                <t t-call="tmtr_exchange.report_efficiency_row"/>
+            </t>
+        </template>
+
+        <template id="report_efficiency_grouped_by_manager">
+            <t t-set="groups" t-value="dict(docs.mapped(lambda r: (r.manager_name + r.type_client, {'manager_name': r.manager_name, 'type_client': r.type_client})))"/>
+            <t t-foreach="sorted(groups.items(), key=lambda r: r[0])" t-as="group">
+              <t t-set="rows" t-value="docs.filtered(lambda r: r.manager_name == group[1].get('manager_name') and r.type_client == group[1].get('type_client'))
+              .sorted(lambda r: (r.manager_name, r.type_client, min(-r.capacity_lacking, -r.turnover_lacking), -r.plan))"/>
+              <t t-set="doc" t-value="rows[0]"/>
+              <t t-call="tmtr_exchange.report_efficiency_rows_header"/>
+              <t t-foreach="rows" t-as="doc">
+                <t t-call="tmtr_exchange.report_efficiency_row"/>
+              </t>
+            </t>
+        </template>
+
+        <template id="report_efficiency_rows_header">
+            <tr>
+            <t t-set="overdue_debt" t-value="sum(rows.mapped('overdue_debt'))"/>
+            <t t-set="debt" t-value="sum(rows.mapped('debt'))"/>
+            <t t-set="plan" t-value="sum(rows.mapped('plan'))"/>
+            <t t-set="capacity" t-value="sum(rows.mapped('capacity'))"/>
+            <t t-set="capacity_lacking" t-value="sum(rows.mapped('capacity_lacking'))"/>
+            <t t-set="turnover_this_mounth" t-value="sum(rows.mapped('turnover_this_mounth'))"/>
+            <t t-set="prediction" t-value="sum(rows.mapped('prediction'))"/>
+            <t t-set="turnover_previous_mounth" t-value="sum(rows.mapped('turnover_previous_mounth'))"/>
+            <t t-set="turnover_lacking" t-value="sum(rows.mapped('turnover_lacking'))"/>
+            <t t-set="plan_predicted_percentage" t-value="prediction / plan if plan > 0 else 0"/>
+            <t t-foreach="headers" t-as="header">
+                <th t-if="header=='manager_type_client_business'" class="text-left">
+                    <span t-esc="doc['manager_name']"/>
+                    / <span t-esc="types2ru.get(doc['type_client'])"/>
+                </th>
+                <th t-if="header=='manager_name'" class="text-center"><span t-esc="doc['manager_name']"/></th>
+                <th t-if="header=='client_name'" class="text-center">
+                    <span t-esc="doc['client_name']" t-att-title="doc['client_1c_id']"/>
+                </th>
+                <th t-if="header=='type_client'" class="text-center"><span t-esc="types2ru.get(doc['type_client'])"/></th>
+                <th t-if="header=='task_count'" class="ef-important text-center"><span t-esc="sum(rows.mapped('task_count'))" t-options='{"widget": "float", "precision": 0}'/></th>
+                <th t-if="header=='interaction_count'" class="ef-important text-center">
+                    <span t-esc="sum(rows.mapped('interaction_count'))" t-options='{"widget": "float", "precision": 0}'/>
+                </th>
+                <th t-if="header=='calls_in_count'" class="text-center"><span t-esc="sum(rows.mapped('calls_in_count'))" t-options='{"widget": "float", "precision": 0}'/></th>
+                <th t-if="header=='calls_out_count'" class="text-center">
+                    <span t-esc="sum(rows.mapped('calls_out_count'))" t-options='{"widget": "float", "precision": 0}'/>
+                </th>
+                <th t-if="header=='sonder_calls_count'" class="text-center"><span t-esc="sum(rows.mapped('sonder_calls_count'))" t-options='{"widget": "float", "precision": 0}'/></th>
+                <th t-if="header=='overdue_debt'" class="ef-important text-right"
+                t-att-class="'th-warning' if overdue_debt &gt; 0 else ''">
+                    <span t-esc="overdue_debt" t-options='{"widget": "float", "precision": 2}'/>
+                </th>
+                <th t-if="header=='debt'" class="text-right"><span t-esc="debt" t-options='{"widget": "float", "precision": 2}'/></th>
+                <th t-if="header=='plan'" class="ef-important text-right"><span t-esc="plan" t-options='{"widget": "float", "precision": 2}'/></th>
+                <th t-if="header=='turnover_this_mounth'" class="ef-important text-right"><span t-esc="turnover_this_mounth" t-options='{"widget": "float", "precision": 2}'/></th>
+                <th t-if="header=='prediction'" class="text-right"
+                t-att-class="'th-warning' if plan_predicted_percentage &lt; 1 else ''">
+                    <span t-esc="prediction" t-options='{"widget": "float", "precision": 2}'/>
+                </th>
+                <th t-if="header=='prediction_and_percentage'" class="text-center"
+                t-att-class="'th-warning' if plan_predicted_percentage &lt; 1
+                             else ('th-ok' if plan_predicted_percentage &gt;= 1.01 else '')">
+                    <span t-esc="prediction" t-options='{"widget": "float", "precision": 2}'/>
+                    <span style="white-space: nowrap;">( <span t-esc="plan_predicted_percentage*100" t-options='{"widget": "float", "precision": 1}'/>% )</span>
+                </th>
+                <th t-if="header=='plan_predicted_percentage'" class="text-center"><span t-esc="plan_predicted_percentage*100" t-options='{"widget": "float", "precision": 1}'/>%</th>
+                <th t-if="header=='turnover_previous_mounth'" class="text-right"><span t-esc="turnover_previous_mounth" t-options='{"widget": "float", "precision": 2}'/></th>
+                <th t-if="header=='calls_minute'" class="text-center"><span t-esc="sum(rows.mapped('calls_minute'))" t-options='{"widget": "float", "precision": 0}'/></th>
+                <th t-if="header=='date'" class="text-center"><span t-esc="doc['date']" t-options='{"widget": "datetime","format": "dd.MM.yyyy"}'/></th>
+                <th t-if="header=='turnover_lacking'" class="text-right"
+                t-att-class="'th-warning' if turnover_lacking &gt; 0 else ''">
+                    <span t-esc="turnover_lacking" t-options='{"widget": "float", "precision": 2}'/>
+                </th>
+                <th t-if="header=='capacity_lacking'" class="text-right"
+                t-att-class="'th-warning' if capacity_lacking &gt; 0 else ''">
+                    <span t-esc="capacity_lacking" t-options='{"widget": "float", "precision": 2}'/>
+                </th>
+                <th t-if="header=='capacity'" class="text-right">
+                    <span t-esc="capacity" t-options='{"widget": "float", "precision": 2}'/>
+                    <span style="white-space: nowrap;">( <span t-esc="( (prediction / capacity) if capacity > 0 else 1)*100" t-options='{"widget": "float", "precision": 1}'/>% )</span>
+                </th>
+            </t>
+            </tr>
+        </template>
+
+        <template id="report_efficiency_row">
+            <tr>
+            <t t-foreach="headers" t-as="header">
+                <td t-if="header=='manager_type_client_business'" class="text-left">
+                    <t t-if="data.get('view') != 'grouped_by_manager'"><span t-esc="doc['manager_name']"/>
+                    / <span t-esc="types2ru.get(doc['type_client'])"/>
+                    / </t>
+                    <span t-esc="doc['client_name']"/>
+                    / <span t-esc="doc['business_type']"/>
+                </td>
+                <td t-if="header=='manager_name'" class="text-center"><span t-esc="doc['manager_name']"/></td>
+                <td t-if="header=='client_name'" class="text-center">
+                    <span t-esc="doc['client_name']" t-att-title="doc['client_1c_id']"/>
+                </td>
+                <td t-if="header=='type_client'" class="text-center"><span t-esc="types2ru.get(doc['type_client'])"/></td>
+                <td t-if="header=='task_count'" class="ef-important text-center"><span t-esc="doc['task_count']" t-options='{"widget": "float", "precision": 0}'/></td>
+                <td t-if="header=='interaction_count'" class="ef-important text-center">
+                    <span t-esc="doc['interaction_count']" t-options='{"widget": "float", "precision": 0}' t-att-title="doc['interaction_last_date'] if doc['interaction_last_date'] &lt; month_start else ''"/>
+                </td>
+                <td t-if="header=='calls_in_count'" class="text-center"><span t-esc="doc['calls_in_count']" t-options='{"widget": "float", "precision": 0}'/></td>
+                <td t-if="header=='calls_out_count'" class="text-center">
+                    <span t-esc="doc['calls_out_count']" t-options='{"widget": "float", "precision": 0}' t-att-title="doc['calls_out_last_date'] if doc['calls_out_last_date'] &lt; month_start else ''"/>
+                </td>
+                <td t-if="header=='sonder_calls_count'" class="text-center"><span t-esc="doc['sonder_calls_count']" t-options='{"widget": "float", "precision": 0}'/></td>
+                <td t-if="header=='overdue_debt'" class="ef-important text-right"
+                t-att-class="'td-warning' if doc['overdue_debt'] &gt; 0 else ''">
+                    <span t-esc="doc['overdue_debt']" t-options='{"widget": "float", "precision": 2}'/>
+                </td>
+                <td t-if="header=='debt'" class="text-right"><span t-esc="doc['debt']" t-options='{"widget": "float", "precision": 2}'/></td>
+                <td t-if="header=='plan'" class="ef-important text-right"><span t-esc="doc['plan']" t-options='{"widget": "float", "precision": 2}'/></td>
+                <td t-if="header=='turnover_this_mounth'" class="ef-important text-right"><span t-esc="doc['turnover_this_mounth']" t-options='{"widget": "float", "precision": 2}'/></td>
+                <td t-if="header=='prediction'" class="text-right"
+                t-att-class="'td-warning' if doc['plan_predicted_percentage'] &lt; 1 else ''">
+                    <span t-esc="doc['prediction']" t-options='{"widget": "float", "precision": 2}'/>
+                </td>
+                <td t-if="header=='prediction_and_percentage'" class="text-center"
+                t-att-class="'td-warning' if doc['plan_predicted_percentage'] &lt; 1
+                             else ('td-ok' if doc['plan_predicted_percentage'] &gt;= 1.01 else '')">
+                    <span t-esc="doc['prediction']" t-options='{"widget": "float", "precision": 2}'/>
+                    <span style="white-space: nowrap;">( <span t-esc="doc['plan_predicted_percentage']*100" t-options='{"widget": "float", "precision": 1}'/>% )</span>
+                </td>
+                <td t-if="header=='plan_predicted_percentage'" class="text-center"><span t-esc="doc['plan_predicted_percentage']*100" t-options='{"widget": "float", "precision": 1}'/>%</td>
+                <td t-if="header=='turnover_previous_mounth'" class="text-right"><span t-esc="doc['turnover_previous_mounth']" t-options='{"widget": "float", "precision": 2}'/></td>
+                <td t-if="header=='calls_minute'" class="text-center"><span t-esc="doc['calls_minute']" t-options='{"widget": "float", "precision": 0}'/></td>
+                <td t-if="header=='date'" class="text-center"><span t-esc="doc['date']" t-options='{"widget": "datetime","format": "dd.MM.yyyy"}'/></td>
+                <td t-if="header=='turnover_lacking'" class="text-right"
+                t-att-class="'td-warning' if doc['turnover_lacking'] &gt; 0 else ''">
+                    <span t-esc="doc['turnover_lacking']" t-options='{"widget": "float", "precision": 2}'/>
+                </td>
+                <td t-if="header=='capacity_lacking'" class="text-right"
+                t-att-class="'td-warning' if doc['capacity_lacking'] &gt; 0 else ''">
+                    <span t-esc="doc['capacity_lacking']" t-options='{"widget": "float", "precision": 2}'/>
+                </td>
+                <td t-if="header=='capacity'" class="text-right">
+                    <span t-esc="doc['capacity']" t-options='{"widget": "float", "precision": 2}'/>
+                    <span style="white-space: nowrap;">( <span t-esc="(doc['prediction'] / (doc['capacity'] * 0.3) if doc['capacity'] > 0 else 1)*100" t-options='{"widget": "float", "precision": 1}'/>% )</span>
+                </td>
+            </t>
+            </tr>
+        </template>
+
+        <template id="report_efficiency_header">
+                    <thead style="display: table-row-group">
+                    <tr>
+                    <t t-foreach="headers" t-as="header">
+                        <th t-if="header=='manager_type_client_business'" class="text-center" style="width: 60%" scope="col">Manager, Client Type, Client, Business</th>
+                        <th t-if="header=='manager_name'" class="text-center" style="width: 60%" scope="col">Manager</th>
+                        <th t-if="header=='client_name'" class="text-center" style="width: 50%" scope="col">Client</th>
+                        <th t-if="header=='type_client'" class="text-center" style="width: 30%" scope="col">Type client</th>
+                        <th t-if="header=='task_count'" class="text-center" style="width: 25%" scope="col">Task count</th>
+                        <th t-if="header=='interaction_count'" class="text-center" style="width: 25%" scope="col">Interaction count</th>
+                        <th t-if="header=='calls_in_count'" class="text-center" style="width: 25%" scope="col">Calls in count</th>
+                        <th t-if="header=='calls_out_count'" class="text-center" style="width: 25%" scope="col">Calls out count</th>
+                        <th t-if="header=='sonder_calls_count'" class="text-center" style="width: 25%" scope="col">Sonder calls count</th>
+                        <th t-if="header=='overdue_debt'" class="text-center" style="width: 35%" scope="col">Overdue debt</th>
+                        <th t-if="header=='debt'" class="text-center" style="width: 35%" scope="col">Debt</th>
+                        <th t-if="header=='plan'" class="text-center" style="width: 35%" scope="col">Plan</th>
+                        <th t-if="header=='turnover_this_mounth'" class="text-center" style="width: 35%" scope="col">Turnover this mounth</th>        
+                        <th t-if="header=='prediction'" class="text-center" style="width: 35%" scope="col">Prediction</th>
+                        <th t-if="header=='plan_predicted_percentage'" class="text-center" style="width: 35%" scope="col">Plan predicted percentage</th>
+                        <th t-if="header=='prediction_and_percentage'" class="text-center" style="width: 35%" scope="col">Prediction and percentage</th>
+                        <th t-if="header=='turnover_previous_mounth'" class="text-center" style="width: 35%" scope="col">Turnover previous mounth</th>
+                        <th t-if="header=='calls_minute'" class="text-center" style="width: 25%" scope="col">Calls minute</th>
+                        <th t-if="header=='date'" class="text-center" style="width: 40%" scope="col">Date</th>
+                        <th t-if="header=='turnover_lacking'" class="text-center" style="width: 35%" scope="col">Lacking to plan</th>
+                        <th t-if="header=='capacity_lacking'" class="text-center" style="width: 35%" scope="col">Lacking by capacity</th>
+                        <th t-if="header=='capacity'" class="text-center" style="width: 35%" scope="col">Capacity</th>
+                    </t>
+                    </tr>
+                    </thead>
+        </template>
+            
+        <template id="report_efficiency_styles">
                 <style>
                 .table-bordered {
                     border: 1px solid #eaeaea;
@@ -21,6 +244,16 @@
                     background-color: #f2f2f2;
                     font-weight: bold;
                     text-align: center;
+                    position: sticky;
+                    top: 0;
+                }
+
+                .td-warning, .th-warning {
+                    background-color: #f2aaaa;
+                }
+
+                .td-ok, .th-ok {
+                    background-color: #aaf2aa;
                 }
 
                 .table tbody tr:nth-child(even) {
@@ -45,62 +278,8 @@
 
                 
             </style>
-            <div class="row">
-                <div class="col-12">
-                    <table class="table table-bordered" style="table-layout: fixed" id="hash_config_table">
-                    <thead style="display: table-row-group">
-                    <tr>
-                        <th class="text-center" style="width: 60%" scope="col">Manager</th>
-                        <th class="text-center" style="width: 50%" scope="col">Client</th>
-                        <th class="text-center" style="width: 30%" scope="col">Type client</th>
-                        <th class="text-center" style="width: 25%" scope="col">Task count</th>
-                        <th class="text-center" style="width: 25%" scope="col">Interaction count</th>
-                        <th class="text-center" style="width: 25%" scope="col">Calls in count</th>
-                        <th class="text-center" style="width: 25%" scope="col">Calls out count</th>
-                        <th class="text-center" style="width: 25%" scope="col">Sonder calls count</th>
-                        <th class="text-center" style="width: 35%" scope="col">Overdue debt</th>
-                        <th class="text-center" style="width: 35%" scope="col">Debt</th>
-                        <th class="text-center" style="width: 35%" scope="col">Plan</th>
-                        <th class="text-center" style="width: 35%" scope="col">Turnover this mounth</th>        
-                        <th class="text-center" style="width: 35%" scope="col">Prediction</th>
-                        <th class="text-center" style="width: 35%" scope="col">Plan predicted percentage</th>
-                        <th class="text-center" style="width: 35%" scope="col">Turnover previous mounth</th>
-                        <th class="text-center" style="width: 25%" scope="col">Calls minute</th>
-                        <th class="text-center" style="width: 40%" scope="col">Date</th>
-                        
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <t t-set='types2ru' t-value="{'4_main': 'Ключевые', '5_mean': 'Значимые', '6_other': 'Активные', '1_unknown':'Неизвестные'}"/>
-                    <t t-foreach="docs" t-as="doc">
-                    <tr>
-                        <td class="text-center"><span t-esc="doc['manager_name']"/></td>
-                        <td class="text-center"><span t-esc="doc['client_name']"/></td>
-                        <td class="text-center"><span t-esc="types2ru.get(doc['type_client'])"/></td>
-                        <!-- <td class="text-center"><t t-set='types2ru' t-value="doc['type_client']" t_esc="types2ru.get(type_client,'Другое')"></t></td> -->
-                        <td class="ef-important text-center"><span t-esc="doc['task_count']" t-options='{"widget": "float", "precision": 0}'/></td>
-                        <td class="ef-important text-center"><span t-esc="doc['interaction_count']" t-options='{"widget": "float", "precision": 0}'/></td>
-                        <td class="text-center"><span t-esc="doc['calls_in_count']" t-options='{"widget": "float", "precision": 0}'/></td>
-                        <td class="text-center"><span t-esc="doc['calls_out_count']" t-options='{"widget": "float", "precision": 0}'/></td>
-                        <td class="text-center"><span t-esc="doc['sonder_calls_count']" t-options='{"widget": "float", "precision": 0}'/></td>
-                        <td class="ef-important text-right"><span t-esc="doc['overdue_debt']" t-options='{"widget": "float", "precision": 2}' t-att-class="{'text-danger': doc['overdue_debt'] &gt; 0}"/></td>
-                        <td class="text-right"><span t-esc="doc['debt']" t-options='{"widget": "float", "precision": 2}'/></td>
-                         <td class="ef-important text-right"><span t-esc="doc['plan']" t-options='{"widget": "float", "precision": 2}'/></td>
-                         <td class="ef-important text-right"><span t-esc="doc['turnover_this_mounth']" t-options='{"widget": "float", "precision": 2}'/></td>
-                        <td class="text-right"><span t-esc="doc['prediction']" t-options='{"widget": "float", "precision": 2}'/></td>
-                        <td class="text-center"><span t-esc="doc['plan_predicted_percentage']*100" t-options='{"widget": "float", "precision": 2}'/>%</td>
-                        <td class="text-right"><span t-esc="doc['turnover_previous_mounth']" t-options='{"widget": "float", "precision": 2}'/></td>
-                        <td class="text-center"><span t-esc="doc['calls_minute']" t-options='{"widget": "float", "precision": 0}'/></td>
-                        <td class="text-center"><span t-esc="doc['date']" t-options='{"widget": "datetime","format": "dd.MM.yyyy"}'/></td>
-
-                    </tr>
-                    </t>
-                    </tbody>
-                    </table>
-                </div>
-            </div>
         </template>
-            
+
         <template id="report_efficiency_saler_web">
             <t t-call="web.html_container">
                 <t t-call="web.external_layout">

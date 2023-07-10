@@ -10,24 +10,18 @@ class TmtrExchangeOneCDeliveryOrder(models.Model):
     _description = '1C Deliver Order'
 
     ref_key = fields.Char(string='Ref key')
-    date_car_out = fields.Char(string='Date car out')
-    is_load = fields.Boolean(string='Order is loading')
-    date = fields.Char(string='Date')
-    responsible_key = fields.Char(string='Responsible key')
-    store_key = fields.Char(string='Store key')
-    number = fields.Char(string='Number')
-    note = fields.Char(string='Note')
-    route_ids = fields.One2many('tmtr.exchange.1c.route', 'order_id', string = 'Routes')
-    impl_ids = fields.One2many('tmtr.exchange.1c.implemention', 'order_id', string = 'Implementions')
-
+    date = fields.Char(string='date')
+    responsible_key = fields.Char(string='responsible key')
+    number = fields.Char(string='order number')
     def upload_new_orders(self, top = 50, skip = 0, from_date = None):
-        from_date = fields.Date.to_date(self.env['ir.config_parameter'].sudo().get_param('tmtr_exchange.last_order_date','2021-06-20T00:00:00')) if not from_date else from_date
+        if not from_date:
+            from_date = fields.Date.to_date(self.env['ir.config_parameter'].sudo().get_param('tmtr_exchange.last_order_date','2021-06-20T00:00:00'))
         date = from_date.strftime("%Y-%m-%dT%H:%M:%S")
         date_till = datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
         finish_before = datetime.now() + timedelta(minutes=1)
         stop_import = False
-        cnt = 0
         total_cnt = 0
+
         while datetime.now() < finish_before and not stop_import:
             order_data = self.env['odata.1c.route'].get_by_route(
                 "1c_ut/get_order/", 
@@ -36,32 +30,19 @@ class TmtrExchangeOneCDeliveryOrder(models.Model):
                 "skip": skip,
                 "date": date,
                 })['value']
-        
+            ref_key_ids = [r['Ref_Key'] for r in order_data if r['DeletionMark'] != True]
+            order_exists = dict((r.ref_key, r.ref_key) for r in self.search([("ref_key", "in", ref_key_ids)]))
+            cnt = 0
             for json_data in order_data:
-                order = self.env['tmtr.exchange.1c.delivery.order'].search([("ref_key", "=", json_data['Ref_Key'])])
-                if not order:
-                    order = self.env['tmtr.exchange.1c.delivery.order'].create({
-                            'ref_key' : json_data['Ref_Key'],
-                            'date_car_out' : json_data['ДатаВыездаМашины'],
-                            'date' : json_data['Date'],
-                            'responsible_key' : json_data['Ответственный_Key'],
-                            'store_key' : json_data['Склад_Key'],
-                            'note': json_data['Примичание'],
-                            'is_load': json_data['ЗаказОтгружен'],
-                            'number': json_data['Number'],
-                        })
-                    cnt+=1
-                routes_data= json_data['Маршруты']
+                if json_data['Ref_Key'] in order_exists:
+                    continue
+
+                cnt += 1
+                order = self.create_purchase_order(json_data)
+
+                routes_data = json_data['Маршруты']
                 for route_data in routes_data:
-                    route = self.env['tmtr.exchange.1c.route'].search([('route_key','=', route_data['Маршрут_Key'])])
-                    if not route:
-                        route = self.env['tmtr.exchange.1c.route'].create({
-                            'ref_key': route_data['Ref_Key'],
-                            'route_key': route_data['Маршрут_Key'],
-                            'car_out': route_data['ВремяВыезда'],
-                            'description': json_data['МаршрутыДоставки'],
-                            'order_id': order.id,
-                        })        
+                    route = self.create_route(route_data)        
                     for impl_data in json_data['Реализации']:
                         implemention = self.env['tmtr.exchange.1c.implemention'].search([("ref_key", "=", impl_data['Ref_Key'])])
                         if not implemention:
@@ -87,8 +68,29 @@ class TmtrExchangeOneCDeliveryOrder(models.Model):
         # Сохранить день, на котором остановился импорт
         if date <= date_till:
             self.env['ir.config_parameter'].set_param('tmtr.exchange.last_order_date', from_date)
-        return {'cnt': total_cnt, 'data': from_date}          
+        return {'cnt': total_cnt, 'data': from_date}        
 
+    def create_purchase_order(self, json_date):
+        new_purchase_order = self.create({
+                            'ref_key' : json_date['Ref_Key'],
+                            'date_car_out' : json_date['ДатаВыездаМашины'],
+                            'date' : json_date['Date'],
+                            'responsible_key' : json_date['Ответственный_Key'],
+                            'store_key' : json_date['Склад_Key'],
+                            'note': json_date['Примичание'],
+                            'is_load': json_date['ЗаказОтгружен'],
+                            'number': json_date['Number'],
+                        })
+        return new_purchase_order          
+
+    def create_route(self, route_data):
+        self.env['tmtr.exchange.1c.route'].create({
+                            'ref_key': route_data['Ref_Key'],
+                            'route_key': route_data['Маршрут_Key'],
+                            'car_out': route_data['ВремяВыезда'],
+                            'description': json_data['МаршрутыДоставки'],
+                            'order_id': order.id,
+                        })
 
     def upload_order_by_number(self, order_number, date=None):
         document_filter = f"endswith(Number,%20%27{order_number}%27)%20eq%20true"

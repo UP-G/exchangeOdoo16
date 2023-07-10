@@ -11,3 +11,4 @@ access_tmtr_exchange_1c_implemention,access.tmtr.exchange.1c.implemention,model_
 access_tmtr_exchange_1c_route,access.tmtr.exchange.1c.route,model_tmtr_exchange_1c_route,,1,1,1,1
 access_efficiency_saler_report,access.efficiency.saler.report,model_efficiency_saler_report,,1,1,1,1
 access_efficiency_saler_report_history,access.efficiency.saler.report_history,model_efficiency_saler_report_history,,1,1,1,1
+access_tmtr_exchange_1c_business_type,access.tmtr.exchange.1c.business_type,model_tmtr_exchange_1c_business_type,,1,1,1,1

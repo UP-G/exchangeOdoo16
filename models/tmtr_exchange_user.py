@@ -6,7 +6,7 @@ class TmtrExchangeOneCUser(models.Model):
 
     user_id = fields.Many2one('res.users', string='user id')
     ref_key = fields.Char(string='Ref_key')
-    identifier_ib = fields.Char(string='identifier user ib')
+    identifier_ib = fields.Char(string='identifier user ib', index=True)
     code = fields.Char(string='Code')
     description = fields.Char(string='Description')
     contacts = fields.Text()
