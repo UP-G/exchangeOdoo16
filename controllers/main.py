@@ -31,5 +31,5 @@ class TmtrComtrollers(http.Controller):
 
     @http.route(['/tmtr_odoo/report/sale_efficiency_test/<string:manager_ids>/', '/tmtr_odoo/report/sale_efficiency_test/<string:manager_ids>'], type='http', auth="public", methods=['POST','GET'], csrf=False)
     def sale_efficiency_no_auth_test(self, manager_ids, view='', **args):
-        return http.request.env["efficiency.saler.report"]._render_html_by_manager(manager_ids.split(',') if manager_ids else ['3c849afc-78d0-4b66-bc9f-81dcc0bbf035']), data={'view': view})
+        return http.request.env["efficiency.saler.report"]._render_html_by_manager(manager_ids.split(',') if manager_ids else ['3c849afc-78d0-4b66-bc9f-81dcc0bbf035'], data={'view': view})
 
