@@ -126,7 +126,7 @@
                 </th>
                 <th t-if="header=='capacity'" class="text-right">
                     <span t-esc="capacity" t-options='{"widget": "float", "precision": 2}'/>
-                    <span style="white-space: nowrap;">( <span t-esc="( prediction / (capacity * 0.3) if capacity > 0 else 1)*100" t-options='{"widget": "float", "precision": 1}'/>% )</span>
+                    <span style="white-space: nowrap;">( <span t-esc="( (prediction / capacity) if capacity > 0 else 1)*100" t-options='{"widget": "float", "precision": 1}'/>% )</span>
                 </th>
             </t>
             </tr>
