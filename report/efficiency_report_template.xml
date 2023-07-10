@@ -43,6 +43,7 @@
                     </table>
                 </div>
             </div>
+            <t t-call="tmtr_exchange.report_efficiency_js"/>
         </template>
 
         <template id="report_efficiency_rows_plain">
@@ -223,7 +224,22 @@
                     </tr>
                     </thead>
         </template>
-            
+
+        <template id="report_efficiency_js">
+            <script>
+                // Enable overflow=visible for working 'position: sticky'
+                let parent = document.querySelector('.table');
+                while (parent) {   
+                    const hasOverflow = getComputedStyle(parent).overflow;   
+                    if (hasOverflow !== 'visible') {
+//                        console.log(hasOverflow, parent);
+                        parent.style.overflow = 'visible';
+                    }
+                    parent = parent.parentElement; 
+                }
+            </script>
+        </template>
+
         <template id="report_efficiency_styles">
                 <style>
                 .table-bordered {
