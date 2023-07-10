@@ -124,7 +124,7 @@ class TmtrExchangeOneCIndicators(models.Model):
         }
         if not indicator:
             _logger.info(jsonValue)
-            indicator = http.request.env['tmtr.exchange.1c.indicators'].create(item)
+            indicator = self.create(item)
         else:
             indicator.write(item)
         return indicator.id if indicator else 0
