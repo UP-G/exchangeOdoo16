@@ -59,7 +59,6 @@
               <t t-set="row_name" t-value="total"/>
               <t t-call="tmtr_exchange.report_efficiency_rows_header"/>
               <t t-set="row_name" t-value=""/>
-            </t>
         </template>
 
         <template id="report_efficiency_grouped_by_manager">
