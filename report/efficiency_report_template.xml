@@ -34,9 +34,10 @@
 -->
             <div class="row">
                 <div class="col-12">
-                    <table class="table table-bordered" style="table-layout: fixed" id="hash_config_table">
+                    <table class="table table-bordered" style="table-layout: fixed" id="hash_config_table" t-att-report_view="data.get('view')">
                     <t t-call="tmtr_exchange.report_efficiency_header"/>
                     <tbody>
+                    <t t-call="report_efficiency_total"/>
                     <t t-if="data.get('view') == 'grouped_by_manager'" t-call="tmtr_exchange.report_efficiency_grouped_by_manager"/>
                     <t t-if="data.get('view') not in ['grouped_by_manager']" t-call="tmtr_exchange.report_efficiency_rows_plain"/>
                     </tbody>
@@ -49,6 +50,15 @@
         <template id="report_efficiency_rows_plain">
             <t t-foreach="docs.sorted(lambda r: (r.manager_name, r.type_client, min(-r.capacity_lacking, -r.turnover_lacking), -r.plan))" t-as="doc">
                 <t t-call="tmtr_exchange.report_efficiency_row"/>
+            </t>
+        </template>
+
+        <template id="report_efficiency_total">
+              <t t-set="rows" t-value="docs"/>
+              <t t-set="doc" t-value="rows[0]"/>
+              <t t-set="row_name" t-value="total"/>
+              <t t-call="tmtr_exchange.report_efficiency_rows_header"/>
+              <t t-set="row_name" t-value=""/>
             </t>
         </template>
 
@@ -78,8 +88,11 @@
             <t t-set="turnover_lacking" t-value="sum(rows.mapped('turnover_lacking'))"/>
             <t t-set="plan_predicted_percentage" t-value="prediction / plan if plan > 0 else 0"/>
             <t t-foreach="headers" t-as="header">
-                <th t-if="header=='manager_type_client_business'" class="text-left">
-                    <span t-esc="doc['manager_name']"/>
+                <th t-if="header=='manager_type_client_business' and row_name!='total'" class="text-left">
+                    Total
+                </th>
+                <th t-if="header=='manager_type_client_business' and row_name=='total'" class="text-left">
+                    <span t-esc="doc['manager_name'] if doc['manager_name'] else '(не указан менеджер)' "/>
                     / <span t-esc="types2ru.get(doc['type_client'])"/>
                 </th>
                 <th t-if="header=='manager_name'" class="text-center"><span t-esc="doc['manager_name']"/></th>
