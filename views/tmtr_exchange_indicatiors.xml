@@ -32,6 +32,7 @@
                 <field name="turnover_percent" optional="show" widget="percentage"/>
                 <field name="capacity" optional="show"/>
                 <field name="capacity_percent" optional="show" widget="percentage"/>
+                <field name="write_date" optional="hide"/>
             </tree>
         </field>
     </record>
@@ -65,7 +66,7 @@
                             <field name="capacity" optional="show"/>
                             <field name="capacity_percent" optional="show" widget="percentage"/>
                             
-                            
+                            <field name="write_date" optional="hide"/>
                         </group>
                     </group>
                 </sheet>

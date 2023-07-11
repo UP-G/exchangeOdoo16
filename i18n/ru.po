@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 16.0-20221202\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-07-10 05:33+0000\n"
-"PO-Revision-Date: 2023-07-10 05:33+0000\n"
+"POT-Creation-Date: 2023-07-11 14:01+0000\n"
+"PO-Revision-Date: 2023-07-11 14:01+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -38,6 +38,7 @@ msgid "1C Delive Order Point"
 msgstr "1С точка доставки заказ-наряда"
 
 #. module: tmtr_exchange
+#: model:ir.actions.act_window,name:tmtr_exchange.action_tmtr_exchange_purchase_order
 #: model:ir.model,name:tmtr_exchange.model_tmtr_exchange_1c_purchase_order
 #: model:ir.ui.menu,name:tmtr_exchange.menu_tmtr_exchange_1c_purchase_order
 msgid "1C Deliver Order"
@@ -251,7 +252,7 @@ msgstr "Минут"
 #: model:ir.model.fields,field_description:tmtr_exchange.field_efficiency_saler_report__calls_minute
 #: model:ir.model.fields,field_description:tmtr_exchange.field_efficiency_saler_report_history__calls_minute
 msgid "Calls minutes"
-msgstr "Итого минут"
+msgstr "Общее количество минут"
 
 #. module: tmtr_exchange
 #: model:ir.model.fields,field_description:tmtr_exchange.field_efficiency_saler_report__calls_out_count
@@ -720,7 +721,7 @@ msgstr "Ключевые + значимые клиенты по Емкости"
 #: model:ir.model.fields,field_description:tmtr_exchange.field_efficiency_saler_report__capacity_lacking
 #: model:ir.model.fields,field_description:tmtr_exchange.field_efficiency_saler_report_history__capacity_lacking
 msgid "Lacking Capacity Turnover"
-msgstr "Упущенная по Емкости"
+msgstr "Упущенная выручка по Емкости"
 
 #. module: tmtr_exchange
 #: model:ir.model.fields,field_description:tmtr_exchange.field_efficiency_saler_report__turnover_lacking
@@ -1026,7 +1027,7 @@ msgstr "Прогноз в процентах"
 #: model:ir.model.fields,field_description:tmtr_exchange.field_efficiency_saler_report__plan
 #: model:ir.model.fields,field_description:tmtr_exchange.field_efficiency_saler_report_history__plan
 msgid "Plan this month"
-msgstr "План на месяц"
+msgstr "План на текущий месяц"
 
 #. module: tmtr_exchange
 #: model:ir.model.fields,field_description:tmtr_exchange.field_efficiency_saler_report__prediction
@@ -1047,7 +1048,6 @@ msgstr "Дата последней загруженной покупки"
 
 #. module: tmtr_exchange
 #: model:ir.actions.act_window,name:tmtr_exchange.action_tmtr_exchange_implemention
-#: model:ir.actions.act_window,name:tmtr_exchange.action_tmtr_exchange_purchase_order
 #: model:ir.actions.act_window,name:tmtr_exchange.action_tmtr_exchange_route
 msgid "Purchase order 1C"
 msgstr "1С номер заказа"
@@ -1224,6 +1224,11 @@ msgid "Tmtr exchange"
 msgstr "Интеграции 1С ТракМоторс"
 
 #. module: tmtr_exchange
+#: model_terms:ir.ui.view,arch_db:tmtr_exchange.report_efficiency_rows_header
+msgid "Total"
+msgstr "Итого"
+
+#. module: tmtr_exchange
 #: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_indicators__turnover_this_mounth
 msgid "Turnover for the current month"
 msgstr "Оборот Текущий"
@@ -1242,7 +1247,7 @@ msgstr "Прогноз"
 #: model:ir.model.fields,field_description:tmtr_exchange.field_efficiency_saler_report__turnover_previous_mounth
 #: model:ir.model.fields,field_description:tmtr_exchange.field_efficiency_saler_report_history__turnover_previous_mounth
 msgid "Turnover last month"
-msgstr "Выручка предыдущего"
+msgstr "Выручка предыдущего месяца"
 
 #. module: tmtr_exchange
 #: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_indicators__turnover_last_3month
@@ -1263,7 +1268,7 @@ msgstr "Прошлый месяц"
 #: model:ir.model.fields,field_description:tmtr_exchange.field_efficiency_saler_report__turnover_this_mounth
 #: model:ir.model.fields,field_description:tmtr_exchange.field_efficiency_saler_report_history__turnover_this_mounth
 msgid "Turnover this month"
-msgstr "Выручка текущего"
+msgstr "Выручка текущего месяца"
 
 #. module: tmtr_exchange
 #: model_terms:ir.ui.view,arch_db:tmtr_exchange.report_efficiency_header
