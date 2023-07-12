@@ -149,6 +149,7 @@ class TmtrExchangeOneCPurchaseOrder(models.Model):
     def upload_returns_row(self, impl_json_value, order_tms):
         self.env['tms.order.row'].create({
                             'order_id': order_tms.id,
+                            'note': impl_json_value['Комментарий'],
                     #'route_point_id': point_tms.id,
                             'impl_num': "Возврат {number}".format(number=impl_json_value['LineNumber']),
                             'comment': "{phone};{address}".format(phone='-',address=impl_json_value['Адрес']),
@@ -158,6 +159,7 @@ class TmtrExchangeOneCPurchaseOrder(models.Model):
     def upload_order_row(self, impl_json_value, order_tms):
         self.env['tms.order.row'].create({
                                 'order_id': order_tms.id,
+                                'note': impl_json_value['Комментарий'],
                         #'route_point_id': point_tms.id,
                                 'impl_num': impl_json_value['Номер'],
                                 'comment': "{phone};{address}".format(phone=impl_json_value['Телефон'], address=impl_json_value['АдресДоставки']),
@@ -279,6 +281,7 @@ class TmtrExchangeOneCPurchaseOrder(models.Model):
 
         key_ids = []
         total_cnt = 0
+        date = None
 
         stock_key = self.env['ir.config_parameter'].get_param('tmtr.exchange.1c_stock_not_upload') # Склады, которе не успели выгрузится
         finish_before = datetime.now() + timedelta(minutes=1) # ограничить время работы скрипта одной минутой
@@ -343,9 +346,7 @@ class TmtrExchangeOneCPurchaseOrder(models.Model):
                         self.upload_returns_row(item, order_tms)
                 
             total_cnt += cnt
-                
-            key_ids.remove(key_ids[0]) #Переход к следующему складу
-                    
+
         obj = {}    
         if key_ids != []: #Если не успели выгрузится все маршруты, то сохраняем до следующей выгрузки
             obj['stock_1c_key'] = key_ids
@@ -359,7 +360,6 @@ class TmtrExchangeOneCPurchaseOrder(models.Model):
             'total_cnt': total_cnt,
             'not_upload': obj,
             }
-
             
     def get_p_order_on_stock_key(self, date, stock_key, top, skip):
         interaction_data = self.env['odata.1c.route'].get_by_route(
@@ -371,3 +371,13 @@ class TmtrExchangeOneCPurchaseOrder(models.Model):
                 "skip": skip
                 })['value']
         return interaction_data
+    
+    def update_stock_id_route(self):
+        stock_key = self.env['tms.route'].search(["&", ("name", "=", "upload"), "&", ("start_time", "=", None), 
+                                                      "&", ("end_time", "=", None), "&", ("stock_id", "!=", None), 
+                                                      "&", ("route_1c_key", "=", None), ("stock_1c_key", "!=", None)])
+
+        for item in stock_key:
+            route = self.env['tms.route'].search(["&", ("name", "!=", None), "&", ("stock_id", "=", None), 
+                                                        "&", ("route_1c_key", "!=", None), ("stock_1c_key", "=", item['stock_1c_key'])])
+            route.update({'stock_id': item['stock_id']})
