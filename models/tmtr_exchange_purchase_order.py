@@ -149,6 +149,7 @@ class TmtrExchangeOneCPurchaseOrder(models.Model):
     def upload_returns_row(self, impl_json_value, order_tms):
         self.env['tms.order.row'].create({
                             'order_id': order_tms.id,
+                            'note': impl_json_value['Комментарий'],
                     #'route_point_id': point_tms.id,
                             'impl_num': "Возврат {number}".format(number=impl_json_value['LineNumber']),
                             'comment': "{phone};{address}".format(phone='-',address=impl_json_value['Адрес']),
@@ -158,6 +159,7 @@ class TmtrExchangeOneCPurchaseOrder(models.Model):
     def upload_order_row(self, impl_json_value, order_tms):
         self.env['tms.order.row'].create({
                                 'order_id': order_tms.id,
+                                'note': impl_json_value['Комментарий'],
                         #'route_point_id': point_tms.id,
                                 'impl_num': impl_json_value['Номер'],
                                 'comment': "{phone};{address}".format(phone=impl_json_value['Телефон'], address=impl_json_value['АдресДоставки']),
@@ -279,6 +281,7 @@ class TmtrExchangeOneCPurchaseOrder(models.Model):
 
         key_ids = []
         total_cnt = 0
+        date = None
 
         stock_key = self.env['ir.config_parameter'].get_param('tmtr.exchange.1c_stock_not_upload') # Склады, которе не успели выгрузится
         finish_before = datetime.now() + timedelta(minutes=1) # ограничить время работы скрипта одной минутой
