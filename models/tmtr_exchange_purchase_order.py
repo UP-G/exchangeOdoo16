@@ -125,7 +125,7 @@ class TmtrExchangeOneCPurchaseOrder(models.Model):
 
                 order_tms = self.env['tms.order'].search([('order_num','=',purchase_data['Number'])])
                 if not order_tms and routes:
-                    order_tms = self.upload_purchase_order(purchase_data, routes[0])#предполагаем, что в заказ наряде только 1 маршрут
+                    order_tms = self.upload_purchase_order(purchase_data, routes[0])
 
                 if not order_tms.order_row_ids and not purchase_data['Реализации'] or not purchase_data['ДопУслуги']:
                     for item in purchase_data['Реализации']:
@@ -140,6 +140,7 @@ class TmtrExchangeOneCPurchaseOrder(models.Model):
         order = self.env['tms.order'].create({
                         'route_id': route_tms.id,
                             'order_num': json_value['Number'],
+                            'notes': json_value['Примичание'],
                             #'departed_on_route': datetime.strptime(order_data['Date'], '%Y-%m-%dT%H:%M:%S'),
 #                'departed_on_route': f"{route_tms.start_time.date()} {datetime.strptime(order_data['Маршруты'][0]['ВремяВыезда'], '%Y-%m-%dT%H:%M:%S').time()}",
                         })
@@ -286,10 +287,12 @@ class TmtrExchangeOneCPurchaseOrder(models.Model):
             stock_key = eval(stock_key)
             date = stock_key['date']
 
-        if not from_date and not stock_key:
-            from_date = fields.Date.to_date(self.env['ir.config_parameter'].sudo().get_param('tmtr.exchange.1c_purchase_order_date','2013-12-21 00:00:00'))
+        if not from_date and not date:
+            from_date = fields.Date.to_date(self.env['ir.config_parameter'].sudo().get_param('tmtr.exchange.1c_purchase_order_date','2023-07-11 00:00:00'))
+
+        if not date:
             date = from_date.strftime("%Y-%m-%dT%H:%M:%S")
-            date_till = datetime.now().strftime("%Y-%m-%dT%H:%M:%S") # не искать дальше текущей даты
+        date_till = datetime.now().strftime("%Y-%m-%dT%H:%M:%S") # не искать дальше текущей даты
 
         if not stock_key:
             stock_key = self.env['tms.route'].search(["&", ("name", "=", 'upload'), "&", ("start_time", "=", None), 
@@ -329,7 +332,7 @@ class TmtrExchangeOneCPurchaseOrder(models.Model):
 
                 order_tms = self.env['tms.order'].search([('order_num','=',purchase_data['Number'])])
                 if not order_tms and routes:
-                    order_tms = self.upload_purchase_order(purchase_data, routes[0])#предполагаем, что в заказ наряде только 1 маршрут
+                    order_tms = self.upload_purchase_order(purchase_data, routes[0])
                     cnt += 1
 
                 if not order_tms.order_row_ids and not purchase_data['Реализации'] or not purchase_data['ДопУслуги']:
