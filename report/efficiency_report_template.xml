@@ -20,8 +20,8 @@
                 'turnover_previous_mounth',
                 'task_count',
                 'interaction_count',
-                'calls_in_count',
                 'calls_out_count',
+                'calls_in_count',
                 'sonder_calls_count',
                 'calls_minute',
             ]"/>
