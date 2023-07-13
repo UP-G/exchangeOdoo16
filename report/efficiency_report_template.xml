@@ -87,7 +87,7 @@
             <t t-foreach="headers" t-as="header">
                 <th t-if="header=='manager_type_client_business'" class="text-left">
                     <t t-if="len(docs)==len(rows)">
-                        <span>Total</span>
+                        <t>Total</t>
                         ( <span t-esc="len(docs)" title="Count of clients"/> )
                     </t>
                     <t t-if="len(docs)!=len(rows)">
