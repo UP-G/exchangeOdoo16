@@ -127,12 +127,13 @@ class TmtrExchangeOneCPurchaseOrder(models.Model):
                 if not order_tms and routes:
                     order_tms = self.upload_purchase_order(purchase_data, routes[0])
 
-                if not order_tms.order_row_ids and not purchase_data['Реализации'] or not purchase_data['ДопУслуги']:
-                    for item in purchase_data['Реализации']:
-                        self.upload_order_row(item, order_tms)
-
-                    for item in purchase_data['ДопУслуги']:
-                        self.upload_returns_row(item, order_tms)
+                if not order_tms.order_row_ids and (purchase_data['Реализации'] or purchase_data['ДопУслуги']):
+                    if purchase_data['Реализации'] != []:
+                        for item in purchase_data['Реализации']:
+                            self.upload_order_row(item, order_tms)
+                    if purchase_data['ДопУслуги'] != []:
+                        for item in purchase_data['ДопУслуги']:
+                            self.upload_returns_row(item, order_tms)
 
         return cnt
 
@@ -338,12 +339,13 @@ class TmtrExchangeOneCPurchaseOrder(models.Model):
                     order_tms = self.upload_purchase_order(purchase_data, routes[0])
                     cnt += 1
 
-                if not order_tms.order_row_ids and not purchase_data['Реализации'] or not purchase_data['ДопУслуги']:
-                    for item in purchase_data['Реализации']:
-                        self.upload_order_row(item, order_tms)
-
-                    for item in purchase_data['ДопУслуги']:
-                        self.upload_returns_row(item, order_tms)
+                if not order_tms.order_row_ids and (purchase_data['Реализации'] or purchase_data['ДопУслуги']):
+                    if purchase_data['Реализации'] != []:
+                        for item in purchase_data['Реализации']:
+                            self.upload_order_row(item, order_tms)
+                    if purchase_data['ДопУслуги'] != []:
+                        for item in purchase_data['ДопУслуги']:
+                            self.upload_returns_row(item, order_tms)
                 
             total_cnt += cnt
 
