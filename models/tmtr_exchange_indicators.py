@@ -213,9 +213,8 @@ class TmtrExchangeOneCIndicators(models.Model):
         recs = self.search(['|',('level_updated','=',False),('level_updated','<',level_updated_old)])
         return recs.update_price_level_selected()
 
-    def update_price_level_selected(self):
-        price_level_connection = json.loads(self.env['ir.config_parameter'].sudo().get_param('tmtr_exchange.price_level_connection','{}'))
-        level_updated_now = datetime.now()
+    @api.model
+    def get_conn_db_analisys(self):
         cnxn = pyodbc.connect(driver='FreeTDS',
             #    server='DCSRV-ERP-03.tmtr.ru,1433', 
             server=price_level_connection.get('server',''),
@@ -224,8 +223,13 @@ class TmtrExchangeOneCIndicators(models.Model):
             TDS_Version='7.4',
             user=price_level_connection.get('user',''),
             password=price_level_connection.get('password',''))
-        cursor = cnxn.cursor()
+        return cnxn.cursor()
+
+    def update_price_level_selected(self):
+        price_level_connection = json.loads(self.env['ir.config_parameter'].sudo().get_param('tmtr_exchange.price_level_connection','{}'))
+        level_updated_now = datetime.now()
         clients = self 
+        cursor = self.get_conn_db_analisys()
         if len(clients) > 0:
             cursor.execute("""select client_code, CONCAT('L',mark) as Mark, [manual] as [manual], cur_date as [cur_date], IsNULL(days_duration,'') as days_duration
                 from [analysis_op].[GetPrice].[init_clients] 
