@@ -223,3 +223,10 @@ class TmtrExchangeOneCPartner(models.Model):
                 'user_id': manager['user_id']
             })
         return
+
+    def _render_debts(self, client_origin_id):
+        value = self.env['odata.1c.route'].get_by_route("1c_ut/debts/", {'client_id': client_origin_id})
+        # _logger.info(value[0])
+        #return http.request.render("base_odata_1c.debts_template", 
+        return self.env['ir.ui.view'].with_context(lang='ru_RU')._render_template('tmtr_exchange.debts_report_template', {"documents": value})
+

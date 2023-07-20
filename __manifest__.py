@@ -12,6 +12,8 @@
         'report/efficiency_saler_view.xml',
         'report/efficiency_saler_history_view.xml',
         'report/efficiency_report_template.xml',
+        'report/best_one_report_template.xml',
+        'report/debts_report_template.xml',
         'views/tmtr_exchange_contact.xml',
         'views/tmtr_exchange_user.xml',
         'views/tmtr_exchange_partner.xml',

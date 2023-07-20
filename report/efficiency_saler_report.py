@@ -35,6 +35,7 @@ class EfficiencySalerReport(models.Model):
     client_name = fields.Char('Client Name') # Клиент (+"не известный" в первой строке - все клиенты, чьи телефоны не найдены в контактах)
     client_1c_id = fields.Char('Client 1C ID') # origin_id
     business_type = fields.Char('Client Business Type') # ДИТ_ВидДеятельности_Key.Description
+    price_level = fields.Char('Price Level') # DB Analisys
 
     plan = fields.Float(string='Plan this month') # План на текущий месяц (макс(среднее в день за предыдущий месяц; среднее в день за 3 месяца) * кол-во дней в текущем месяце)
     # plan_percentage = fields.Float('Plan percantage') # Процент выполнения плана, поле долно быть вычисляемым, чтобы корректно работало при группировках
@@ -66,10 +67,13 @@ class EfficiencySalerReport(models.Model):
         ('6_other','Other'), # Прочие по емкости
         ], 'Type capacity')
 
+    indicator_id = fields.Many2one('tmtr.exchange.1c.indicators', string='Client Indicators', readonly=True) # Не дублировать поле в Истории, т.к. в Индикаторах хранится только последнее состояние
+
     def _select(self):
         return """
             SELECT
                 max(indicators.id) as id,
+                max(indicators.id) as indicator_id,
                 timezone('Europe/Moscow',date_trunc('month',now())) as date,
                 COALESCE(s1user.description, COALESCE(indicators.identifier_ib, 'Unknown manager')) as manager_name,
                 COALESCE(indicators.identifier_ib, 'Unknown_ID') as manager_1c_id,
@@ -89,24 +93,19 @@ class EfficiencySalerReport(models.Model):
                     else '6_other' end,'1_unknown') as type_capacity,
                 COALESCE(client.full_name,'Unknown client') as client_name,
                 COALESCE(business_type.name,'Unknown type') as business_type,
+                COALESCE(indicators.level_code, '-') as price_level,
 
-                GREATEST(
-                    sum(indicators.turnover_previous_mounth),
-                    sum(indicators.turnover_last_3month) / 3,
-                    sum(indicators.turnover_last_30days)
-                ) as plan,
-                case when extract(day from now()) < 16 then
-                    sum(indicators.turnover_last_30days) else
-                    sum(indicators.turnover_this_mounth) / (extract(day from now()) -1 ) * (DATE_PART('days', DATE_TRUNC('month', NOW())  + '1 MONTH'::INTERVAL - '1 DAY'::INTERVAL))
-                end as prediction,
+                max(indicators.plan) as plan,
+                max(indicators.prediction) as prediction,
+
                 sum(indicators.turnover_lacking_percent) as turnover_lacking_percent,
-                case when sum(plan) > 0 then sum(prediction) / sum(plan) else 0 end as plan_predicted_percentage,
-                case when sum(plan) - sum(prediction) > 0 then sum(plan) - sum(prediction) else 0 end as turnover_lacking,
-                sum(indicators.turnover_this_mounth) as turnover_this_mounth,
-                sum(indicators.turnover_previous_mounth) as turnover_previous_mounth,
-                sum(indicators.debt) as debt,
-                sum(indicators.overdue_debt) as overdue_debt,
-                sum(indicators.task_count) as task_count,
+                case when max(indicators.plan) > 0 then sum(indicators.prediction) / max(indicators.plan) else 0 end as plan_predicted_percentage,
+                case when max(indicators.plan) - max(indicators.prediction) > 0 then max(indicators.plan) - max(indicators.prediction) else 0 end as turnover_lacking,
+                max(indicators.turnover_this_mounth) as turnover_this_mounth,
+                max(indicators.turnover_previous_mounth) as turnover_previous_mounth,
+                max(indicators.debt) as debt,
+                max(indicators.overdue_debt) as overdue_debt,
+                max(indicators.task_count) as task_count,
                 sum(COALESCE(interaction.cnt, 0)) as interaction_count,
                 timezone('Europe/Moscow',max(COALESCE(interaction.interaction_last_date, date_trunc('month',now() - '31 DAY'::INTERVAL)))) as interaction_last_date,
                 sum(COALESCE(imot.calls_in_count, 0)) as calls_in_count,
@@ -115,14 +114,39 @@ class EfficiencySalerReport(models.Model):
                 sum(COALESCE(imot.sonder_calls_count, 0)) as sonder_calls_count,
                 timezone('Europe/Moscow',max(COALESCE(imot.calls_out_last_date, date_trunc('month',now() - '31 DAY'::INTERVAL)))) as calls_out_last_date,
                 max(client.capacity) as capacity,
-                case when (max(client.capacity)*0.3-max(plan))>0 then max(client.capacity)*0.3-max(plan) else 0 end as capacity_lacking,
-                case when max(client.capacity) > 1 then max(prediction) / max(client.capacity) else 0 end as capacity_percentage,
+                case when (max(client.capacity)*0.3-max(indicators.prediction))>0 then max(client.capacity)*0.3-max(indicators.prediction) else 0 end as capacity_lacking,
+                case when max(client.capacity) > 1 then max(indicators.prediction) / max(client.capacity) else 0 end as capacity_percentage,
                 max(client.our_share / 100) as our_share
         """
 
     def _from(self):
         return """
-            FROM tmtr_exchange_1c_indicators AS indicators
+            FROM (SELECT
+                indicators.id,
+                indicators.identifier_ib,
+                indicators.origin_id,
+                indicators.turnover_percent,
+                indicators.turnover_previous_mounth,
+                indicators.turnover_last_3month,
+                indicators.turnover_last_30days,
+                indicators.turnover_lacking_percent,
+                indicators.turnover_this_mounth,
+                indicators.capacity_percent,
+                indicators.debs_percent,
+                indicators.debt,
+                indicators.overdue_debt,
+                indicators.task_count,
+                indicators.level_code,
+                GREATEST(
+                    indicators.turnover_previous_mounth,
+                    indicators.turnover_last_3month / 3,
+                    indicators.turnover_last_30days
+                ) as plan,
+                case when extract(day from now()) < 16 then
+                    indicators.turnover_last_30days else
+                    indicators.turnover_this_mounth / (extract(day from now()) -1 ) * (DATE_PART('days', DATE_TRUNC('month', NOW())  + '1 MONTH'::INTERVAL - '1 DAY'::INTERVAL))
+                end as prediction
+                FROM tmtr_exchange_1c_indicators AS indicators) AS indicators
         """
 
     def _join(self):
@@ -151,14 +175,14 @@ class EfficiencySalerReport(models.Model):
 
     def _where(self):
         return ''
-        ####
+        #### For DEBUG:
         return """
             WHERE indicators.origin_id = '00-00023608' and indicators.identifier_ib = '370515e0-f824-48f3-89ba-89db66b1d618'
         """
 
     def _group(self):
         return """
-            GROUP BY manager_name, manager_1c_id, client_name, client_1c_id, business_type
+            GROUP BY manager_name, manager_1c_id, client_name, client_1c_id, business_type, price_level
         """
 
     def init(self):

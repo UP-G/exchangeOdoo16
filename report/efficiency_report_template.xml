@@ -155,6 +155,7 @@
                     / </t>
                     <span t-esc="doc['client_name']" t-att-title="doc['client_1c_id']"/>
                     / <span t-esc="doc['business_type']"/>
+                    / <span t-esc="doc['price_level']"/>
                 </td>
                 <td t-if="header=='manager_name'" class="text-center"><span t-esc="doc['manager_name']"/></td>
                 <td t-if="header=='client_name'" class="text-center">

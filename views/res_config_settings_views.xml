@@ -119,7 +119,7 @@
                                         </div>
                                         <div class="content-group">
                                             <div class="mt16" groups="base.group_no_one">
-                                                <field name="best_one_filter" class="oe_inline"/>
+                                                <field name="best_one_filter" class="w-100" widget="text"/>
                                             </div>
                                         </div>
                                     </div>
@@ -136,6 +136,40 @@
                                         <div class="content-group">
                                             <div class="mt16" groups="base.group_no_one">
                                                 <field name="registration_date_partner" class="oe_inline"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <br/>
+                                </div>
+                                <div class="col-12 col-lg-6 o_setting_box" id="price_level_connection">
+                                    <br/>
+                                    <div class="o_setting_right_pane">
+                                        <span class="o_form_label">Analisys database connection settings</span>
+                                        <span class="fa fa-lg fa-building-o" title="Set Analisys database connection settings" 
+                                            aria-label='{"server": "servername,port", "database": "basename", "user": "username", "password": "secret" }' groups="base.group_multi_company"/>
+                                        <div class="text-muted">
+                                            Describe MS SQL Connection to Analisys DataBase in format:<br/>
+                                            {"server": "servername,port", "database": "basename", "user": "username", "password": "secret" }
+                                        </div>
+                                        <div class="content-group">
+                                            <div class="mt16" groups="base.group_no_one">
+                                                <field name="price_level_connection" class="w-100" widget="text"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <br/>
+                                </div>
+                                <div class="col-12 col-lg-6 o_setting_box" id="price_level_actuality">
+                                    <br/>
+                                    <div class="o_setting_right_pane">
+                                        <span class="o_form_label">Actual Hours for Price Level Info</span>
+                                        <span class="fa fa-lg fa-building-o" title="Set an Actual Hours for Price Level Info" aria-label="Actual Hours for Price Level Info" groups="base.group_multi_company"/>
+                                        <div class="text-muted">
+                                            Set an actual Hours for Price Level Info
+                                        </div>
+                                        <div class="content-group">
+                                            <div class="mt16" groups="base.group_no_one">
+                                                <field name="price_level_actuality" class="oe_inline"/>
                                             </div>
                                         </div>
                                     </div>

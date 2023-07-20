@@ -32,6 +32,7 @@ class EfficiencySalerReport(models.Model):
     client_name = fields.Char('Client Name') # Клиент (+"не известный" в первой строке - все клиенты, чьи телефоны не найдены в контактах)
     client_1c_id = fields.Char('Client 1C ID') # origin_id
     business_type = fields.Char('Client Business Type') # ДИТ_ВидДеятельности_Key.Description
+    price_level = fields.Char('Price Level') # DB Analisys
 
     plan = fields.Float(string='Plan this month') # План на текущий месяц (макс(среднее в день за предыдущий месяц; среднее в день за 3 месяца) * кол-во дней в текущем месяце)
     # plan_percentage = fields.Float('Plan percantage') # Процент выполнения плана, поле долно быть вычисляемым, чтобы корректно работало при группировках

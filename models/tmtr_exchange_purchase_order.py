@@ -146,15 +146,35 @@ class TmtrExchangeOneCPurchaseOrder(models.Model):
 #                'departed_on_route': f"{route_tms.start_time.date()} {datetime.strptime(order_data['Маршруты'][0]['ВремяВыезда'], '%Y-%m-%dT%H:%M:%S').time()}",
                         })
         return order
+
+    def create_delivery(self, json_value, route_tms):
+
+        delivery = self.env['tms.delivery'].create({
+                        'route_id': route_tms.id,
+                            'name': json_value['Number'],
+                            'order_num': json_value['Number'],
+                            'notes': json_value['Примичание'],
+                        })
+        return delivery    
     
     def upload_returns_row(self, impl_json_value, order_tms):
         self.env['tms.order.row'].create({
                             'order_id': order_tms.id,
                             'note': impl_json_value['Комментарий'],
                     #'route_point_id': point_tms.id,
+                            'order_row_type': 'return',
                             'impl_num': "Возврат {number}".format(number=impl_json_value['LineNumber']),
                             'comment': "{phone};{address}".format(phone='-',address=impl_json_value['Адрес']),
                             #'partner_key': self.update_partner_by_name(impl['Контрагент']),
+                        })
+
+    def create_returns_delivery(self, impl_json_value, tms_delivery):
+        self.env['tms.delivery.row'].create({
+                            'order_id': tms_delivery.id,
+                            'selected_1c': impl_json_value['Выбрать'],
+                            'order_row_type': 'return',
+                            'impl_num': "Возврат {number}".format(number=impl_json_value['LineNumber']),
+                            'comment': "{phone};{address}".format(phone='-',address=impl_json_value['Адрес']),
                         })
 
     def upload_order_row(self, impl_json_value, order_tms):
@@ -162,9 +182,19 @@ class TmtrExchangeOneCPurchaseOrder(models.Model):
                                 'order_id': order_tms.id,
                                 'note': impl_json_value['Комментарий'],
                         #'route_point_id': point_tms.id,
+                                'order_row_type': 'delivery',
                                 'impl_num': impl_json_value['Номер'],
                                 'comment': "{phone};{address}".format(phone=impl_json_value['Телефон'], address=impl_json_value['АдресДоставки']),
                                 #'partner_key': self.update_partner(item['Контрагент_Key']),
+                            })
+
+    def create_delivery_row(self, impl_json_value, tms_delivery):
+        self.env['tms.delivery.row'].create({
+                                'delivery_id': tms_delivery.id,
+                                'order_row_type': 'delivery',
+                                'selected_1c': impl_json_value['Выбрать'],
+                                'impl_num': impl_json_value['Номер'],
+                                'comment': "{phone};{address}".format(phone=impl_json_value['Телефон'], address=impl_json_value['АдресДоставки']),
                             })
 
     def upload_order_by_number2(self, order_number):
@@ -283,19 +313,20 @@ class TmtrExchangeOneCPurchaseOrder(models.Model):
         key_ids = []
         total_cnt = 0
         date = None
+        stock_not_upload = False
 
         stock_key = self.env['ir.config_parameter'].get_param('tmtr.exchange.1c_stock_not_upload') # Склады, которе не успели выгрузится
         finish_before = datetime.now() + timedelta(minutes=1) # ограничить время работы скрипта одной минутой
 
         if stock_key: #Если есть не выгруженные маршруты по складам
-            stock_key = eval(stock_key)
+            stock_key = json.loads(stock_key.replace("'", "\""))
             date = stock_key['date']
+            stock_not_upload = True
 
         if not from_date and not date:
             from_date = fields.Date.to_date(self.env['ir.config_parameter'].sudo().get_param('tmtr.exchange.1c_purchase_order_date','2023-07-11 00:00:00'))
-
-        if not date:
             date = from_date.strftime("%Y-%m-%dT%H:%M:%S")
+
         date_till = datetime.now().strftime("%Y-%m-%dT%H:%M:%S") # не искать дальше текущей даты
 
         if not stock_key:
@@ -303,14 +334,14 @@ class TmtrExchangeOneCPurchaseOrder(models.Model):
                                                       "&", ("end_time", "=", None), "&", ("stock_id", "!=", None), 
                                                       "&", ("route_1c_key", "=", None), ("stock_1c_key", "!=", None)])
             
-        key_ids = [r['stock_1c_key'] for r in stock_key]
+        key_ids = [r for r in stock_key['stock_1c_key']]
 
         copy_key_ids = key_ids[:]
 
         while datetime.now() < finish_before:
             cnt = 0
             if len(key_ids) == 0: #Если всё выгрузили
-                if not date < date_till:
+                if not date < date_till or stock_not_upload: #Если старая выгрузrа завершилось, то прерываем
                     break
                 # перейти к следующему дню, если он в прошлом
                 key_ids = copy_key_ids[:] # Запись маршрутов
@@ -351,11 +382,11 @@ class TmtrExchangeOneCPurchaseOrder(models.Model):
 
         obj = {}    
         if key_ids != []: #Если не успели выгрузится все маршруты, то сохраняем до следующей выгрузки
-            obj['stock_1c_key'] = key_ids
-            obj['date'] = date
+            obj = {'stock_1c_key': [key  for key in key_ids], 'date': date}
+            
             stock_key = self.env['ir.config_parameter'].set_param('tmtr.exchange.1c_stock_not_upload', obj)
 
-        if date <= date_till:
+        if date <= date_till and not stock_not_upload: #Еслы выгружали по прошлым складам, то дату не записываем, 
             self.env['ir.config_parameter'].sudo().set_param('tmtr.exchange.1c_purchase_order_date', from_date)
             
         return {
@@ -383,3 +414,90 @@ class TmtrExchangeOneCPurchaseOrder(models.Model):
             route = self.env['tms.route'].search(["&", ("name", "!=", None), "&", ("stock_id", "=", None), 
                                                         "&", ("route_1c_key", "!=", None), ("stock_1c_key", "=", item['stock_1c_key'])])
             route.update({'stock_id': item['stock_id']})
+
+    def upload_deliveries_by_stock_key(self, from_date=None, stock_upload=None, top=50, skip=0):
+        key_ids = []
+        total_cnt = 0
+        date = None
+        stock_not_upload = False
+
+        stock_key = self.env['ir.config_parameter'].get_param('tmtr.exchange.1c_stock_not_upload') # Склады, которе не успели выгрузится
+        finish_before = datetime.now() + timedelta(minutes=1) # ограничить время работы скрипта одной минутой
+
+        if stock_key: #Если есть не выгруженные маршруты по складам
+            stock_key = json.loads(stock_key.replace("'", "\""))
+            date = stock_key["date"]
+            key_ids = [r for r in stock_key['stock_1c_key']]
+            stock_not_upload = True
+
+        if not from_date:
+            from_date = fields.Date.to_date(self.env['ir.config_parameter'].sudo().get_param('tmtr.exchange.1c_purchase_order_date','2023-07-11 00:00:00'))
+        if not stock_not_upload:
+            date = from_date.strftime("%Y-%m-%dT%H:%M:%S")
+
+        date_till = datetime.now().strftime("%Y-%m-%dT%H:%M:%S") # не искать дальше текущей даты
+
+        if not stock_not_upload:
+            stock_key = self.env['tms.route'].search(["&", ("name", "=", 'upload'), "&", ("start_time", "=", None), 
+                                                      "&", ("end_time", "=", None), "&", ("stock_id", "!=", None), 
+                                                      "&", ("route_1c_key", "=", None), ("stock_1c_key", "!=", None)])
+            
+            key_ids = [r['stock_1c_key'] for r in stock_key]
+
+        copy_key_ids = key_ids[:]
+
+        while datetime.now() < finish_before:
+            cnt = 0
+            if len(key_ids) == 0: #Если всё выгрузили
+                if not date < date_till or stock_not_upload: #Если старая выгрузrа завершилось, то прерываем
+                    break
+                # перейти к следующему дню, если он в прошлом
+                key_ids = copy_key_ids[:] # Запись маршрутов
+                from_date += timedelta(days=1)
+                date = from_date.strftime("%Y-%m-%dT%H:%M:%S")
+                skip = 0
+
+            purchases_data = self.get_p_order_on_stock_key(date=date, stock_key=key_ids[0], top=top, skip=skip)
+
+            if not purchases_data: #Если нет больше для склада маршрутов
+                key_ids.remove(key_ids[0]) #Переход к следующему
+                skip = 0
+                continue # Возрат в начала while
+
+            skip += top
+                
+            for purchase_data in purchases_data:
+                if not self.env['tms.route'].have_stock(purchase_data):
+                    _logger.info(f"order {purchase_data['Number']} dosent have a stock in DB")
+                    continue
+                
+                routes = self.env['tms.route'].upload_new_route(purchase_data)
+                driver = self.env['tmtr.exchange.1c.individual'].upload_new_individual(purchase_data['Водитель_Key'])#выгрузка водителей
+                delivery_tms = self.env['tms.delivery'].search([('order_num','=',purchase_data['Number'])])
+                if not delivery_tms and routes:
+                    delivery_tms = self.create_delivery(purchase_data, routes[0])
+                    cnt += 1
+
+                if not delivery_tms.delivery_row_ids and (purchase_data['Реализации'] or purchase_data['ДопУслуги']):
+                    if purchase_data['Реализации'] != []:
+                        for item in purchase_data['Реализации']:
+                            self.create_delivery_row(item, delivery_tms)
+                    if purchase_data['ДопУслуги'] != []:
+                        for item in purchase_data['ДопУслуги']:
+                            self.create_returns_delivery(item, delivery_tms)
+                
+            total_cnt += cnt
+
+        obj = {}    
+        if key_ids != []: #Если не успели выгрузится все маршруты, то сохраняем до следующей выгрузки
+            obj = {'stock_1c_key': [key for key in key_ids], 'date': date}
+            
+            stock_key = self.env['ir.config_parameter'].set_param('tmtr.exchange.1c_stock_not_upload', obj)
+
+        if date <= date_till and not stock_not_upload: #Еслы выгружали по прошлым складам, то дату не записываем, 
+            self.env['ir.config_parameter'].sudo().set_param('tmtr.exchange.1c_purchase_order_date', from_date)
+            
+        return {
+            'total_cnt': total_cnt,
+            'not_upload': obj,
+            }
