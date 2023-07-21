@@ -215,6 +215,7 @@ class TmtrExchangeOneCIndicators(models.Model):
 
     @api.model
     def get_conn_db_analisys(self):
+        price_level_connection = json.loads(self.env['ir.config_parameter'].sudo().get_param('tmtr_exchange.price_level_connection','{}'))
         cnxn = pyodbc.connect(driver='FreeTDS',
             #    server='DCSRV-ERP-03.tmtr.ru,1433', 
             server=price_level_connection.get('server',''),
@@ -226,7 +227,6 @@ class TmtrExchangeOneCIndicators(models.Model):
         return cnxn.cursor()
 
     def update_price_level_selected(self):
-        price_level_connection = json.loads(self.env['ir.config_parameter'].sudo().get_param('tmtr_exchange.price_level_connection','{}'))
         level_updated_now = datetime.now()
         clients = self 
         cursor = self.get_conn_db_analisys()
