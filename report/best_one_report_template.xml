@@ -60,7 +60,8 @@
                             <span t-esc="client.capacity" t-options='{"widget": "float", "precision": 0}'/> <span>EUR</span>
                             (30% = <span t-esc="client.capacity * 0.3" t-options='{"widget": "float", "precision": 0}'/> <span>EUR</span>)</li>
                         <li t-if="client.debt &gt; 0"><span>Долг</span>: <span t-esc="client.debt" t-options='{"widget": "float", "precision": 0}'/> <span>руб.</span></li>
-                        <li t-if="client.overdue_debt &gt; 0"><span>Просроченный долг</span>: <b><span t-esc="client.overdue_debt" t-options='{"widget": "float", "precision": 0}'/></b> <span>руб.</span></li>
+                        <li t-if="client.overdue_debt &gt; 0"><span>Просроченный долг</span>: <b><span t-esc="client.overdue_debt" t-options='{"widget": "float", "precision": 0}'/></b>
+                            <span>руб.</span> <span>(сутки назад, актуальные долги в таблице ниже)</span></li>
                     </ul>
                     </div>
                 </td>
