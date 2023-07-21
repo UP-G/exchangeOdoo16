@@ -58,6 +58,7 @@ You have the follow options to create a 'computed measure':
                     <field name="type_capacity" optional="show"/>
                     <field name="business_type" optional="hide" />
                     <field name="price_level" optional="hide" />
+                    <field name="requests_limit" optional="hide" />
                     <field name="date" optional="hide"/> 
                     <field name="plan" optional="show"/>
                     <field name="prediction" optional="show"/>
@@ -109,6 +110,7 @@ You have the follow options to create a 'computed measure':
                                 <field name="client_name" class="o_text_overflow" />
                                 <field name="business_type" class="o_text_overflow" />
                                 <field name="price_level" />
+                                <field name="requests_limit" />
                             </group> 
                             <group>
                                 <field name="plan"/>
@@ -149,6 +151,7 @@ You have the follow options to create a 'computed measure':
                     <field name="client_1c_id"/>
                     <field name="business_type"/>
                     <field name="price_level"/>
+                    <field name="requests_limit"/>
                     <separator/>
                     <filter string="Key clients" name="filter_is_main" domain="[('type_client', '=', '4_main')]"/>
                     <filter string="Key+meaningfull clients" name="filter_is_main_second" domain="[('type_client', 'in', ['4_main','5_mean'])]"/>
@@ -163,6 +166,7 @@ You have the follow options to create a 'computed measure':
                     <filter string="Overdued debts" name="filter_is_main" domain="[('overdue_debt', '>', '0')]"/>
                     <separator/>
                     <filter string="Last 31 days" name="filter_last_month_creation" domain="[('date','&gt;', (context_today() - datetime.timedelta(days=31)).strftime('%Y-%m-%d'))]"/>
+                    <filter string="Low limit for daily requests" name="filter_low_requests_limit" domain="[('requests_limit','&gt;', '10')]"/>
                     <group expand="0" string="Group By">
                         <filter string="Manager" name="manager" domain="[]" context="{'group_by':'manager_name'}"/>
                         <filter string="Client" name="client" domain="[]" context="{'group_by':'client_name'}"/>

@@ -20,6 +20,7 @@ class TmtrExchangeOneCPartner(models.Model):
     capacity = fields.Float(string='Client capacity') # ТМ_ЕмкостьКлиента
     our_share = fields.Float(string="Our share in client's purchases") # ТМ_ПроцентЗакупокНашаДоля
     business_type_key = fields.Char(string='Business Type Key') # ДИТ_ВидДеятельности_Key
+    requests_limit = fields.Char(string='Daily requests limit') # ДИТ_МаксимальноеЧислоЗапросов
 
     user_id = fields.Many2one('res.users', string='Manager')
 
@@ -57,17 +58,23 @@ class TmtrExchangeOneCPartner(models.Model):
             _logger.info(e)
             return
 
-    def update_partner(self, model_fields=['capacity', 'our_share', 'business_type_key', 'description'], code=None, skip=0, top=100):
+    def update_partner(self, model_fields=['capacity', 'our_share', 'business_type_key', 'description', 'requests_limit'], code=None, skip=0, top=100, limit_minutes=1):
         try:
-            finish_before = datetime.now() + timedelta(minutes=1) # ограничить время работы скрипта одной минутой
+            finish_before = datetime.now() + timedelta(minutes=limit_minutes) # ограничить время работы скрипта
 
             if not code: #Если не указан с какого code начинаем выкачиваем
-                partner_list= self.env['tmtr.exchange.1c.partner'].search([('code', 'like', '00-')],
+                if len(self) == 0:
+                    partner_list= self.env['tmtr.exchange.1c.partner'].search([('code', 'like', '00-')],
                           order="write_date asc",limit=1) #Берем последний обновленный code
-                if not partner_list:
-                    code = '00-00000000'
+                    if not partner_list:
+                        code = '00-00000000'
+                    else:
+                        code = partner_list.code
                 else:
-                    code = partner_list.code
+                    # TODO: заменить на гарантированную обработку всего списка, но экономя нагрузку на 1С УТ
+                    codes = self.mapped('code')
+                    codes.sort()
+                    code = codes[0]
             cnt = 0
             last_updated = ''
             empty_result = 0
@@ -96,20 +103,6 @@ class TmtrExchangeOneCPartner(models.Model):
         partner = self.env['tmtr.exchange.1c.partner'].search([("ref_key", "=", json_data['Ref_Key'])])
         if not partner:
             return 1 if self.create(self.odata_array_to_model(json_data, ['all'])) else 0
-            """
-            return 1 if self.env['tmtr.exchange.1c.partner'].create({
-                            'ref_key' : json_data['Ref_Key'],
-                            'parent_key' : json_data['Parent_Key'],
-                            'code' : json_data['Code'],
-                            'description' : json_data['Description'],
-                            'full_name' : json_data['НаименованиеПолное'],
-                            'main_manager_key' : json_data['ОсновнойМенеджер_Key'],
-                            'date_of_registration' : self.parse_date(json_data['ДатаРегистрации']),
-                            'capacity' : json_data['ТМ_ЕмкостьКлиента'],
-                            'our_share' : json_data['ТМ_ПроцентЗакупокНашаДоля'],
-                            'business_type_key' : json_data['ДИТ_ВидДеятельности_Key'],
-                        }) else 0
-            """
         else:
             return 0
 
@@ -126,6 +119,7 @@ class TmtrExchangeOneCPartner(models.Model):
             'capacity' : 'ТМ_ЕмкостьКлиента',
             'our_share' : 'ТМ_ПроцентЗакупокНашаДоля',
             'business_type_key' : 'ДИТ_ВидДеятельности_Key',
+            'requests_limit' : 'ДИТ_МаксимальноеЧислоЗапросов',
         }
         data = {}
         if 'all' in model_fields:

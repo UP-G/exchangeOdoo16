@@ -6,6 +6,7 @@
         'web',
         'mail',
         'tms',
+        'base_odata_1c',
     ],
     'data': [
         'security/ir.model.access.csv',

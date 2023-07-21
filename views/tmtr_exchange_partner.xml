@@ -28,6 +28,7 @@
                 <field name="full_name" optional="show"/>
                 <field name="main_manager_key" optional="show"/>
                 <field name="date_of_registration" optional="show"/>
+                <field name="requests_limit" optional="show"/>
             </tree>
         </field>
     </record>
@@ -54,6 +55,7 @@
                         <field name="capacity"/>
                         <field name="our_share"/>
                         <field name="business_type_key"/>
+                        <field name="requests_limit" optional="show"/>
                         </group>
                     </group>
                 </sheet>

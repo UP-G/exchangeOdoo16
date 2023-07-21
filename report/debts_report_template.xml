@@ -4,16 +4,23 @@
     <table border="1">
         <tr><th>Долг </th><th>Дней просрочки</th><th>Название документа</th></tr>
         <t t-set="cnt" t-value="0"/>
+        <t t-set="total" t-value="0"/>
         <t t-foreach="documents" t-as="document">
             <t t-if="(document['summdolg'] != 0) and (document['dayprosroch'] &gt; 0)">
                 <tr><td style="border-right: 1px solid black; text-align: right;"><t t-out="float(document.get('summdolg',0))" t-options='{"widget": "float", "precision": 2}'/></td>
                 <td style="text-align: center;"><t t-out="document['dayprosroch']"/></td>
                 <td><t t-out="document['doc']"/></td></tr>
                 <t t-set="cnt" t-value="cnt + 1"/>
+                <t t-set="total" t-value="total + float(document.get('summdolg',0))"/>
             </t>
         </t>
         <t t-if="cnt==0">
             <tr><td colspan="3">Нет документов с просроченным долгом</td></tr>
+        </t>
+        <t t-if="total &gt; 0">
+            <tr><td style="border-right: 1px solid black; text-align: right;"><b><t t-out="total" t-options='{"widget": "float", "precision": 2}'/></b></td>
+            <td>-</td>
+            <td>-</td></tr>
         </t>
     </table>
 </template>

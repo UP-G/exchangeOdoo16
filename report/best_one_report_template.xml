@@ -51,6 +51,7 @@
                     <div><span>Статистика по клиенту:</span>
                     <ul style="margin-block-start: 0px;">
                         <li><span>Уровень цен</span>: <span t-esc="client.price_level"/></li>
+                        <li><span>Лимит запросов в день</span>: <span t-esc="client.requests_limit"/></li>
                         <li><span>Потенциал (план на месяц)</span>: <span t-esc="client.plan" t-options='{"widget": "float", "precision": 0}'/> <span>EUR</span></li>
                         <li><span>Текущий прогноз</span>: <span t-esc="client.prediction" t-options='{"widget": "float", "precision": 0}'/> <span>EUR</span></li>
                         <li t-if="client.turnover_lacking &gt; 0"><span>Недостающая выручка (до плана)</span>: <b><span t-esc="client.turnover_lacking" t-options='{"widget": "float", "precision": 0}'/></b> <span>EUR</span></li>
@@ -62,6 +63,7 @@
                         <li t-if="client.debt &gt; 0"><span>Долг</span>: <span t-esc="client.debt" t-options='{"widget": "float", "precision": 0}'/> <span>руб.</span></li>
                         <li t-if="client.overdue_debt &gt; 0"><span>Просроченный долг</span>: <b><span t-esc="client.overdue_debt" t-options='{"widget": "float", "precision": 0}'/></b>
                             <span>руб.</span> <span>(сутки назад, актуальные долги в таблице ниже)</span></li>
+                        <li><span>Тип бизнеса</span>: <span t-esc="client.business_type"/></li>
                     </ul>
                     </div>
                 </td>
@@ -86,45 +88,45 @@
                 <th align="left">Выручка</th>
                 <td align="center"><t t-esc="client.plan" t-options='{"widget": "float", "precision": 0}'/></td>
                 <td align="center"><t t-esc="client.prediction" t-options='{"widget": "float", "precision": 0}'/>
-                    (<t t-esc="client.prediction / client.plan * 100 if client.plan &gt; 0 else '-'" t-options='{"widget": "float", "precision": 1}'/>%)</td>
-                <td align="center"><t t-esc="metrics.get('turnover_thismonth', '-')" t-options='{"widget": "float", "precision": 0}'/></td>
-                <td align="center"><t t-esc="metrics.get('turnover_30days', '-')" t-options='{"widget": "float", "precision": 0}'/></td>
-                <td align="center"><t t-esc="metrics.get('turnover_prevmonth', '-')" t-options='{"widget": "float", "precision": 0}'/></td>
-                <td align="center"><t t-esc="metrics.get('turnover_3month', '-')" t-options='{"widget": "float", "precision": 0}'/></td>
-                <td align="center"><t t-esc="metrics.get('turnover_3month') / 3 if metrics.get('turnover_3month') else '-'" t-options='{"widget": "float", "precision": 0}'/></td>
+                    (<t t-esc="client.prediction / client.plan * 100 if client.plan &gt; 0 else 0" t-options='{"widget": "float", "precision": 1}'/>%)</td>
+                <td align="center"><t t-esc="metrics.get('turnover_thismonth', 0)" t-options='{"widget": "float", "precision": 0}'/></td>
+                <td align="center"><t t-esc="metrics.get('turnover_30days', 0)" t-options='{"widget": "float", "precision": 0}'/></td>
+                <td align="center"><t t-esc="metrics.get('turnover_prevmonth', 0)" t-options='{"widget": "float", "precision": 0}'/></td>
+                <td align="center"><t t-esc="metrics.get('turnover_3month', 0)" t-options='{"widget": "float", "precision": 0}'/></td>
+                <td align="center"><t t-esc="metrics.get('turnover_3month') / 3 if metrics.get('turnover_3month') else 0" t-options='{"widget": "float", "precision": 0}'/></td>
             </tr>
             <tr>
                 <th align="left">Товарные группы</th>
                 <td align="center">-</td>
                 <td align="center">Доля:
-                    <t t-esc="(metrics.get('groups_thismonth', 0) / metrics.get('turnover_thismonth')) * 100 if metrics.get('turnover_thismonth') &gt; 0 else '-'" t-options='{"widget": "float", "precision": 1}'/>%</td>
-                <td align="center"><t t-esc="metrics.get('groups_thismonth', '-')" t-options='{"widget": "float", "precision": 0}'/></td>
-                <td align="center"><t t-esc="metrics.get('groups_30days', '-')" t-options='{"widget": "float", "precision": 0}'/></td>
-                <td align="center"><t t-esc="metrics.get('groups_prevmonth', '-')" t-options='{"widget": "float", "precision": 0}'/></td>
-                <td align="center"><t t-esc="metrics.get('groups_3month', '-')" t-options='{"widget": "float", "precision": 0}'/></td>
-                <td align="center"><t t-esc="metrics.get('groups_3month') / 3 if metrics.get('groups_3month') else '-'" t-options='{"widget": "float", "precision": 0}'/></td>
+                    <t t-esc="(metrics.get('groups_thismonth', 0) / metrics.get('turnover_thismonth')) * 100 if metrics.get('turnover_thismonth') &gt; 0 else 0" t-options='{"widget": "float", "precision": 1}'/>%</td>
+                <td align="center"><t t-esc="metrics.get('groups_thismonth', 0)" t-options='{"widget": "float", "precision": 0}'/></td>
+                <td align="center"><t t-esc="metrics.get('groups_30days', 0)" t-options='{"widget": "float", "precision": 0}'/></td>
+                <td align="center"><t t-esc="metrics.get('groups_prevmonth', 0)" t-options='{"widget": "float", "precision": 0}'/></td>
+                <td align="center"><t t-esc="metrics.get('groups_3month', 0)" t-options='{"widget": "float", "precision": 0}'/></td>
+                <td align="center"><t t-esc="metrics.get('groups_3month') / 3 if metrics.get('groups_3month') else 0" t-options='{"widget": "float", "precision": 0}'/></td>
             </tr>
             <tr>
                 <th align="left">Sonder</th>
                 <td align="center">-</td>
                 <td align="center">Доля:
-                    <t t-esc="(metrics.get('sonder_thismonth', 0) / metrics.get('turnover_thismonth')) * 100 if metrics.get('turnover_thismonth') &gt; 0 else '-'" t-options='{"widget": "float", "precision": 1}'/>%</td>
-                <td align="center"><t t-esc="metrics.get('sonder_thismonth', '-')" t-options='{"widget": "float", "precision": 0}'/></td>
-                <td align="center"><t t-esc="metrics.get('sonder_30days', '-')" t-options='{"widget": "float", "precision": 0}'/></td>
-                <td align="center"><t t-esc="metrics.get('sonder_prevmonth', '-')" t-options='{"widget": "float", "precision": 0}'/></td>
-                <td align="center"><t t-esc="metrics.get('sonder_3month', '-')" t-options='{"widget": "float", "precision": 0}'/></td>
-                <td align="center"><t t-esc="metrics.get('sonder_3month') / 3 if metrics.get('sonder_3month') else '-'" t-options='{"widget": "float", "precision": 0}'/></td>
+                    <t t-esc="(metrics.get('sonder_thismonth', 0) / metrics.get('turnover_thismonth')) * 100 if metrics.get('turnover_thismonth') &gt; 0 else 0" t-options='{"widget": "float", "precision": 1}'/>%</td>
+                <td align="center"><t t-esc="metrics.get('sonder_thismonth', 0)" t-options='{"widget": "float", "precision": 0}'/></td>
+                <td align="center"><t t-esc="metrics.get('sonder_30days', 0)" t-options='{"widget": "float", "precision": 0}'/></td>
+                <td align="center"><t t-esc="metrics.get('sonder_prevmonth', 0)" t-options='{"widget": "float", "precision": 0}'/></td>
+                <td align="center"><t t-esc="metrics.get('sonder_3month', 0)" t-options='{"widget": "float", "precision": 0}'/></td>
+                <td align="center"><t t-esc="metrics.get('sonder_3month') / 3 if metrics.get('sonder_3month') else 0" t-options='{"widget": "float", "precision": 0}'/></td>
             </tr>
             <tr>
                 <th align="left">EBS</th>
                 <td align="center">-</td>
                 <td align="center">Доля:
-                    <t t-esc="(metrics.get('ebs_thismonth', 0) / metrics.get('turnover_thismonth')) * 100 if metrics.get('turnover_thismonth') &gt; 0 else '-'" t-options='{"widget": "float", "precision": 1}'/>%</td>
-                <td align="center"><t t-esc="metrics.get('ebs_thismonth', '-')" t-options='{"widget": "float", "precision": 0}'/></td>
-                <td align="center"><t t-esc="metrics.get('ebs_30days', '-')" t-options='{"widget": "float", "precision": 0}'/></td>
-                <td align="center"><t t-esc="metrics.get('ebs_prevmonth', '-')" t-options='{"widget": "float", "precision": 0}'/></td>
-                <td align="center"><t t-esc="metrics.get('ebs_3month', '-')" t-options='{"widget": "float", "precision": 0}'/></td>
-                <td align="center"><t t-esc="metrics.get('ebs_3month') / 3 if metrics.get('ebs_3month') else '-'" t-options='{"widget": "float", "precision": 0}'/></td>
+                    <t t-esc="(metrics.get('ebs_thismonth', 0) / metrics.get('turnover_thismonth')) * 100 if metrics.get('turnover_thismonth') &gt; 0 else 0" t-options='{"widget": "float", "precision": 1}'/>%</td>
+                <td align="center"><t t-esc="metrics.get('ebs_thismonth', 0)" t-options='{"widget": "float", "precision": 0}'/></td>
+                <td align="center"><t t-esc="metrics.get('ebs_30days', 0)" t-options='{"widget": "float", "precision": 0}'/></td>
+                <td align="center"><t t-esc="metrics.get('ebs_prevmonth', 0)" t-options='{"widget": "float", "precision": 0}'/></td>
+                <td align="center"><t t-esc="metrics.get('ebs_3month', 0)" t-options='{"widget": "float", "precision": 0}'/></td>
+                <td align="center"><t t-esc="metrics.get('ebs_3month') / 3 if metrics.get('ebs_3month') else 0" t-options='{"widget": "float", "precision": 0}'/></td>
             </tr>
             </tbody>
             </table>
