@@ -35,7 +35,7 @@ class TmtrExchangeOneCPartner(models.Model):
             finish_before = datetime.now() + timedelta(minutes=1) # ограничить время работы скрипта одной минутой
 
             if not code: #Если не указан с какого code начинаем выкачиваем
-                partner_list= self.env['tmtr.exchange.1c.partner'].search([('code', 'like', '00-')],
+                partner_list= self.search([('code', 'like', '00-')],
                           order="code desc",limit=1) #Берем максимальный code
                 if not partner_list:
                     code = '00-00000000'
@@ -76,7 +76,7 @@ class TmtrExchangeOneCPartner(models.Model):
 
             if not code: #Если не указан с какого code начинаем выкачиваем
                 if len(self) == 0:
-                    partner_list= self.env['tmtr.exchange.1c.partner'].search([('code', 'like', '00-')],
+                    partner_list= self.search([('code', 'like', '00-')],
                           order="write_date asc",limit=1) #Берем последний обновленный code
                     if not partner_list:
                         code = '00-00000000'
@@ -112,7 +112,7 @@ class TmtrExchangeOneCPartner(models.Model):
 
 
     def create_by_odata_json(self, json_data):
-        partner = self.env['tmtr.exchange.1c.partner'].search([("ref_key", "=", json_data['Ref_Key'])])
+        partner = self.search([("ref_key", "=", json_data['Ref_Key'])])
         if not partner:
             return 1 if self.create(self.odata_array_to_model(json_data, ['all'])) else 0
         else:
@@ -148,7 +148,7 @@ class TmtrExchangeOneCPartner(models.Model):
 
 
     def update_by_odata_json(self, json_data, model_fields=[]):
-        partner = self.env['tmtr.exchange.1c.partner'].search([("ref_key", "=", json_data['Ref_Key'])])
+        partner = self.search([("ref_key", "=", json_data['Ref_Key'])])
         if model_fields and partner:
             partner.update(self.odata_array_to_model(json_data,model_fields))
             return 1

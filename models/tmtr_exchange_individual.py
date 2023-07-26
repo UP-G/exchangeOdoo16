@@ -57,7 +57,7 @@ class TmtrExchangeOneCIndividual(models.Model):
                 _logger.info(e)
 
     def create_new_individual(self, json_date):
-        self.env['tmtr.exchange.1c.individual'].create({
+        self.create({
             'ref_key' : json_date['Ref_Key'],
             'full_name' : json_date['Description'],
             'tm_code' : json_date['ТМ_Код'],
@@ -69,7 +69,7 @@ class TmtrExchangeOneCIndividual(models.Model):
     
     def create_new_tms_drivers(self):#сделать выгрузку из tmtr.exchange в водителей, когда произойдет слияние веток в гите 
         try:
-            data = self.env['tmtr.exchange.1c.individual'].search([('carrier_driver_id', '=', False)])
+            data = self.search([('carrier_driver_id', '=', False)])
             if not data:
                 return
 

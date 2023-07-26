@@ -19,9 +19,9 @@ class TmtrExchangeOneCUser(models.Model):
         if not template_id:
             return
         
-        onec_user = self.env['tmtr.exchange.1c.user'].search(["&", ('user_id', '=', None), 
-                                                              ('identifier_ib', '!=', '00000000-0000-0000-0000-000000000000')], 
-                                                              limit=limit)
+        onec_user = self.search(["&", ('user_id', '=', None), 
+                                      ('identifier_ib', '!=', '00000000-0000-0000-0000-000000000000')], 
+                              limit=limit)
 
         for onec_user_data in onec_user:     
             manager = self.env['tmtr.exchange.1c.interaction'].search(["&", ('responsible_key', '!=', onec_user_data['ref_key']),
@@ -66,7 +66,7 @@ class TmtrExchangeOneCUser(models.Model):
             obj = {}
     
     def upload_user(self, top, skip):
-        max_code_user = self.env['tmtr.exchange.1c.user'].search([('code', "!=", None)],order="code desc",limit=1)['code']
+        max_code_user = self.search([('code', "!=", None)],order="code desc",limit=1)['code']
 
         if not max_code_user:
             max_code_user = '00000000000'
@@ -84,10 +84,10 @@ class TmtrExchangeOneCUser(models.Model):
 
 
     def create_by_odata_json(self, data_user):
-        onec_user = self.env['tmtr.exchange.1c.user'].search([('ref_key', "=", data_user['Ref_Key'])])
+        onec_user = self.search([('ref_key', "=", data_user['Ref_Key'])])
         if onec_user:
             return onec_user
-        return self.env['tmtr.exchange.1c.user'].create({
+        return self.create({
                 'ref_key': data_user['Ref_Key'],
                 'description': data_user['Description'],
                 'code': data_user['Code'],
@@ -110,7 +110,7 @@ class TmtrExchangeOneCUser(models.Model):
 
 
     def update_user_id(self, limit):
-        users = self.env['tmtr.exchange.1c.user'].search([('user_id', "=", None)], limit=limit)
+        users = self.search([('user_id', "=", None)], limit=limit)
 
         for user in users:
             res_user = self.env['res.users'].search([('name', "=", user['description'])])['id']

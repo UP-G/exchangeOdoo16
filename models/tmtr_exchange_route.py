@@ -26,7 +26,7 @@ class TmtrExchangeOneCRoute(models.Model):
     #     for json_data in tms_route_data:
     #         if json_data['DeletionMark'] == True:
     #             continue
-    #         route = self.env['tmtr.exchange.1c.route'].search([("route_key", "=", json_data['Ref_Key'])])
+    #         route = self.search([("route_key", "=", json_data['Ref_Key'])])
     #     #     # if not order:>
     #     #     #     order = self.env['tmtr.exchange.1c.purchase.order'].create({
     #     #     #             'ref_key' : json_data['Ref_Key'],
@@ -56,7 +56,7 @@ class TmtrExchangeOneCRoute(models.Model):
 
         # route_exists = dict((r.ref, r.ref) for r in self.search([("Ref_Key", "in", ref_ids)]))
         for item in routes_data:
-            route = self.env['tmtr.exchange.1c.route'].search([("route_key", "=", item['Ref_Key'])])
+            route = self.search([("route_key", "=", item['Ref_Key'])])
             if route:
                 route.ref_key = item['Ref_Key']
                 route.store_key = item['СкладМаршрута_Key']

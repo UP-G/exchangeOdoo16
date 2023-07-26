@@ -10,80 +10,156 @@ class TmtrExchangeOneCCounterparty(models.Model):
     _description = '1C Counterparty'
 
     partner_id = fields.Many2one('res.partner', string='Partner')
-    ref_key = fields.Char(string='ref_key')
-    data_version= fields.Char(string="DataVersion")
-    description=fields.Char(string="Description")
-    full_name = fields.Char(string="Full name counterparty")
-    partner_key=fields.Char(string="Partner Key")
-    ur_fiz_face= fields.Char(string="Legal entity (physical person)")
-    tm_code = fields.Char(string="TM_Code")
-    contact= fields.Text(string='Contact information')
+    ref_key = fields.Char(string='ref_key') # Ref_Key
+    code = fields.Char(string="TM_Code") # ТМ_Код
+    description = fields.Char(string="Description") # Description
+    full_name = fields.Char(string="Full name counterparty") # НаименованиеПолное
+    partner_key = fields.Char(string="Partner Key") # Партнер_Key
+    ur_fiz_face = fields.Char(string="Legal entity (physical person)") # ЮрФизЛицо
+    contact = fields.Text(string='Contact information') # КонтактнаяИнформация.Представление
     credit_limit = fields.Float(string="Credit limit") # ДИТ_ЛимитКредита
     credit_days = fields.Integer(string="Credit days") # ДИТ_ЛимитСрока
+    # ИНН
+    # КодПоОКПО
+    # КПП
+    # ДИТ_ОГРН
+    # СтатусКонтрагента = НеДействующий
+    # ДИТ_Маршруты
 
-    def upload_new_counterparty(self, tm_code_max=None, top=100, skip=0):
+    def upload_new(self, code=None, skip=0, top=500, do_limit={}):
+        try:
+            if do_limit:
+                finish_before = datetime.now() + timedelta(seconds=do_limit.get('seconds',0), minutes=do_limit.get('minutes',0)) # ограничить время работы скрипта
+            else:
+                finish_before = datetime.now() + timedelta(minutes=1) # ограничить время работы скрипта одной минутой
 
-        finish_before = datetime.now() + timedelta(minutes=1) # ограничить время работы скрипта одной минутой
-        while datetime.now() < finish_before:
-            try:
-                if not tm_code_max:
-                    counterparty_list= self.env['tmtr.exchange.1c.counterparty'].search([('tm_code', "!=", None)],order="tm_code desc",limit=1)
-                
-                    if not counterparty_list:
-                        return
-                    tm_code_max = counterparty_list.tm_code
-
+            if not code: #Если не указан с какого code начинаем выкачиваем
+                recs = self.search([('code', 'like', '000')],
+                          order="code desc",limit=1) #Берем максимальный code
+                if not recs:
+                    code = '0'
+                else:
+                    code = recs[0].code
+            cnt = 0
+            last_created = ''
+            empty_result = 0
+            while datetime.now() < finish_before and empty_result < 3:
                 data = self.env['odata.1c.route'].get_by_route(
                     "1c_ut/get_counterparty/", 
                     {
-                        "tm_code": tm_code_max, 
+                        "tm_code": code, 
                         "top": top,
                         "skip": skip
                         })["value"]
+                if data:
+                    for item in data:
+                        cnt += self.create_by_odata_json(item)
+                        last_created = item['ТМ_Код']
+                else:
+                    empty_result += 1
+                if skip+1 >= top * 1:
+                    if last_created:
+                        code = last_created
+                        skip = 1
+                    else:
+                        empty_result += 1
+                else:
+                    skip += top
+            return {'count': cnt, 'last_code': code, 'last_created': last_created}
+        except Exception as e:
+            _logger.info(e)
+            return
 
-                if not data:
-                    return
+    def update_fields(self, model_fields=[
+            'description', 'full_name', 'partner_key', 'credit_limit', 'credit_days'
+            ], code=None, skip=0, top=500, do_limit={}, limit_minutes=1):
+        try:
+            if do_limit:
+                finish_before = datetime.now() + timedelta(seconds=do_limit.get('seconds',0), minutes=do_limit.get('minutes',0)) # ограничить время работы скрипта
+            else:
+                finish_before = datetime.now() + timedelta(minutes=limit_minutes) # ограничить время работы скрипта
+            if not code: #Если не указан с какого code начинаем выкачиваем
+                if len(self) == 0:
+                    recs = self.search([('code', 'like', '000')],
+                          order="write_date asc",limit=1) #Берем последний обновленный code
+                    if not recs:
+                        code = '0'
+                    else:
+                        code = recs.code
+                else:
+                    # TODO: заменить на гарантированную обработку всего списка, но экономя нагрузку на 1С УТ
+                    codes = self.mapped('code')
+                    codes.sort()
+                    code = codes[0]
+            cnt = 0
+            last_updated = ''
+            empty_result = 0
+            while datetime.now() < finish_before and empty_result < 3:
+                data = self.env['odata.1c.route'].get_by_route(
+                    "1c_ut/get_counterparty/", 
+                    {
+                        "tm_code": code,
+                        "skip": skip,
+                        "top": top
+                    })["value"]
+                if data:
+                    for item in data:
+                        cnt += self.update_by_odata_json(item, model_fields=model_fields)
+                        last_updated = item['ТМ_Код']
+                else:
+                    empty_result += 1
+                if skip+1 >= top * 1:
+                    if last_updated:
+                        code = last_updated
+                        skip = 1
+                    else:
+                        empty_result += 1
+                else:
+                    skip += top
+            return {'count': cnt, 'last_code': code, 'last_updated': last_updated}
+        except Exception as e:
+            _logger.info(e)
+            return
 
-                ref_key_ids = [r['Ref_Key'] for r in data]
-                counterparty_exists = dict((r.ref_key, r.ref_key) for r in self.search([("ref_key", "in", ref_key_ids)]))
-                for json_date in data:
-                    #counterparty = self.env['tmtr.exchange.1c.counterparty'].search([("ref_key", "=", json_data['Ref_Key'])])
-                    if json_date['Ref_Key'] in counterparty_exists:
-                        continue
-                    new_counterparty = self.create_new_counterparty(json_date)
-                skip += top
 
-            except Exception as e:
-                _logger.info(e)
-            
+    def create_by_odata_json(self, json_data):
+        partner = self.search([("ref_key", "=", json_data['Ref_Key'])])
+        if not partner:
+            return 1 if self.create(self.odata_array_to_model(json_data, ['all'])) else 0
+        else:
+            return 0
 
-    def create_new_counterparty(self, json_date):
-        self.env['tmtr.exchange.1c.counterparty'].create({
-            'ref_key' : json_date['Ref_Key'],
-            'data_version' : json_date['DataVersion'],
-            'description' : json_date['Description'],
-            'full_name' : json_date['НаименованиеПолное'],
-            'partner_key' : json_date['Партнер_Key'],
-            'ur_fiz_face' : json_date['ЮрФизЛицо'],
-            'tm_code' : json_date['ТМ_Код'],
-            'credit_limit' : json_date['ДИТ_ЛимитКредита'],
-            'credit_days' : json_date['ДИТ_ЛимитСрока'],
-            'contact':'\n'.join([f"{contact['Тип']}: {contact['Представление']}" for contact in json_date['КонтактнаяИнформация']]),
-            })
-        return
 
-    def upload_parnter_ref(self, limit=1000): #Непонятно, что делает данный метод: Андрей чурилов
-        
-        partners = self.env['tmtr.exchange.1c.partner'].search([("partner_id", "=", None)], limit=limit)
-        
-        for partner in partners:
-            counterpartys = self.env['tmtr.exchange.1c.counterparty'].search([("partner_id", "=", partner['ref_key'])])
-            if not counterpartys:
-                continue
-            for counterparty in counterpartys:
-                partner.update({
-                    'partner_id': counterparty.id
-                    })
+    def odata_array_to_model(self, json_data, model_fields=[]):
+        odata2model = {
+            'ref_key': 'Ref_Key',
+            'code': 'ТМ_Код',
+            'description': 'Description',
+            'full_name': 'НаименованиеПолное',
+            'partner_key': 'Партнер_Key',
+            'ur_fiz_face': 'ЮрФизЛицо',
+            'contact': ('КонтактнаяИнформация', lambda j: '\n'.join([f"{contact['Тип']}: {contact['Представление']}" for contact in j])),
+            'credit_limit': 'ДИТ_ЛимитКредита',
+            'credit_days': 'ДИТ_ЛимитСрока',
+        }
+        data = {}
+        if 'all' in model_fields:
+            model_fields = list(odata2model.keys())
+        for field in model_fields:
+            odata_src = odata2model.get(field, '')
+            if odata_src:
+                data.update({field: json_data.get(odata_src,'') if isinstance(odata_src, str) else odata_src[1](json_data.get(odata_src[0],''))})
+        return data
+
+
+    def update_by_odata_json(self, json_data, model_fields=[]):
+        partner = self.search([("ref_key", "=", json_data['Ref_Key'])])
+        if model_fields and partner:
+            partner.update(self.odata_array_to_model(json_data,model_fields))
+            return 1
+        else:
+            return 0
+
 
     def add_res_partner(self, limit=100):
         # obj = {}
@@ -92,7 +168,7 @@ class TmtrExchangeOneCCounterparty(models.Model):
             counterparty_tag_id = int(self.env['ir.config_parameter'].sudo().get_param('tmtr_exchange.tag_1c_counterparty'))
             if not counterparty_tag_id:
                 continue
-            counterparty = self.env['tmtr.exchange.1c.counterparty'].search([("partner_id", "=", None)], limit=limit)
+            counterparty = self.search([("partner_id", "=", None)], limit=limit)
             for data_counterparty in counterparty:
                 name = data_counterparty['full_name'] if data_counterparty['full_name'] else data_counterparty['description']
                 if not name:
@@ -118,4 +194,3 @@ class TmtrExchangeOneCCounterparty(models.Model):
                 data_counterparty.write({
                     'partner_id': new_counterparty.id
                 })
-            

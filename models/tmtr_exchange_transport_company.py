@@ -16,7 +16,7 @@ class TmtrExchangeOneCTransportCompany(models.Model):
     def upload_new_companys(self, top=100, skip =0):
             finish_before = datetime.now() + timedelta(minutes=1)
             cnt =0
-            max_code_entry = self.env['tmtr.exchange.1c.transport.company'].search([], order="code desc", limit=1)
+            max_code_entry = self.search([], order="code desc", limit=1)
             max_code = '000000001' if not max_code_entry else max_code_entry.code
             while datetime.now() < finish_before:
                 try:
@@ -40,7 +40,7 @@ class TmtrExchangeOneCTransportCompany(models.Model):
             return cnt
 
     def create_new_company(self, json_date):
-        self.env['tmtr.exchange.1c.transport.company'].create({
+        self.create({
             'ref_key' : json_date['Ref_Key'],
             'full_name' : json_date['Description'],
             'code' : json_date['Code'],
@@ -49,7 +49,7 @@ class TmtrExchangeOneCTransportCompany(models.Model):
         return
     
     def create_new_tms_carriers(self):
-            data = self.env['tmtr.exchange.1c.transport.company'].search([])
+            data = self.search([])
             if not data:
                 return
 

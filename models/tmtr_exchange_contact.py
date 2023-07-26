@@ -21,7 +21,7 @@ class TmtrExchangeOneCContact(models.Model):
 
     def update_contact_from_max_date(self, top, skip):
   
-        max_date = self.env['tmtr.exchange.1c.contact'].search([], limit=1, order="communication_registration_date ASC")
+        max_date = self.search([], limit=1, order="communication_registration_date ASC")
         max_date_str = max_date.communication_registration_date.strftime('%Y-%m-%dT%H:%M:%S')
 
         data = self.env['odata.1c.route'].get_by_route(
@@ -39,10 +39,10 @@ class TmtrExchangeOneCContact(models.Model):
     def create_by_odata_json(self, data_contact):
         if data_contact['DeletionMark'] == True:
             return 0
-        contact = self.env['tmtr.exchange.1c.contact'].search([("ref_key", "=", data_contact['Ref_Key'])])
+        contact = self.search([("ref_key", "=", data_contact['Ref_Key'])])
         if contact:
             return 0
-        return self.env['tmtr.exchange.1c.contact'].create({
+        return self.create({
                         'ref_key' : data_contact['Ref_Key'],
                         'owner_key' : data_contact['Owner_Key'],
                         'description' : data_contact['Description'],
@@ -74,13 +74,13 @@ class TmtrExchangeOneCContact(models.Model):
          return onec_partner.id
     
     def update_onec_partner_id(self, limit):
-        contact_partner = self.env['tmtr.exchange.1c.contact'].search([("onec_partner_id", "=", None)], limit=limit)
+        contact_partner = self.search([("onec_partner_id", "=", None)], limit=limit)
         for data_contact in contact_partner:
             data_contact['onec_partner_id'] = self.get_owner_contact_partner(owner_key=data_contact['owner_key'])
 
     def create_contact_in_res_partner(self, limit):
 
-        contact = self.env['tmtr.exchange.1c.contact'].search([("partner_id", "=", None)], limit=limit)
+        contact = self.search([("partner_id", "=", None)], limit=limit)
 
         contact_tag_id = int(self.env['ir.config_parameter'].sudo().get_param('tmtr_exchange.tag_1c_contact'))
 
