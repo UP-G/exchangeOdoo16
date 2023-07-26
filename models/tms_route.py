@@ -23,15 +23,18 @@ class TmtrExchangeTmsRoute(models.Model):
 
     def upload_new_route(self, json_value):
         new_routes = []
+        name_route = json_value['МаршрутыДоставки'].split('/')
+        i = 0
         for route_1c in json_value['Маршруты']:
             route_tms = self.search([('stock_1c_key','=', json_value['Склад_Key']), ('route_1c_key', '=', route_1c['Маршрут_Key'])])
             if not route_tms:
                 route_tms = self.create({
-                    'name': json_value['МаршрутыДоставки'],
+                    'name': name_route[i] if name_route[i] and name_route[i] != '' else 'No',
                     'stock_1c_key': json_value['Склад_Key'],
                     'route_1c_key': route_1c['Маршрут_Key'],
                 })
             new_routes.append(route_tms)
+            i = i + 1
 
         return new_routes
             

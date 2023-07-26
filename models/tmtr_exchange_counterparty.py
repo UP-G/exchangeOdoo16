@@ -18,6 +18,8 @@ class TmtrExchangeOneCCounterparty(models.Model):
     ur_fiz_face= fields.Char(string="Legal entity (physical person)")
     tm_code = fields.Char(string="TM_Code")
     contact= fields.Text(string='Contact information')
+    credit_limit = fields.Float(string="Credit limit") # ДИТ_ЛимитКредита
+    credit_days = fields.Integer(string="Credit days") # ДИТ_ЛимитСрока
 
     def upload_new_counterparty(self, tm_code_max=None, top=100, skip=0):
 
@@ -64,7 +66,9 @@ class TmtrExchangeOneCCounterparty(models.Model):
             'partner_key' : json_date['Партнер_Key'],
             'ur_fiz_face' : json_date['ЮрФизЛицо'],
             'tm_code' : json_date['ТМ_Код'],
-            'contact':'\n'.join([f"{contact['Тип']}: {contact['Представление']}" for contact in json_date['КонтактнаяИнформация']])
+            'credit_limit' : json_date['ДИТ_ЛимитКредита'],
+            'credit_days' : json_date['ДИТ_ЛимитСрока'],
+            'contact':'\n'.join([f"{contact['Тип']}: {contact['Представление']}" for contact in json_date['КонтактнаяИнформация']]),
             })
         return
 

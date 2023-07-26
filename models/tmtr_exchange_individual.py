@@ -13,16 +13,34 @@ class TmtrExchangeOneCIndividual(models.Model):
     tm_code = fields.Char(string="TM code")
     tm_department_Key = fields.Char(string='ТМ Department Key')
     snils = fields.Char(string='InsuranceNumberPFR')
+    carrier_driver_id = fields.Many2one('tms.carrier.driver', string="carrier driver id")
+    transport_company_ids = fields.Many2many('tmtr.exchange.1c.transport.company', 
+                                             relation='tmtr_exchange_1c_transport_company_tmtr_exch_1c_individual_rel')
+
+    def set_transport_company(self, ref_key):
+        
+        return
+
+    def get_individual(self, ref_key):
+        individual = self.upload_new_individual(ref_key)
+        if individual:
+            if not individual.carrier_driver_id:
+                new_driver = self.create_driver(individual)
+                individual.carrier_driver_id = new_driver.id
+                return individual
+            return individual
+        else:
+            return False
 
     def upload_new_individual(self, ref_key):
             try:
                 if not ref_key:
                     _logger.info("can not find ref key")
-                    return
+                    return False
                 individual = self.search([('ref_key', "=",ref_key)])
                 if individual:
                     _logger.info("the individual with this ref key is exist")
-                    return
+                    return individual #individual.carrier_driver_id if individual.carrier_driver_id else False
                 data = self.env['odata.1c.route'].get_by_route(
                     "1c_ut/get_individual/", 
                     {
@@ -51,24 +69,26 @@ class TmtrExchangeOneCIndividual(models.Model):
     
     def create_new_tms_drivers(self):#сделать выгрузку из tmtr.exchange в водителей, когда произойдет слияние веток в гите 
         try:
-            data = self.env['tmtr.exchange.1c.individual'].search([])
+            data = self.env['tmtr.exchange.1c.individual'].search([('carrier_driver_id', '=', False)])
             if not data:
                 return
 
-            tm_code_ids = [r.tm_code for r in data]
-            individual_exists = dict((r.tm_code, r.tm_code) for r in self.env['tms.carrier.driver'].search([("tm_code", "in", tm_code_ids)]))
+            # tm_code_ids = [r.tm_code for r in data]
+            # individual_exists = dict((r.tm_code, r.tm_code) for r in self.env['tms.carrier.driver'].search([("tm_code", "in", tm_code_ids)]))
             for individual in data:
-                if individual.tm_code in individual_exists:
-                    continue
+                # if individual.tm_code in individual_exists:
+                #     continue
                 new_driver = self.create_driver(individual)
+                individual.carrier_driver_id = new_driver.id
 
         except Exception as e:
             _logger.info(e)
         
     def create_driver(self, individual):
-        self.env['tms.carrier.driver'].create({
+        new_driver = self.env['tms.carrier.driver'].create({
             'name' : individual.full_name,
             'tm_code' : individual.tm_code,
             'inn' : individual.inn,
             'snils': individual.snils,
         })
+        return new_driver

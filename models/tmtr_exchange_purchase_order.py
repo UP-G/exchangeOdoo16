@@ -142,6 +142,7 @@ class TmtrExchangeOneCPurchaseOrder(models.Model):
                         'route_id': route_tms.id,
                             'order_num': json_value['Number'],
                             'notes': json_value['Примичание'],
+                            'date_create_1c': datetime.strptime(json_value['Date'], '%Y-%m-%dT%H:%M:%S')
                             #'departed_on_route': datetime.strptime(order_data['Date'], '%Y-%m-%dT%H:%M:%S'),
 #                'departed_on_route': f"{route_tms.start_time.date()} {datetime.strptime(order_data['Маршруты'][0]['ВремяВыезда'], '%Y-%m-%dT%H:%M:%S').time()}",
                         })
@@ -154,6 +155,8 @@ class TmtrExchangeOneCPurchaseOrder(models.Model):
                             'name': json_value['Number'],
                             'order_num': json_value['Number'],
                             'notes': json_value['Примичание'],
+                            'date_create_1c': datetime.strptime(json_value['Date'], '%Y-%m-%dT%H:%M:%S'),
+                            'carrier_driver_id': self.env['tmtr.exchange.1c.individual'].search([('ref_key', '=', json_value['Водитель_Key'])]).carrier_driver_id.id
                         })
         return delivery    
     
@@ -364,11 +367,19 @@ class TmtrExchangeOneCPurchaseOrder(models.Model):
                     continue
 
                 routes = self.env['tms.route'].upload_new_route(purchase_data)
-
+                driver = self.env['tmtr.exchange.1c.individual'].get_individual(purchase_data['Водитель_Key'])#выгрузка водителей
                 order_tms = self.env['tms.order'].search([('order_num','=',purchase_data['Number'])])
-                if not order_tms and routes:
+                # if order_tms
+                if not order_tms and routes: 
                     order_tms = self.upload_purchase_order(purchase_data, routes[0])
                     cnt += 1
+
+                if driver:
+                    #self.update_carrier_driver_id(order_tms, driver.carrier_driver_id)
+                    tk_unique_key = self.get_unique_values_on_filed(purchase_data['Реализации'], 'ТК')
+                    transport_companys = self.get_transport_company_id(tk_unique_key)
+                    self.update_carrier_id(order_tms, transport_companys['carrier_ids'])
+                    self.update_tk_driver(driver, transport_companys['tk_ids'])
 
                 if not order_tms.order_row_ids and (purchase_data['Реализации'] or purchase_data['ДопУслуги']):
                     if purchase_data['Реализации'] != []:
@@ -470,17 +481,31 @@ class TmtrExchangeOneCPurchaseOrder(models.Model):
                 if not self.env['tms.route'].have_stock(purchase_data):
                     _logger.info(f"order {purchase_data['Number']} dosent have a stock in DB")
                     continue
-                
+
                 routes = self.env['tms.route'].upload_new_route(purchase_data)
-                driver = self.env['tmtr.exchange.1c.individual'].upload_new_individual(purchase_data['Водитель_Key'])#выгрузка водителей
+                driver = self.env['tmtr.exchange.1c.individual'].get_individual(purchase_data['Водитель_Key'])#выгрузка водителей
                 delivery_tms = self.env['tms.delivery'].search([('order_num','=',purchase_data['Number'])])
+
                 if not delivery_tms and routes:
                     delivery_tms = self.create_delivery(purchase_data, routes[0])
                     cnt += 1
 
+                if not driver:
+                    continue
+                self.update_carrier_driver_id(delivery_tms, driver.carrier_driver_id)
+                tk_unique_key = self.get_unique_values_on_filed(purchase_data['Реализации'], 'ТК')
+                transport_companys = self.get_transport_company_id(tk_unique_key)
+                self.update_carrier_id(delivery_tms, transport_companys['carrier_ids'])
+                self.update_tk_driver(driver, transport_companys['tk_ids'])
+
+                tk_route = self.get_unique_values_on_filed(purchase_data['Маршруты'], 'Маршрут_Key')
+                route = self.get_route_id(tk_route)
+                self.update_route_tk(delivery_tms.carrier_ids, route['route_ids'])
+
                 if not delivery_tms.delivery_row_ids and (purchase_data['Реализации'] or purchase_data['ДопУслуги']):
                     if purchase_data['Реализации'] != []:
                         for item in purchase_data['Реализации']:
+                            delivery_tms.carrier_ids = self.get_transport_company_id(list(item['ТК']))['carrier_ids']
                             self.create_delivery_row(item, delivery_tms)
                     if purchase_data['ДопУслуги'] != []:
                         for item in purchase_data['ДопУслуги']:
@@ -491,8 +516,10 @@ class TmtrExchangeOneCPurchaseOrder(models.Model):
         obj = {}    
         if key_ids != []: #Если не успели выгрузится все маршруты, то сохраняем до следующей выгрузки
             obj = {'stock_1c_key': [key for key in key_ids], 'date': date}
-            
-            stock_key = self.env['ir.config_parameter'].set_param('tmtr.exchange.1c_stock_not_upload', obj)
+        else:
+            obj = ''
+        
+        stock_key = self.env['ir.config_parameter'].set_param('tmtr.exchange.1c_stock_not_upload', obj)
 
         if date <= date_till and not stock_not_upload: #Еслы выгружали по прошлым складам, то дату не записываем, 
             self.env['ir.config_parameter'].sudo().set_param('tmtr.exchange.1c_purchase_order_date', from_date)
@@ -501,3 +528,45 @@ class TmtrExchangeOneCPurchaseOrder(models.Model):
             'total_cnt': total_cnt,
             'not_upload': obj,
             }
+    
+    def get_unique_values_on_filed(self, objects, name_field):
+        unique_values = set(obj[name_field] for obj in objects)
+        return list(unique_values)
+    
+    def update_carrier_id(self, obj, tk_keys):
+        obj.carrier_ids = tk_keys
+        return
+    
+    def get_transport_company_id(self, tk_keys):
+        transport_company_ids = self.env['tmtr.exchange.1c.transport.company'].search(['&',('ref_key', 'in', tk_keys),
+                                                                             ('carrier_id', '!=', None)])
+        carrier_ids = [r['id'] for r in transport_company_ids['carrier_id']]
+        tk_ids = [r['id'] for r in transport_company_ids]
+        return {
+            'carrier_ids': carrier_ids,
+            'tk_ids': tk_ids
+                }
+    
+    def get_route_id(self, route_keys):
+        route_ids = self.env['tms.route'].search([('route_1c_key', 'in', route_keys)])
+        route_ids = [r['id'] for r in route_ids]
+        return {
+            'route_ids': route_ids
+        }
+    
+    def update_carrier_driver_id(self, obj, carrire_driver_id):
+        obj.carrier_driver_id = carrire_driver_id
+
+    def update_tk_driver(self, obj, tk_list):
+        tk_cur_list = [r['id'] for r in obj.transport_company_ids]
+        tk_id_not_driver = list(set(tk_list) - set(tk_cur_list))
+        if tk_id_not_driver != []:
+            obj.transport_company_ids = [(4, new_tk_id) for new_tk_id in tk_id_not_driver]
+            # obj.update({
+            #     'transport_company_ids': [(4, tk_id_not_driver)]
+            # })
+
+    def update_route_tk(self, obj, route_list):
+        for item in obj:
+            self.env['tms.carrier.route'].create_carrier_route(item['id'], item['name'], route_list)
+        return

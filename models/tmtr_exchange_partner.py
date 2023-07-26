@@ -20,9 +20,15 @@ class TmtrExchangeOneCPartner(models.Model):
     capacity = fields.Float(string='Client capacity') # ТМ_ЕмкостьКлиента
     our_share = fields.Float(string="Our share in client's purchases") # ТМ_ПроцентЗакупокНашаДоля
     business_type_key = fields.Char(string='Business Type Key') # ДИТ_ВидДеятельности_Key
-    requests_limit = fields.Char(string='Daily requests limit') # ДИТ_МаксимальноеЧислоЗапросов
+    requests_limit = fields.Integer(string='Daily requests limit') # ДИТ_МаксимальноеЧислоЗапросов
+    business_region_key = fields.Char(string='Business Region Key') # БизнесРегион_Key
+    department_key = fields.Char(string='Department Key') # ДИТ_Подразделение_Key # http://dcsrv-erpap-01:8080/StockTM_app/odata/standard.odata/Catalog_СтруктураПредприятия?$filter=ТМ_КодДоходов%20eq%20%27ДоходыНаправленияПрямые%27
+    department_accounting_key = fields.Char(string='Accounting Department Key') # ТМ_ПодразделениеУчета_Key # Второе измерение для ссылки на структуру продаж
+    branch_key = fields.Char(string='Branch Key') # ДИТ_Филиал_Key # http://dcsrv-erpap-01:8080/StockTM_app/odata/standard.odata/Catalog_Склады
 
     user_id = fields.Many2one('res.users', string='Manager')
+    #department_1c_id = fields.Many2one('tmtr.exchange.1c.department', string="1C Department")
+    #department_accounting_1c_id = fields.Many2one('tmtr.exchange.1c.department', string="1C Department Accounting")
 
     def upload_new_partner(self, code=None, skip=0, top=100):
         try:
@@ -58,9 +64,15 @@ class TmtrExchangeOneCPartner(models.Model):
             _logger.info(e)
             return
 
-    def update_partner(self, model_fields=['capacity', 'our_share', 'business_type_key', 'description', 'requests_limit'], code=None, skip=0, top=100, limit_minutes=1):
+    def update_partner(self, model_fields=[
+            'capacity', 'our_share', 'business_type_key', 'description', 'requests_limit', 'business_region_key', 'department_key', 'department_accounting_key', 'branch_key'
+            ], code=None, skip=0, top=100, do_limit={}, limit_minutes=1):
         try:
-            finish_before = datetime.now() + timedelta(minutes=limit_minutes) # ограничить время работы скрипта
+            if do_limit:
+                finish_before = datetime.now() + timedelta(seconds=do_limit.get('seconds',0), minutes=do_limit.get('minutes',0)) # ограничить время работы скрипта
+            else:
+                finish_before = datetime.now() + timedelta(minutes=limit_minutes) # ограничить время работы скрипта
+
 
             if not code: #Если не указан с какого code начинаем выкачиваем
                 if len(self) == 0:
@@ -120,6 +132,10 @@ class TmtrExchangeOneCPartner(models.Model):
             'our_share' : 'ТМ_ПроцентЗакупокНашаДоля',
             'business_type_key' : 'ДИТ_ВидДеятельности_Key',
             'requests_limit' : 'ДИТ_МаксимальноеЧислоЗапросов',
+            'business_region_key' : 'БизнесРегион_Key',
+            'department_key': 'ДИТ_Подразделение_Key',
+            'department_accounting_key': 'ТМ_ПодразделениеУчета_Key',
+            'branch_key': 'ДИТ_Филиал_Key',
         }
         data = {}
         if 'all' in model_fields:
@@ -197,15 +213,15 @@ class TmtrExchangeOneCPartner(models.Model):
 
 
     def update_child_ids(self):
-        onec_contacts = self.env['tmtr.exchange.1c.contact'].search((["&",('partner_id', '!=', None),
-                                                                        ('onec_partner_id.partner_id', '!=', None)]))
-
+        onec_contacts = self.env['tmtr.exchange.1c.contact'].search([
+            "&",('partner_id', '!=', None),
+                 ('onec_partner_id.partner_id', '!=', None)
+            ])
         for contact in onec_contacts:
             contact.onec_partner_id.partner_id.write({
-            'child_ids': [(6, 0, [contact.partner_id.id])]
-        })
+                'child_ids': [(6, 0, [contact.partner_id.id])]
+            })
         return
-
 
     def update_seller(self):
         main_managers = self.env['tmtr.exchange.1c.user'].search(["&", ('ref_key', '!=', None),
@@ -224,3 +240,18 @@ class TmtrExchangeOneCPartner(models.Model):
         #return http.request.render("base_odata_1c.debts_template", 
         return self.env['ir.ui.view'].with_context(lang='ru_RU')._render_template('tmtr_exchange.debts_report_template', {"documents": value})
 
+    def fast_update(self, code=None, model_fields=['capacity', 'business_region_key', 'department_key', 'department_accounting_key', 'branch_key']):
+        code=code if code else '00-00000000'
+        do_exit = False
+        cnt = 0
+        skip = 0
+        prev_code = code
+        while not do_exit:
+            res = self.update_partner(skip=skip,top=500,do_limit={'seconds': 1, 'minutes': 0},model_fields=model_fields,code=code)
+            code = res.get('last_updated')
+            do_exit = True if res.get('count') == 0 else False
+            skip = skip + 1 if res.get('count') <= 1 and prev_code == code else skip
+            _logger.info(f'last code: {code}, count: {res.get("count")}, do exit: {do_exit}')
+            cnt += int(res.get('count'))
+            prev_code = code
+        return cnt

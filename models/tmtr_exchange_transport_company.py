@@ -11,7 +11,7 @@ class TmtrExchangeOneCTransportCompany(models.Model):
     full_name = fields.Char(string="Full name company")
     code = fields.Char(string="code")
     tc_type = fields.Char(string="transport company type")
-
+    carrier_id = fields.Many2one('tms.carrier', string='carrier id')
 
     def upload_new_companys(self, top=100, skip =0):
             finish_before = datetime.now() + timedelta(minutes=1)
@@ -59,15 +59,16 @@ class TmtrExchangeOneCTransportCompany(models.Model):
                 if company.code in company_exists:
                     continue
                 new_company = self.create_tms_company(company)
-
+                company.carrier_id = new_company.id
 
     def create_tms_company(self, company):
         try:
-            self.env['tms.carrier'].create({
+            new_comapny = self.env['tms.carrier'].create({
                 'name' : company.full_name,
                 'code': company.code,
                 'tc_type': company.tc_type,
             })
+            return new_comapny
         except Exception as e:
             _logger.info(e)
             return False

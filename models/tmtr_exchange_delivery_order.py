@@ -13,6 +13,7 @@ class TmtrExchangeOneCDeliveryOrder(models.Model):
     date = fields.Char(string='date')
     responsible_key = fields.Char(string='responsible key')
     number = fields.Char(string='order number')
+    
     def upload_new_orders(self, top = 50, skip = 0, from_date = None):
         if not from_date:
             from_date = fields.Date.to_date(self.env['ir.config_parameter'].sudo().get_param('tmtr_exchange.last_order_date','2021-06-20T00:00:00'))

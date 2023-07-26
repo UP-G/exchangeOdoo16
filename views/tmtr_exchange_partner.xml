@@ -28,6 +28,12 @@
                 <field name="full_name" optional="show"/>
                 <field name="main_manager_key" optional="show"/>
                 <field name="date_of_registration" optional="show"/>
+                <field name="capacity" optional="hide"/>
+                <field name="our_share" optional="hide"/>
+                <field name="business_type_key" optional="hide"/>
+                <field name="department_key" optional="hide"/>
+                <field name="department_accounting_key" optional="hide"/>
+                <field name="business_type_key" optional="hide"/>
                 <field name="requests_limit" optional="show"/>
             </tree>
         </field>
@@ -41,21 +47,24 @@
                 <sheet>
                     <group>
                         <group>
-                        <field name="partner_id" optional="show"/>
-                        <field name="ref_key" optional="show"/>
-                        <field name="parent_key" optional="show"/>
-                        <field name="code" optional="show"/>
-                        <field name="description" optional="show"/>
+                        <field name="partner_id"/>
+                        <field name="ref_key"/>
+                        <field name="parent_key"/>
+                        <field name="code"/>
+                        <field name="description"/>
                         </group>
                         <group>
-                        <field name="full_name" optional="show"/>
-                        <field name="main_manager_key" optional="show"/>
-                        <field name="user_id" optional="show"/>
-                        <field name="date_of_registration" optional="show"/>
+                        <field name="full_name"/>
+                        <field name="main_manager_key"/>
+                        <field name="user_id"/>
+                        <field name="date_of_registration"/>
                         <field name="capacity"/>
                         <field name="our_share"/>
                         <field name="business_type_key"/>
-                        <field name="requests_limit" optional="show"/>
+                        <field name="department_key"/>
+                        <field name="department_accounting_key"/>
+                        <field name="business_type_key"/>
+                        <field name="requests_limit"/>
                         </group>
                     </group>
                 </sheet>

@@ -13,3 +13,6 @@ from . import tmtr_exchange_business_type
 from . import tms_route
 from . import tmtr_exchange_individual
 from . import tmtr_exchange_transport_company
+from . import tmtr_exchange_business_region
+from . import tmtr_exchange_department
+from . import tmtr_exchange_stock

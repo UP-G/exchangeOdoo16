@@ -76,6 +76,27 @@
             sequence="30"/>
 
         <menuitem
+            id="menu_tmtr_exchange_department"
+            name="1C Company Structure"
+            parent="menu_tmtr_exchange_1c"
+            action="action_tmtr_exchange_department"
+            sequence="50"/>
+
+        <menuitem
+            id="menu_tmtr_exchange_stock"
+            name="1C Stocks"
+            parent="menu_tmtr_exchange_1c"
+            action="action_tmtr_exchange_stock"
+            sequence="60"/>
+
+        <menuitem
+            id="menu_tmtr_exchange_business_region"
+            name="Business Region"
+            parent="menu_tmtr_exchange_1c"
+            action="action_tmtr_exchange_business_region"
+            sequence="40"/>
+
+        <menuitem
             id="menu_tmtr_exchange_1c_delivery"
             name="1C Delivery"
             parent="menu_tmtr_exchange_root"

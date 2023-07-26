@@ -36,7 +36,7 @@ class EfficiencySalerReport(models.Model):
     client_1c_id = fields.Char('Client 1C ID') # origin_id
     business_type = fields.Char('Client Business Type') # ДИТ_ВидДеятельности_Key.Description
     price_level = fields.Char('Price Level') # DB Analisys
-    requests_limit = fields.Char(string='Daily requests limit') # ДИТ_МаксимальноеЧислоЗапросов
+    requests_limit = fields.Integer(string='Daily requests limit') # ДИТ_МаксимальноеЧислоЗапросов
 
     plan = fields.Float(string='Plan this month') # План на текущий месяц (макс(среднее в день за предыдущий месяц; среднее в день за 3 месяца) * кол-во дней в текущем месяце)
     # plan_percentage = fields.Float('Plan percantage') # Процент выполнения плана, поле долно быть вычисляемым, чтобы корректно работало при группировках
@@ -95,7 +95,7 @@ class EfficiencySalerReport(models.Model):
                 COALESCE(client.full_name,'Unknown client') as client_name,
                 COALESCE(business_type.name,'Unknown type') as business_type,
                 COALESCE(indicators.level_code, '-') as price_level,
-                COALESCE(client.requests_limit, '-') as requests_limit,
+                COALESCE(client.requests_limit, 0) as requests_limit,
 
                 max(indicators.plan) as plan,
                 max(indicators.prediction) as prediction,
