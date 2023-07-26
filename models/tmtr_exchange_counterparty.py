@@ -15,15 +15,15 @@ class TmtrExchangeOneCCounterparty(models.Model):
     description = fields.Char(string="Description") # Description
     full_name = fields.Char(string="Full name counterparty") # НаименованиеПолное
     partner_key = fields.Char(string="Partner Key") # Партнер_Key
-    ur_fiz_face = fields.Char(string="Legal entity (physical person)") # ЮрФизЛицо
+    legal_type = fields.Char(string="Legal Type") # ФизЛицо, ИндивидуальныйПредприниматель, ЮрЛицо
     contact = fields.Text(string='Contact information') # КонтактнаяИнформация.Представление
     credit_limit = fields.Float(string="Credit limit") # ДИТ_ЛимитКредита
     credit_days = fields.Integer(string="Credit days") # ДИТ_ЛимитСрока
-    # ИНН
-    # КодПоОКПО
-    # КПП
-    # ДИТ_ОГРН
-    # СтатусКонтрагента = НеДействующий
+    inn = fields.Char(string="Tax ID") # ИНН
+    okpo = fields.Char(string="OKPO") # КодПоОКПО
+    kpp = fields.Char(string="KPP") # КПП
+    ogrn = fields.Char(string="OGRN") # ДИТ_ОГРН
+    status = fields.Char(string="Status") # СтатусКонтрагента = НеДействующий
     # ДИТ_Маршруты
 
     def upload_new(self, code=None, skip=0, top=500, do_limit={}):
@@ -71,7 +71,7 @@ class TmtrExchangeOneCCounterparty(models.Model):
             return
 
     def update_fields(self, model_fields=[
-            'description', 'full_name', 'partner_key', 'credit_limit', 'credit_days'
+            'description', 'full_name', 'partner_key', 'credit_limit', 'credit_days', 'status'
             ], code=None, skip=0, top=500, do_limit={}, limit_minutes=1):
         try:
             if do_limit:
@@ -137,10 +137,15 @@ class TmtrExchangeOneCCounterparty(models.Model):
             'description': 'Description',
             'full_name': 'НаименованиеПолное',
             'partner_key': 'Партнер_Key',
-            'ur_fiz_face': 'ЮрФизЛицо',
+            'legal_type': 'ЮрФизЛицо',
             'contact': ('КонтактнаяИнформация', lambda j: '\n'.join([f"{contact['Тип']}: {contact['Представление']}" for contact in j])),
             'credit_limit': 'ДИТ_ЛимитКредита',
             'credit_days': 'ДИТ_ЛимитСрока',
+            'inn': 'ИНН',
+            'okpo': 'КодПоОКПО',
+            'kpp': 'КПП',
+            'ogrn': 'ДИТ_ОГРН',
+            'status': 'СтатусКонтрагента',
         }
         data = {}
         if 'all' in model_fields:

@@ -38,6 +38,8 @@ class EfficiencySalerReport(models.Model):
     price_level = fields.Char('Price Level') # DB Analisys
     requests_limit = fields.Integer(string='Daily requests limit') # ДИТ_МаксимальноеЧислоЗапросов
 
+    team_name = fields.Char('Team Name') 
+
     plan = fields.Float(string='Plan this month') # План на текущий месяц (макс(среднее в день за предыдущий месяц; среднее в день за 3 месяца) * кол-во дней в текущем месяце)
     # plan_percentage = fields.Float('Plan percantage') # Процент выполнения плана, поле долно быть вычисляемым, чтобы корректно работало при группировках
     prediction = fields.Float('Prediction') # Прогноз выручки на текущий месяц (среднее в день за 30 дней * количество дней в текущем месяце)
@@ -71,6 +73,7 @@ class EfficiencySalerReport(models.Model):
     indicator_id = fields.Many2one('tmtr.exchange.1c.indicators', string='Client Indicators', readonly=True) # Не дублировать поле в Истории, т.к. в Индикаторах хранится только последнее состояние
 
     def _select(self):
+#                COALESCE(indicators.team_id.name, 'Unkown team') as team_name,
         return """
             SELECT
                 max(indicators.id) as id,
@@ -139,6 +142,9 @@ class EfficiencySalerReport(models.Model):
                 indicators.overdue_debt,
                 indicators.task_count,
                 indicators.level_code,
+                indicators.team_id,
+                indicators.credit_limit,
+                indicators.credit_days,
                 GREATEST(
                     indicators.turnover_previous_mounth,
                     indicators.turnover_last_3month / 3,
@@ -184,7 +190,7 @@ class EfficiencySalerReport(models.Model):
 
     def _group(self):
         return """
-            GROUP BY manager_name, manager_1c_id, client_name, client_1c_id, business_type, price_level, requests_limit
+            GROUP BY manager_name, manager_1c_id, client_name, client_1c_id, business_type, price_level, requests_limit, indicators.team_id
         """
 
     def init(self):

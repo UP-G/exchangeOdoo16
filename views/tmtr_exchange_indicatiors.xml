@@ -33,6 +33,9 @@
                 <field name="capacity" optional="show"/>
                 <field name="capacity_percent" optional="hide" widget="percentage"/>
                 <field name="level_code" optional="show" />
+                <field name="credit_limit" optional="hide"/>
+                <field name="credit_days" optional="hide"/>
+                <field name="team_id" optional="hide"/>
                 <field name="write_date" optional="hide"/>
             </tree>
         </field>
@@ -46,26 +49,29 @@
                 <sheet>
                     <group>
                         <group>
-                            <field name="turnover_this_mounth" optional="show"/>
-                            <field name="turnover_previous_mounth" optional="show"/>
-                            <field name="turnover_last_30days" optional="show"/>
-                            <field name="turnover_last_3month" optional="show"/>
-                            <field name="debt" optional="show"/>
-                            <field name="overdue_debt" optional="show"/>
-                            <field name="task_count" optional="show"/>
-                            <field name="plan" optional="show"/>
-                            <field name="prediction" optional="show"/>
-                            
+                            <field name="turnover_this_mounth"/>
+                            <field name="turnover_previous_mounth"/>
+                            <field name="turnover_last_30days"/>
+                            <field name="turnover_last_3month"/>
+                            <field name="debt"/>
+                            <field name="overdue_debt"/>
+                            <field name="task_count"/>
+                            <field name="plan"/>
+                            <field name="prediction"/>
+                            <field name="credit_limit"/>
+                            <field name="credit_days"/>
+
+                            <field name="team_id"/>
                         </group>
                         <group>
-                            <field name="identifier_ib" optional="show"/>
-                            <field name="origin_id" optional="show"/>
-                            <field name="company_ref_key" optional="show"/>
-                            <field name="partner_id" optional="show"/>
-                            <field name="debs_percent" optional="show"/>
-                            <field name="turnover_percent" optional="show"/>
-                            <field name="capacity" optional="show"/>
-                            <field name="capacity_percent" optional="show" widget="percentage"/>
+                            <field name="identifier_ib"/>
+                            <field name="origin_id"/>
+                            <field name="company_ref_key"/>
+                            <field name="partner_id"/>
+                            <field name="debs_percent"/>
+                            <field name="turnover_percent"/>
+                            <field name="capacity"/>
+                            <field name="capacity_percent" widget="percentage"/>
                             <field name="metrics" widget="text"/>
 
                             <field name="level_code"/>
@@ -90,6 +96,7 @@
                     <field name="identifier_ib" />
                     <field name="partner_id" />
                     <field name="metrics"/>
+                    <field name="team_id"/>
                     <separator/>
                     <filter string="Old records" name="old_records" domain="[('write_date','&lt;', (context_today() - datetime.timedelta(days=3)).strftime('%Y-%m-%d'))]"/>
                     <group expand="0" string="Group By">

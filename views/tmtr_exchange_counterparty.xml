@@ -22,11 +22,19 @@
             <tree multi_edit="1">
                 <field name="partner_id" optional="show"/>
                 <field name="ref_key" optional="show"/>
+                <field name="code" optional="show"/>
                 <field name="description" optional="show"/>
                 <field name="full_name" optional="show"/>
                 <field name="partner_key" optional="show"/>
-                <field name="ur_fiz_face" optional="show"/>
-                <field name="tm_code" optional="show"/>
+                <field name="legal_type" optional="hide"/>
+                <field name="contact" optional="hide"/>
+                <field name="credit_limit" optional="show"/>
+                <field name="credit_days" optional="show"/>
+                <field name="inn" optional="hide"/>
+                <field name="okpo" optional="hide"/>
+                <field name="kpp" optional="hide"/>
+                <field name="ogrn" optional="hide"/>
+                <field name="status" optional="hide"/>
             </tree>
         </field>
     </record>
@@ -39,14 +47,23 @@
                 <sheet>
                     <group>
                         <group>
-                            <field name="partner_id" optional="show"/>
-                            <field name="ref_key" optional="show"/>
-                            <field name="description" optional="show"/>
-                            <field name="full_name" optional="show"/>
-                            <field name="partner_key" optional="show"/>
-                            <field name="ur_fiz_face" optional="show"/>
-                            <field name="tm_code" optional="show"/>
-                            <field name="contact" optional="show"/>
+                            <field name="partner_id"/>
+                            <field name="ref_key"/>
+                            <field name="code"/>
+                            <field name="description"/>
+                            <field name="full_name"/>
+                            <field name="status"/>
+                        </group>
+                        <group>
+                            <field name="credit_limit"/>
+                            <field name="credit_days"/>
+                            <field name="partner_key"/>
+                            <field name="legal_type"/>
+                            <field name="contact"/>
+                            <field name="inn"/>
+                            <field name="okpo"/>
+                            <field name="kpp"/>
+                            <field name="ogrn"/>
                         </group>       
                     </group>
                 </sheet>

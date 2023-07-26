@@ -37,3 +37,5 @@ class ResConfigSettings(models.TransientModel):
         default='{"server": "192.168.0.20,1433", "database": "analysis", "user": "DWHUser", "password": "secret" }')
 
     price_level_actuality = fields.Integer(config_parameter='tmtr_exchange.price_level_actuality', default="23")
+
+    default_team_id = fields.Many2one('crm.team', config_parameter='tmtr_exchange.default_team_id') # Команда продаж по умолчанию, если иная команда не найдена

@@ -26,7 +26,10 @@ class TmtrExchangeOneCCompanyRoute(models.Model):
             else:
                 tc_keys = [r.tc_key for r in routes]
                 if not impl['ТК'] in tc_keys:
-                    self.create_new_route(data)
+                    self.create_new_entry(data, impl)
+                else:
+                    _logger.info(f'can not create entry for {impl}')
+                    return
         self.create_tms_carrier_route()
 
     def create_new_entry(self, data, impl):
@@ -42,6 +45,7 @@ class TmtrExchangeOneCCompanyRoute(models.Model):
             'company_id': company.id,
             'route_id': route_tms.id,
         })
+        _logger.info('tmtr route created')
 
     def create_tms_carrier_route(self):
         routes = self.search(['&',('individual_id', '!=', None),('company_id', '!=', None)])

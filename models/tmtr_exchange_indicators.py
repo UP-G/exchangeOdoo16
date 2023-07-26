@@ -40,6 +40,11 @@ class TmtrExchangeOneCIndicators(models.Model):
     level_updated = fields.Datetime(string="Price Level Info Last Updated")
     level_info = fields.Char(string="JSON about Price Level")
 
+    credit_limit = fields.Float(string="Credit limit") # min среди > 0 в контрагентах партнера
+    credit_days = fields.Integer(string="Credit days") # min среди > 0 в контрагентах партнера
+
+    team_id = fields.Many2one('crm.team') # Команда продаж, обновляется по расписанию на основе Департамента продаж в Партнерах
+
     """ Metrics:
             "groups_3month"        => 0,  //: МассивДанных.Добавить(Выборка.Выр3Мес_1);   //товарных групп (подушки, РМК, тормоза, фильтры)
             "sonder_3month"        => 1,  //: МассивДанных.Добавить(Выборка.Выр3Мес_2);   //Sonder
@@ -283,3 +288,46 @@ class TmtrExchangeOneCIndicators(models.Model):
     def get_call_ids(self):
         return self.env['voximplant.imot'].search([('client_origin_id','=',self.mapped('origin_id'))]).ids
 
+    def set_team_ids(self):
+        if len(self) > 0:
+            recs = self
+        else:
+            recs = self.search([])
+        # TODO: после настройки кронов, создающих связи, упростить эту процедуру
+        partners = self.env['tmtr.exchange.1c.partner'].search([('code','in',list(recs.mapped('origin_id')))])
+        partner_department_map = dict([ (r.code, r.department_key) for r in partners ])
+        departments = self.env['tmtr.exchange.1c.department'].search([('ref_key','in',list(set(partners.mapped('department_key'))))])
+        teams = self.env['crm.team'].search([])
+        default_team_id = int(self.env['ir.config_parameter'].sudo().get_param('tmtr_exchange.default_team_id')) # Команда продаж по умолчанию, если иная команда не найдена
+        team_name_map = dict([ (r.name, r.id) for r in teams ])
+        department_team_map = dict([ (r.ref_key, r.team_id.id if r.team_id else team_name_map.get(r.name, default_team_id)) for r in departments])
+        cnt = 0
+        for rec in recs:
+            department_key = partner_department_map.get(rec.origin_id)
+            team_id = department_team_map.get(department_key, default_team_id) if department_key else default_team_id
+            if not rec.team_id or rec.team_id.id != team_id:
+                rec.team_id = team_id
+                cnt += 1
+        return cnt
+
+    def set_credit_limits(self):
+        if len(self) > 0:
+            recs = self
+        else:
+            recs = self.search([])
+        # TODO: после настройки кронов, создающих связи, упростить эту процедуру
+        partners = self.env['tmtr.exchange.1c.partner'].search([('code','in',list(recs.mapped('origin_id')))])
+        partner_key_map = dict([ (r.code, r.ref_key) for r in partners ])
+        limits = self.env['tmtr.exchange.1c.counterparty'].read_group(
+            [('credit_limit','>',0),('partner_key','in',list(partners.mapped('ref_key')))], 
+            ['partner_key', 'min_credit_limit:min(credit_limit)', 'min_credit_days:min(credit_days)'], 
+            ['partner_key'])
+        partner_limit_map = dict([ (r.get('partner_key'), {'credit_limit': r.get('min_credit_limit', 0), 'credit_days': r.get('min_credit_days', 0)}) for r in limits ])
+        cnt = 0
+        for rec in recs:
+            partner_key = partner_key_map.get(rec.origin_id)
+            limit = partner_limit_map.get(partner_key, {})
+            if rec.credit_limit != limit.get('credit_limit') or rec.credit_days != limit.get('credit_days'):
+                rec.update(limit)
+                cnt += 1
+        return cnt
