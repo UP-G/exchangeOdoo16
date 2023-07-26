@@ -54,7 +54,7 @@ class TmtrExchangeOneCPartner(models.Model):
                     })["value"]
                 if data:
                     for json_data in data:
-                        cnt += self.create_by_odata_array(json_data)
+                        cnt += self.create_by_odata_json(json_data)
                         last_created = json_data['Code']
                 else:
                     empty_result += 1
@@ -100,7 +100,7 @@ class TmtrExchangeOneCPartner(models.Model):
                     })["value"]
                 if data:
                     for json_data in data:
-                        cnt += self.update_by_odata_array(json_data, model_fields=model_fields)
+                        cnt += self.update_by_odata_json(json_data, model_fields=model_fields)
                         last_updated = json_data['Code']
                 else:
                     empty_result += 1
@@ -111,7 +111,7 @@ class TmtrExchangeOneCPartner(models.Model):
             return
 
 
-    def create_by_odata_array(self, json_data):
+    def create_by_odata_json(self, json_data):
         partner = self.env['tmtr.exchange.1c.partner'].search([("ref_key", "=", json_data['Ref_Key'])])
         if not partner:
             return 1 if self.create(self.odata_array_to_model(json_data, ['all'])) else 0
@@ -147,7 +147,7 @@ class TmtrExchangeOneCPartner(models.Model):
         return data
 
 
-    def update_by_odata_array(self, json_data, model_fields=[]):
+    def update_by_odata_json(self, json_data, model_fields=[]):
         partner = self.env['tmtr.exchange.1c.partner'].search([("ref_key", "=", json_data['Ref_Key'])])
         if model_fields and partner:
             partner.update(self.odata_array_to_model(json_data,model_fields))
@@ -165,7 +165,7 @@ class TmtrExchangeOneCPartner(models.Model):
                     "filter": f"Description eq '{name}'&$orderby=Code&$top=1&$skip=0"
                 })['value']
             for json_data in data:
-                cnt += 1 if self.create_by_odata_array(json_data) > 0 else 0
+                cnt += 1 if self.create_by_odata_json(json_data) > 0 else 0
         return cnt
 
 
@@ -178,7 +178,7 @@ class TmtrExchangeOneCPartner(models.Model):
                     "filter": f"Code eq '{origin_id}'&$orderby=Code&$top=1&$skip=0"
                 })['value']
             for json_data in data:
-                cnt += 1 if self.create_by_odata_array(json_data) > 0 else 0
+                cnt += 1 if self.create_by_odata_json(json_data) > 0 else 0
         return {'cnt': len(origin_ids), 'exists': cnt}
 
 

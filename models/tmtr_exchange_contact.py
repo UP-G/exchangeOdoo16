@@ -34,9 +34,9 @@ class TmtrExchangeOneCContact(models.Model):
 
         contact_partner = data['value']
         for data_contact in contact_partner:
-            self.create_by_odata_array(data_contact)
+            self.create_by_odata_json(data_contact)
 
-    def create_by_odata_array(self, data_contact):
+    def create_by_odata_json(self, data_contact):
         if data_contact['DeletionMark'] == True:
             return 0
         contact = self.env['tmtr.exchange.1c.contact'].search([("ref_key", "=", data_contact['Ref_Key'])])
@@ -65,7 +65,7 @@ class TmtrExchangeOneCContact(models.Model):
                       })
             contact_partner = data['value']
             for data_contact in contact_partner:
-                cnt += 1 if self.create_by_odata_array(data_contact) > 0 else 0
+                cnt += 1 if self.create_by_odata_json(data_contact) > 0 else 0
         return cnt
 
 

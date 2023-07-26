@@ -43,13 +43,15 @@ class TmtrExchangeOneCBusinessType(models.Model):
 
             if manager_keys == None:
                 if len(self) > 0:
-                    manager_keys = self.mapped('main_manager_key')
+                    manager_keys = set(self.mapped('main_manager_key'))
                 else:
-                    manager_keys = self.search([]).mapped('main_manager_key')
+                    manager_keys = set(self.search([]).mapped('main_manager_key'))
             cnt = 0
             last_updated = ''
+            skip_default = skip
             for manager_key in manager_keys:
                 empty_result = 0
+                skip = skip_default
                 while datetime.now() < finish_before and empty_result < 2:
                     data = self.env['odata.1c.route'].get_by_route(
                         "1c_ut/get_catalog/", {
@@ -58,14 +60,15 @@ class TmtrExchangeOneCBusinessType(models.Model):
                         })['value']
                     for item in data:
                         if item.get('DeletionMark') != True:
-                            if self.update_by_odata_array(item, model_fields=model_fields):
+                            if self.update_by_odata_json(item, model_fields=model_fields):
                                 cnt += 1
                             else:
-                                rec = self.create_by_odata_array(item)
+                                rec = self.create_by_odata_json(item)
                                 cnt += 1 if len(rec) > 0 else 0
                             last_updated = item['ОсновнойМенеджер_Key']
                     if not data:
                         empty_result += 1
+                    #_logger.info(f'empty_result={empty_result}, cnt={cnt}')
                     skip += top
             return {'count': cnt, 'last_updated': last_updated}
         except Exception as e:
@@ -79,7 +82,7 @@ class TmtrExchangeOneCBusinessType(models.Model):
         else:
             return rec
 
-    def update_by_odata_array(self, json_data, model_fields=[]):
+    def update_by_odata_json(self, json_data, model_fields=[]):
         partner = self.search([("ref_key", "=", json_data['Ref_Key'])])
         if model_fields and partner:
             partner.update(self.odata_array_to_model(json_data,model_fields))

@@ -68,10 +68,10 @@ class TmtrExchangeOneCCompanyStructure(models.Model):
                         })['value']
                 for item in data:
                         if item.get('DeletionMark') != True and item.get('DeletionMark') in codes:
-                            if self.update_by_odata_array(item, model_fields=model_fields):
+                            if self.update_by_odata_json(item, model_fields=model_fields):
                                 cnt += 1
                             else:
-                                rec = self.create_by_odata_array(item)
+                                rec = self.create_by_odata_json(item)
                                 cnt += 1 if len(rec) > 0 else 0
                             last_updated = item['Code']
                 if not data:
@@ -89,7 +89,7 @@ class TmtrExchangeOneCCompanyStructure(models.Model):
         else:
             return rec
 
-    def update_by_odata_array(self, json_data, model_fields=[]):
+    def update_by_odata_json(self, json_data, model_fields=[]):
         partner = self.search([("ref_key", "=", json_data['Ref_Key'])])
         if model_fields and partner:
             partner.update(self.odata_array_to_model(json_data,model_fields))
