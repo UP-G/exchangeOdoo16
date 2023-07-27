@@ -26,10 +26,12 @@ class TmtrExchangeTmsRoute(models.Model):
         name_route = json_value['МаршрутыДоставки'].split('/')
         i = 0
         for route_1c in json_value['Маршруты']:
+            if name_route[i] == '':
+                break
             route_tms = self.search([('stock_1c_key','=', json_value['Склад_Key']), ('route_1c_key', '=', route_1c['Маршрут_Key'])])
-            if not route_tms:
+            if not route_tms and route_1c['Маршрут_Key'] != '00000000-0000-0000-0000-000000000000':
                 route_tms = self.create({
-                    'name': name_route[i] if name_route[i] and name_route[i] != '' else 'No',
+                    'name': name_route[i],
                     'stock_1c_key': json_value['Склад_Key'],
                     'route_1c_key': route_1c['Маршрут_Key'],
                 })
