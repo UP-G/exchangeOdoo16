@@ -175,7 +175,7 @@
                                     </div>
                                     <br/>
                                 </div>
-                                <div class="col-12 col-lg-6 o_setting_box" id="default_team_id">
+                                <div class="col-12 col-lg-6 o_setting_box" id="tmtr_default_team_id">
                                     <br/>
                                     <div class="o_setting_right_pane">
                                         <span class="o_form_label">Default Sales Team</span>
@@ -185,7 +185,7 @@
                                         </div>
                                         <div class="content-group">
                                             <div class="mt16" groups="base.group_no_one">
-<!--                                                <field name="default_team_id"  context="{'default_model': 'res.config.settings'}" class="oe_inline"/> -->
+                                                <field name="tmtr_default_team_id"  context="{'default_model': 'res.config.settings'}" class="oe_inline"/>
                                             </div>
                                         </div>
                                     </div>

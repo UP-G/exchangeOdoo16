@@ -38,4 +38,4 @@ class ResConfigSettings(models.TransientModel):
 
     price_level_actuality = fields.Integer(config_parameter='tmtr_exchange.price_level_actuality', default="23")
 
-    default_team_id = fields.Many2one('crm.team', config_parameter='tmtr_exchange.default_team_id') # Команда продаж по умолчанию, если иная команда не найдена
+    tmtr_default_team_id = fields.Many2one('crm.team', config_parameter='tmtr_exchange.default_team_id') # Команда продаж по умолчанию, если иная команда не найдена

@@ -69,11 +69,11 @@ class EfficiencySalerReport(models.Model):
         ('5_mean','Meaningful'), # Значимые по емкости (следующие 15%)
         ('6_other','Other'), # Прочие по емкости
         ], 'Type capacity')
+    debts_to_limit_percentage = fields.Float(string='Detbs to credit_limit ration')
 
     indicator_id = fields.Many2one('tmtr.exchange.1c.indicators', string='Client Indicators', readonly=True) # Не дублировать поле в Истории, т.к. в Индикаторах хранится только последнее состояние
 
     def _select(self):
-#                COALESCE(team.name, ' {"en_US": "Unkown team", "ru_RU": "Нет команды"}') as team_name,
         return """
             SELECT
                 max(indicators.id) as id,
@@ -101,12 +101,14 @@ class EfficiencySalerReport(models.Model):
                 COALESCE(client.requests_limit, 0) as requests_limit,
                 indicators.team_id as team_id,
 
-                max(indicators.plan) as plan,
+                max(indicators.target) as plan,
                 max(indicators.prediction) as prediction,
 
+                case when max(indicators.credit_limit) > 100 then max(indicators.debt) / max(indicators.credit_limit) else 0.99 end as debts_to_limit_percentage,
+
                 sum(indicators.turnover_lacking_percent) as turnover_lacking_percent,
-                case when max(indicators.plan) > 0 then sum(indicators.prediction) / max(indicators.plan) else 0 end as plan_predicted_percentage,
-                case when max(indicators.plan) - max(indicators.prediction) > 0 then max(indicators.plan) - max(indicators.prediction) else 0 end as turnover_lacking,
+                case when max(indicators.target) > 0 then sum(indicators.prediction) / max(indicators.target) else 0 end as plan_predicted_percentage,
+                case when max(indicators.target) - max(indicators.prediction) > 0 then max(indicators.target) - max(indicators.prediction) else 0 end as turnover_lacking,
                 max(indicators.turnover_this_mounth) as turnover_this_mounth,
                 max(indicators.turnover_previous_mounth) as turnover_previous_mounth,
                 max(indicators.debt) as debt,
@@ -144,6 +146,7 @@ class EfficiencySalerReport(models.Model):
                 indicators.task_count,
                 indicators.level_code,
                 indicators.team_id,
+                indicators.target,
                 indicators.credit_limit,
                 indicators.credit_days,
                 GREATEST(
@@ -295,3 +298,4 @@ class EfficiencySalerReport(models.Model):
                 if best_task:
                     best_client_1c_id = best_task[0].client_1c_id
         return {'origin_id': best_client_1c_id, 'step': step, 'message': 'nothing to do' if not best_client_1c_id else '', 'manager_1c_id': manager_1c_id}
+

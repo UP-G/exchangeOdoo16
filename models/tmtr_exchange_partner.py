@@ -31,8 +31,14 @@ class TmtrExchangeOneCPartner(models.Model):
     #department_accounting_1c_id = fields.Many2one('tmtr.exchange.1c.department', string="1C Department Accounting")
 
     def upload_new_partner(self, code=None, skip=0, top=100):
+        return self.upload_new(code=code, skip=skip, top=top)
+
+    def upload_new(self, code=None, skip=0, top=100, do_limit={}):
         try:
-            finish_before = datetime.now() + timedelta(minutes=1) # ограничить время работы скрипта одной минутой
+            if do_limit:
+                finish_before = datetime.now() + timedelta(seconds=do_limit.get('seconds',0), minutes=do_limit.get('minutes',0)) # ограничить время работы скрипта
+            else:
+                finish_before = datetime.now() + timedelta(minutes=1) # ограничить время работы скрипта одной минутой
 
             if not code: #Если не указан с какого code начинаем выкачиваем
                 partner_list= self.search([('code', 'like', '00-')],

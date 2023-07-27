@@ -58,22 +58,31 @@ class TmtrExchangeOneCBusinessType(models.Model):
                             "catalog_name": "Catalog_БизнесРегионы",
                             "filter": f"ОсновнойМенеджер_Key eq guid'{manager_key}'&$orderby=Ref_Key&$top={top}&$skip={skip}"
                         })['value']
-                    for item in data:
-                        if item.get('DeletionMark') != True:
+                    if data:
+                        for item in data:
                             if self.update_by_odata_json(item, model_fields=model_fields):
                                 cnt += 1
                             else:
                                 rec = self.create_by_odata_json(item)
                                 cnt += 1 if len(rec) > 0 else 0
                             last_updated = item['ОсновнойМенеджер_Key']
-                    if not data:
+                    else:
                         empty_result += 1
+                    if skip+1 >= top * 1:
+                        if last_updated:
+                            code = last_updated
+                            skip = 1
+                        else:
+                            empty_result += 1
+                    else:
+                        skip += top
                     #_logger.info(f'empty_result={empty_result}, cnt={cnt}')
                     skip += top
             return {'count': cnt, 'last_updated': last_updated}
         except Exception as e:
             _logger.info(e)
             return
+
 
     def create_by_odata_json(self, json_data):
         rec = self.search([("ref_key", "=", json_data.get('Ref_Key'))])

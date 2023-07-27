@@ -39,7 +39,8 @@
                     <tbody t-if="docs">
                     <t t-call="tmtr_exchange.report_efficiency_total"/>
                     <t t-if="data.get('view') == 'grouped_by_manager'" t-call="tmtr_exchange.report_efficiency_grouped_by_manager"/>
-                    <t t-if="data.get('view') not in ['grouped_by_manager']" t-call="tmtr_exchange.report_efficiency_rows_plain"/>
+                    <t t-if="data.get('view') == 'grouped_by_team'" t-call="tmtr_exchange.report_efficiency_grouped_by_team"/>
+                    <t t-if="data.get('view') not in ['grouped_by_manager', 'grouped_by_team']" t-call="tmtr_exchange.report_efficiency_rows_plain"/>
                     </tbody>
                     </table>
                 </div>
@@ -48,7 +49,7 @@
         </template>
 
         <template id="report_efficiency_rows_plain">
-            <t t-foreach="docs.sorted(lambda r: (r.manager_name, r.type_client, min(-r.capacity_lacking, -r.turnover_lacking), -r.plan))" t-as="doc">
+            <t t-foreach="docs.sorted(lambda r: (r.team_id.name, r.manager_name, r.type_client, min(-r.capacity_lacking, -r.turnover_lacking), -r.plan))" t-as="doc">
                 <t t-call="tmtr_exchange.report_efficiency_row"/>
             </t>
         </template>
@@ -63,6 +64,19 @@
             <t t-set="groups" t-value="dict(docs.mapped(lambda r: (r.manager_name + r.type_client, {'manager_name': r.manager_name, 'type_client': r.type_client})))"/>
             <t t-foreach="sorted(groups.items(), key=lambda r: r[0])" t-as="group">
               <t t-set="rows" t-value="docs.filtered(lambda r: r.manager_name == group[1].get('manager_name') and r.type_client == group[1].get('type_client'))
+              .sorted(lambda r: (r.manager_name, r.type_client, min(-r.capacity_lacking, -r.turnover_lacking), -r.plan))"/>
+              <t t-set="doc" t-value="rows[0]"/>
+              <t t-call="tmtr_exchange.report_efficiency_rows_header"/>
+              <t t-foreach="rows" t-as="doc">
+                <t t-call="tmtr_exchange.report_efficiency_row"/>
+              </t>
+            </t>
+        </template>
+
+        <template id="report_efficiency_grouped_by_team">
+            <t t-set="groups" t-value="dict(docs.mapped(lambda r: (str(r.team_id) + r.manager_name + r.type_client, {'team_id': r.team_id.id, 'manager_name': r.manager_name, 'type_client': r.type_client})))"/>
+            <t t-foreach="sorted(groups.items(), key=lambda r: r[0])" t-as="group">
+              <t t-set="rows" t-value="docs.filtered(lambda r: r.team_id.id == group[1].get('team_id') and r.manager_name == group[1].get('manager_name') and r.type_client == group[1].get('type_client'))
               .sorted(lambda r: (r.manager_name, r.type_client, min(-r.capacity_lacking, -r.turnover_lacking), -r.plan))"/>
               <t t-set="doc" t-value="rows[0]"/>
               <t t-call="tmtr_exchange.report_efficiency_rows_header"/>
@@ -91,6 +105,10 @@
                         ( <span t-esc="len(docs)" title="Count of clients"/> )
                     </t>
                     <t t-if="len(docs)!=len(rows)">
+                        <t t-if="data.get('view') == 'grouped_by_team'">
+                          <span t-esc="doc.team_id.name"/>
+                        / 
+                        </t>
                         <span t-esc="doc['manager_name'] if doc['manager_name'] else '(не указан менеджер)' "/>
                         / <span t-esc="types2ru.get(doc['type_client'])"/>
                     </t>
@@ -150,9 +168,16 @@
             <tr>
             <t t-foreach="headers" t-as="header">
                 <td t-if="header=='manager_type_client_business'" class="text-left">
-                    <t t-if="data.get('view') != 'grouped_by_manager'"><span t-esc="doc['manager_name']"/>
+                    <t t-if="data.get('view') not in ['grouped_by_manager', 'grouped_by_team']">
+                      <span t-esc="doc.team_id.name"/>
+                    / <span t-esc="doc['manager_name']"/>
                     / <span t-esc="types2ru.get(doc['type_client'])"/>
-                    / </t>
+                    / 
+                    </t>
+                    <t t-if="data.get('view') in ['grouped_by_manager']">
+                      <span t-esc="doc.team_id.name"/>
+                    / 
+                    </t>
                     <span t-esc="doc['client_name']" t-att-title="doc['client_1c_id']"/>
                     / <span t-esc="doc['business_type']"/>
                     / <span t-esc="doc['price_level']"/>
