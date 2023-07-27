@@ -10,6 +10,7 @@ access_tmtr_exchange_1c_purchase_order,access.tmtr.exchange.1c.purchase.order,mo
 access_tmtr_exchange_1c_implemention,access.tmtr.exchange.1c.implemention,model_tmtr_exchange_1c_implemention,,1,1,1,1
 access_tmtr_exchange_1c_route,access.tmtr.exchange.1c.route,model_tmtr_exchange_1c_route,,1,1,1,1
 access_tmtr_exchange_1c_individual,access.tmtr.exchange.1c.individual,model_tmtr_exchange_1c_individual,,1,1,1,1
+access_tmtr_exchange_1c_transport_company,access.tmtr.exchange.1c.transport_company,model_tmtr_exchange_1c_transport_company,,1,1,1,1
 access_tmtr_exchange_1c_company_route,access.tmtr.exchange.1c.company.route,model_tmtr_exchange_1c_company_route,,1,1,1,1
 access_efficiency_saler_report,access.efficiency.saler.report,model_efficiency_saler_report,,1,1,1,1
 access_efficiency_saler_report_history,access.efficiency.saler.report_history,model_efficiency_saler_report_history,,1,1,1,1
