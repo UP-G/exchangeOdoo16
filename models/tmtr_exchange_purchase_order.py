@@ -3,7 +3,6 @@ import logging
 import json
 from datetime import datetime, timedelta
 
-
 _logger = logging.getLogger(__name__)
 class TmtrExchangeOneCPurchaseOrder(models.Model):
     _name = 'tmtr.exchange.1c.purchase.order'
@@ -35,9 +34,9 @@ class TmtrExchangeOneCPurchaseOrder(models.Model):
     
     def create_returns_delivery(self, impl_json_value, tms_delivery):
         self.env['tms.delivery.row'].create({
-                            'order_id': tms_delivery.id,
-                            'selected_1c': impl_json_value['Выбрать'],
+                            'delivery_id': tms_delivery.id,
                             'order_row_type': 'return',
+                            'notes': impl_json_value['Комментарий'],
                             'impl_num': "Возврат {number}".format(number=impl_json_value['LineNumber']),
                             'comment': "{phone};{address}".format(phone='-',address=impl_json_value['Адрес']),
                         })
@@ -48,6 +47,7 @@ class TmtrExchangeOneCPurchaseOrder(models.Model):
                                 'order_row_type': 'delivery',
                                 'selected_1c': impl_json_value['Выбрать'],
                                 'impl_num': impl_json_value['Номер'],
+                                'notes': impl_json_value['Комментарий'],
                                 'comment': "{phone};{address}".format(phone=impl_json_value['Телефон'], address=impl_json_value['АдресДоставки']),
                             })
 
@@ -125,7 +125,7 @@ class TmtrExchangeOneCPurchaseOrder(models.Model):
 
                 routes = self.env['tms.route'].upload_new_route(purchase_data)
                 driver = self.env['tms.carrier.driver'].get_carrier_driver(purchase_data['Водитель_Key'])#выгрузка водителей
-
+                _logger.info(purchase_data['Number'])
                 delivery_tms = self.env['tms.delivery'].search([('order_num','=',purchase_data['Number'])])
                 self.env['tmtr.exchange.1c.company.route'].create_company_route(purchase_data)
 
