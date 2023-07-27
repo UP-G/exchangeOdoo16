@@ -25,6 +25,7 @@
                 <field name="task_count" optional="show"/>
                 <field name="debt" optional="show"/>
                 <field name="overdue_debt" optional="show"/>
+                <field name="target" optional="show"/>
                 <field name="plan" optional="hide"/>
                 <field name="prediction" optional="hide"/>
                 <field name="turnover_this_mounth" optional="show"/>
@@ -56,6 +57,7 @@
                             <field name="debt"/>
                             <field name="overdue_debt"/>
                             <field name="task_count"/>
+                            <field name="target"/>
                             <field name="plan"/>
                             <field name="prediction"/>
                             <field name="credit_limit"/>
@@ -114,7 +116,7 @@
         <field name="context">{
             'group_by': [],
             'pivot_row_groupby': []
-            'pivot_measures':  ['__count', 'plan', 'prediction', 'turnover_this_mounth', 'turnover_previous_mounth', 'debt', 'overdue_debt', 
+            'pivot_measures':  ['__count', 'target', 'plan', 'prediction', 'turnover_this_mounth', 'turnover_previous_mounth', 'debt', 'overdue_debt', 
                 'task_count', 'capacity', 'turnover_last_30days', 'turnover_last_3month'],
             'pivot_column_groupby': [],
             'search_default_filter_old_records': 1,

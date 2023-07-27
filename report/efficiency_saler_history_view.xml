@@ -6,7 +6,7 @@
             <field name="model">efficiency.saler.report_history</field>
             <field name="arch" type="xml">
                 <pivot string="Analysis" sample="1">
-                    <field name="team_name" type="row"/>
+                    <field name="team_id" type="row"/>
                     <field name="manager_name" type="row"/>
                     <field name="client_name" type="row"/>
                     <field name="plan_predicted_percentage" type="measure" widget="percentage"/>
@@ -22,7 +22,7 @@
             <field name="model">efficiency.saler.report_history</field>
             <field name="arch" type="xml">
                 <tree>
-                    <field name="team_name" optional="show" />
+                    <field name="team_id" optional="show" />
                     <field name="manager_name" optional="show"/>
                     <field name="client_name" optional="show"/>
                     <field name="type_client" optional="show"/>
@@ -75,7 +75,7 @@
                         <group>
                             <group>
                                 <field name="date"/>
-                                <field name="team_name"/>
+                                <field name="team_id"/>
                                 <field name="manager_name" class="o_text_overflow" />
                                 <field name="type_client"/>
                                 <field name="type_debts"/>
@@ -119,7 +119,7 @@
                     <field name="manager_name" string="Manager or Client" filter_domain="['|', ('manager_name', 'ilike', self), ('client_name', 'ilike', self)]"/>
                     <field name="manager_name" class="o_text_overflow" />
                     <field name="client_name" class="o_text_overflow" />
-                    <field name="team_name"/>
+                    <field name="team_id"/>
                     <field name="client_1c_id"/>
                     <field name="business_type"/>
                     <field name="price_level"/>
@@ -138,7 +138,7 @@
                     <separator/>
                     <filter string="Last 31 days" name="filter_last_month_creation" domain="[('date','&gt;', (context_today() - datetime.timedelta(days=31)).strftime('%Y-%m-%d'))]"/>
                     <group expand="0" string="Group By">
-                        <filter string="Sales Team name" name="team_name" domain="[]" context="{'group_by':'team_name'}"/>
+                        <filter string="Sales Team" name="team_id" domain="[]" context="{'group_by':'team_id'}"/>
                         <filter string="Manager" name="manager" domain="[]" context="{'group_by':'manager_name'}"/>
                         <filter string="Client" name="client" domain="[]" context="{'group_by':'client_name'}"/>
                         <filter string="Client Type" name="client_type" domain="[]" context="{'group_by':'type_client'}"/>
@@ -157,7 +157,7 @@
             <field name="view_mode">tree,pivot,graph,form</field>
             <field name="context">{
                 'group_by': ['type_client'],
-                'pivot_row_groupby': ['date:month', 'team_name', 'manager_name', 'type_client', 'client_name']
+                'pivot_row_groupby': ['date:month', 'team_id', 'manager_name', 'type_client', 'client_name']
                 'pivot_measures':  ['__count', 'plan', 'prediction', 'turnover_lacking', 'capacity', 'capacity_lacking', 'turnover_this_mounth', 'turnover_previous_mounth', 'debt', 'overdue_debt', 
                     'task_count', 'interaction_count', 'calls_in_count', 'calls_out_count', 'calls_minute', 'sonder_calls_count'],
                 'pivot_column_groupby': [],

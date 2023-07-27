@@ -38,7 +38,7 @@ class EfficiencySalerReport(models.Model):
     price_level = fields.Char('Price Level') # DB Analisys
     requests_limit = fields.Integer(string='Daily requests limit') # ДИТ_МаксимальноеЧислоЗапросов
 
-    team_name = fields.Char('Team Name') 
+    team_id = fields.Many2one('crm.team', string="Sales Team")
 
     plan = fields.Float(string='Plan this month') # План на текущий месяц (макс(среднее в день за предыдущий месяц; среднее в день за 3 месяца) * кол-во дней в текущем месяце)
     # plan_percentage = fields.Float('Plan percantage') # Процент выполнения плана, поле долно быть вычисляемым, чтобы корректно работало при группировках
@@ -73,7 +73,7 @@ class EfficiencySalerReport(models.Model):
     indicator_id = fields.Many2one('tmtr.exchange.1c.indicators', string='Client Indicators', readonly=True) # Не дублировать поле в Истории, т.к. в Индикаторах хранится только последнее состояние
 
     def _select(self):
-#                COALESCE(indicators.team_id.name, 'Unkown team') as team_name,
+#                COALESCE(team.name, ' {"en_US": "Unkown team", "ru_RU": "Нет команды"}') as team_name,
         return """
             SELECT
                 max(indicators.id) as id,
@@ -99,6 +99,7 @@ class EfficiencySalerReport(models.Model):
                 COALESCE(business_type.name,'Unknown type') as business_type,
                 COALESCE(indicators.level_code, '-') as price_level,
                 COALESCE(client.requests_limit, 0) as requests_limit,
+                indicators.team_id as team_id,
 
                 max(indicators.plan) as plan,
                 max(indicators.prediction) as prediction,

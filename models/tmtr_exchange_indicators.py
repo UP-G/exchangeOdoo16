@@ -44,6 +44,7 @@ class TmtrExchangeOneCIndicators(models.Model):
     credit_days = fields.Integer(string="Credit days") # min среди > 0 в контрагентах партнера
 
     team_id = fields.Many2one('crm.team') # Команда продаж, обновляется по расписанию на основе Департамента продаж в Партнерах
+    target = fields.Float(string="Client target") # Цель на текущий месяц, исходя из последнего плана продаж
 
     """ Metrics:
             "groups_3month"        => 0,  //: МассивДанных.Добавить(Выборка.Выр3Мес_1);   //товарных групп (подушки, РМК, тормоза, фильтры)
@@ -331,3 +332,35 @@ class TmtrExchangeOneCIndicators(models.Model):
                 rec.update(limit)
                 cnt += 1
         return cnt
+
+    def update_targets(self):
+        """
+            Вычисление плана продаж каждого каждого клиента исходя из последнего плана продаж
+        """
+        # Вычислить плановые суммы продаж регионов исходя из последнего плана продаж
+        sales_plan = self.env['base_bi.sales_plan'].search([('date','<',datetime.now())],order='date desc',limit=1)
+        plan_by_team = dict([ (r.team_id.id, r.target) for r in sales_plan.row_ids ])
+
+        # Сгруппировать клиентов по командам продаж
+        clients_by_team = self.read_group([],['team_id', 'team_avg:sum(plan)'], ['team_id'], 'team_avg desc')
+        total_avg = sum([ r.get('team_avg') for r in clients_by_team ])
+        team_avg = dict([ (r.get('team_id')[0] if r.get('team_id') else False, r.get('team_avg')) for r in clients_by_team ])
+        team_unknown = dict([ (k, v) for k,v in team_avg.items() if not k or k not in plan_by_team ]) # все не перечисленные в планах
+        total_unknown = sum([ v for k,v in team_unknown.items() ]) # средние продажи всех не перечисленных в планах
+        target_for_unknown = sum([ v for k,v in plan_by_team.items() if k not in team_avg ]) + max(0, sales_plan.target - sales_plan.rows_target ) # План на всех неизвестных
+        if target_for_unknown <= 0:
+            target_for_unknown = 0.05 * sum([ v for k,v in plan_by_team.items() ])
+
+        # Вычислить индивидуальный по клиентам целевые суммы продаж
+        cnt = 0
+        for team in clients_by_team:
+            for rec in self.search(team.get('__domain')):
+                team_id = rec.team_id.id if rec.team_id else False
+                team_target = ( plan_by_team.get(team_id) if team_id in plan_by_team else
+                    target_for_unknown * team_unknown.get(team_id) / total_unknown if total_unknown else target_for_unknown
+                    )
+                client_target = team_target * rec.plan / team_avg.get(team_id) if team_avg.get(team_id) else rec.plan
+                rec.target = client_target
+                cnt += 1
+        return cnt
+
