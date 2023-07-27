@@ -11,6 +11,7 @@ from . import tmtr_exchange_sales
 from . import tmtr_exchange_indicators
 from . import tmtr_exchange_business_type
 from . import tms_route
+from . import tms_carrier_driver
 from . import tmtr_exchange_individual
 from . import tmtr_exchange_transport_company
 from . import tmtr_exchange_business_region
