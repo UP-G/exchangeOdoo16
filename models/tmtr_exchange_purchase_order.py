@@ -151,7 +151,7 @@ class TmtrExchangeOneCPurchaseOrder(models.Model):
     def create_delivery(self, json_value, route_tms, driver_id):
 
         delivery = self.env['tms.delivery'].create({
-                        'route_id': [(4, route_id.id) for route_id in route_tms],
+                        'route_id': route_tms[0].id,
                             'name': json_value['Number'],
                             'order_num': json_value['Number'],
                             'notes': json_value['Примичание'],
@@ -483,24 +483,26 @@ class TmtrExchangeOneCPurchaseOrder(models.Model):
                 #     continue
 
                 routes = self.env['tms.route'].upload_new_route(purchase_data)
-                driver = self.env['tmtr.exchange.1c.individual'].get_individual(purchase_data['Водитель_Key'])#выгрузка водителей
+                driver = self.env['tms.carrier.driver'].get_carrier_driver(purchase_data['Водитель_Key'])#выгрузка водителей
+
                 delivery_tms = self.env['tms.delivery'].search([('order_num','=',purchase_data['Number'])])
+                self.env['tmtr.exchange.1c.company.route'].create_company_route(purchase_data)
 
                 if not delivery_tms and routes:
-                    delivery_tms = self.create_delivery(purchase_data, routes, driver.carrier_driver_id.id if driver else False)
+                    delivery_tms = self.create_delivery(purchase_data, routes, driver.id if driver else False)
                     cnt += 1
 
                 tk_unique_key = self.get_unique_values_on_filed(purchase_data['Реализации'], 'ТК')
                 transport_companys = self.get_transport_company_id(tk_unique_key)
                 self.update_carrier_id(delivery_tms, transport_companys['carrier_ids'])
 
-                if driver:
-                    self.update_carrier_driver_id(delivery_tms, driver.carrier_driver_id)
-                    self.update_tk_driver(driver, transport_companys['tk_ids'])
+                # if driver:
+                #     self.update_carrier_driver_id(delivery_tms, driver.carrier_driver_id)
+                #     self.update_tk_driver(driver, transport_companys['tk_ids'])
 
-                tk_route = self.get_unique_values_on_filed(purchase_data['Маршруты'], 'Маршрут_Key')
-                route = self.get_route_id(tk_route)
-                self.update_route_tk(delivery_tms.carrier_ids, route['route_ids'])
+                # tk_route = self.get_unique_values_on_filed(purchase_data['Маршруты'], 'Маршрут_Key')
+                # route = self.get_route_id(tk_route)
+                # self.update_route_tk(delivery_tms.carrier_ids, route['route_ids'])
 
                 if not delivery_tms.delivery_row_ids and (purchase_data['Реализации'] or purchase_data['ДопУслуги']):
                     if purchase_data['Реализации'] != []:
@@ -534,7 +536,8 @@ class TmtrExchangeOneCPurchaseOrder(models.Model):
         return list(unique_values)
     
     def update_carrier_id(self, obj, tk_keys):
-        obj.carrier_ids = [(4, item) for item in tk_keys]
+        if tk_keys:
+            obj.carrier_id = tk_keys[0]
         return
     
     def get_transport_company_id(self, tk_keys):
@@ -542,6 +545,7 @@ class TmtrExchangeOneCPurchaseOrder(models.Model):
                                                                              ('carrier_id', '!=', None)])
         carrier_ids = [r['id'] for r in transport_company_ids['carrier_id']]
         tk_ids = [r['id'] for r in transport_company_ids]
+        _logger.info(f"tk_ids: {transport_company_ids}  carrer_ids: {carrier_ids}")
         return {
             'carrier_ids': carrier_ids,
             'tk_ids': tk_ids
