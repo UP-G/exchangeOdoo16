@@ -13,9 +13,10 @@ class TmtrExchangeOneCIndividual(models.Model):
     tm_code = fields.Char(string="TM code")
     tm_department_Key = fields.Char(string='ТМ Department Key')
     snils = fields.Char(string='InsuranceNumberPFR')
+    user_id = fields.Many2one('res.users')
     carrier_driver_id = fields.Many2one('tms.carrier.driver', string="carrier driver id")
-    transport_company_ids = fields.Many2many('tmtr.exchange.1c.transport.company', 
-                                             relation='tmtr_exchange_1c_transport_company_tmtr_exch_1c_individual_rel')
+    # transport_company_ids = fields.Many2many('tmtr.exchange.1c.transport.company', 
+    #                                          relation='tmtr_exchange_1c_transport_company_tmtr_exch_1c_individual_rel')
 
     def set_transport_company(self, ref_key):
         
@@ -27,8 +28,8 @@ class TmtrExchangeOneCIndividual(models.Model):
             if not individual.carrier_driver_id:
                 new_driver = self.create_driver(individual)
                 individual.carrier_driver_id = new_driver.id
-                return individual
-            return individual
+                return new_driver
+            return individual.carrier_driver_id
         else:
             return False
 
@@ -87,8 +88,6 @@ class TmtrExchangeOneCIndividual(models.Model):
     def create_driver(self, individual):
         new_driver = self.env['tms.carrier.driver'].create({
             'name' : individual.full_name,
-            'tm_code' : individual.tm_code,
-            'inn' : individual.inn,
-            'snils': individual.snils,
+            'ref_key': individual.ref_key,
         })
         return new_driver
