@@ -51,7 +51,7 @@
                     <div><span>Статистика по клиенту:</span>
                     <ul style="margin-block-start: 0px;">
                         <li><span>Уровень цен</span>: <span t-esc="client.price_level"/></li>
-                        <li><span>Кредитный лимит</span>: <span t-esc="doc.credit_limit"  t-options='{"widget": "float", "precision": 0}'/> EUR, <span t-esc="doc.credit_days"/> дней</li>
+                        <li><span>Кредитный лимит</span>: <span t-esc="doc.credit_limit"  t-options='{"widget": "float", "precision": 0}'/> EUR, дней: <span t-esc="doc.credit_days"/></li>
                         <li><span>Лимит запросов в день</span>: <span t-esc="client.requests_limit"/></li>
                         <li><span>Потенциал (план на месяц)</span>: <span t-esc="client.plan" t-options='{"widget": "float", "precision": 0}'/> <span>EUR</span></li>
                         <li><span>Текущий прогноз</span>: <span t-esc="client.prediction" t-options='{"widget": "float", "precision": 0}'/> <span>EUR</span></li>
