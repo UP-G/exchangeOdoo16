@@ -28,8 +28,6 @@
         'views/tmtr_exchange_sales.xml',
         'views/tms_route_view.xml',
         'views/tms_carrier_driver_view.xml',
-        'views/tms_delivery_row.xml',
-        'views/tms_order_row.xml',
         'views/tmtr_exchange_indicatiors.xml',
         'views/tmtr_exchange_interaction.xml',
         'views/tmtr_exchange_order.xml',
