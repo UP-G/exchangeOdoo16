@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_tms_order_row_form_inherit" model="ir.ui.view">
+        <field name="name">tms.order.row.inherit</field>
+        <field name="model">tms.order.row</field>
+        <field name="inherit_id" ref="tms.view_tms_route_order_row_form"/>
+        <field name="arch" type="xml">
+           <xpath expr="//field[@name='order_id']" position="after">
+                <field name="counterparty_id" optional="show"/>
+            </xpath>
+        </field>
+    </record>
+    </data>
+</odoo>

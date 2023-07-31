@@ -2,15 +2,15 @@
 <odoo>
     <data>
         <record id="view_tms_route_form_inherit" model="ir.ui.view">
-        <field name="name">tms.route.inherit</field>
-        <field name="model">tms.route</field>
-        <field name="inherit_id" ref="tms.view_tms_route_form"/>
-        <field name="arch" type="xml">
-           <xpath expr="//field[@name='stock_id']" position="after">
-                <field name="stock_1c_key" optional="show"/>
-                <field name="route_1c_key" optional="show"/>
-            </xpath>
-        </field>
-    </record>
+            <field name="name">tms.route.inherit</field>
+            <field name="model">tms.route</field>
+            <field name="inherit_id" ref="tms.view_tms_route_form"/>
+            <field name="arch" type="xml">
+               <xpath expr="//field[@name='stock_id']" position="after">
+                    <field name="stock_1c_key" optional="show"/>
+                    <field name="route_1c_key" optional="show"/>
+                </xpath>
+            </field>
+        </record>
     </data>
 </odoo>

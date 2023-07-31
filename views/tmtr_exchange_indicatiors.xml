@@ -20,23 +20,24 @@
         <field name="model">tmtr.exchange.1c.indicators</field>
         <field name="arch" type="xml">
             <tree multi_edit="1">
-                <field name="identifier_ib" optional="show"/>
+                <field name="identifier_ib" optional="hide"/>
+                <field name="origin_id" optional="show"/>
                 <field name="partner_id" optional="show"/>
                 <field name="task_count" optional="show"/>
-                <field name="debt" optional="show"/>
-                <field name="overdue_debt" optional="show"/>
                 <field name="target" optional="show"/>
-                <field name="plan" optional="hide"/>
+                <field name="plan" string="Average Sales" optional="hide"/>
                 <field name="prediction" optional="hide"/>
                 <field name="turnover_this_mounth" optional="show"/>
+                <field name="debt" optional="show"/>
+                <field name="overdue_debt" optional="show"/>
                 <field name="debs_percent" optional="hide" widget="percentage"/>
                 <field name="turnover_percent" optional="hide" widget="percentage"/>
                 <field name="capacity" optional="show"/>
                 <field name="capacity_percent" optional="hide" widget="percentage"/>
                 <field name="level_code" optional="show" />
-                <field name="credit_limit" optional="hide"/>
+                <field name="credit_limit" optional="show"/>
                 <field name="credit_days" optional="hide"/>
-                <field name="team_id" optional="hide"/>
+                <field name="team_id" optional="show"/>
                 <field name="write_date" optional="hide"/>
             </tree>
         </field>

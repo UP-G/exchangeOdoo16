@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="open_1c_indicators_tree_domain" model="ir.actions.act_window">
+        <field name="name">indicators 1c Domain</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">tmtr.exchange.1c.indicators</field>
+        <field name="view_mode">tree,form,pivot,graph</field>
+        <field name="domain">[('team_id','=', context.get('team_id'))]</field>
+        <field name="view_id" ref="view_tmtr_exchange_indicators_tree"/>
+        <field name="search_view_id" ref="tmtr_exchange_indicators_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create indicators
+            </p>
+        </field>
+    </record>
+
+    <record id="view_sales_plan_form_inherit" model="ir.ui.view">
+        <field name="name">sales_plan.inherit</field>
+        <field name="model">base_bi.sales_plan</field>
+        <field name="inherit_id" ref="base_bi.view_sales_plan_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <button name="fill_by_sales" string="Fill by sales" class="btn-primary" type="object"/>
+            </xpath>
+            <xpath expr="//field[@name='rows_target']" position="before">
+                <field name="avg_sales"/>
+            </xpath>
+            <xpath expr="//field[@name='row_ids']/tree//field[@name='target']" position="after">
+                <field name="avg_sales" readonly="1"/>
+                <field name="client_count" readonly="1"/>
+                <button name="%(tmtr_exchange.open_1c_indicators_tree_domain)d" context="{'team_id':team_id}" icon="fa-arrow-right" type="action" string="View clients" class="btn-link"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

@@ -12,10 +12,12 @@ from . import tmtr_exchange_indicators
 from . import tmtr_exchange_business_type
 from . import tms_route
 from . import tms_carrier_driver
+from . import tms_delivery_row
+from . import tms_order_row
 from . import tmtr_exchange_individual
 from . import tmtr_exchange_transport_company
 from . import tmtr_exchange_business_region
 from . import tmtr_exchange_department
 from . import tmtr_exchange_stock
 from . import tmtr_exchange_company_route
-
+from . import base_bi_sales_plan

@@ -30,6 +30,9 @@ class TmtrExchangeOneCPartner(models.Model):
     #department_1c_id = fields.Many2one('tmtr.exchange.1c.department', string="1C Department")
     #department_accounting_1c_id = fields.Many2one('tmtr.exchange.1c.department', string="1C Department Accounting")
 
+    def name_get(self):
+        return [(record.id, '{code}, {name})'.format(code=record.code, name=record.description)) for record in self]
+
     def upload_new_partner(self, code=None, skip=0, top=100):
         return self.upload_new(code=code, skip=skip, top=top)
 
@@ -106,7 +109,11 @@ class TmtrExchangeOneCPartner(models.Model):
                     })["value"]
                 if data:
                     for json_data in data:
-                        cnt += self.update_by_odata_json(json_data, model_fields=model_fields)
+                        partner = self.update_by_odata_json(json_data, model_fields=model_fields)
+                        if partner:
+                            cnt += 1
+                        else:
+                            cnt += self.create_by_odata_json(json_data)
                         last_updated = json_data['Code']
                 else:
                     empty_result += 1
