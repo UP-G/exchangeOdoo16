@@ -449,7 +449,7 @@ msgstr "Минут"
 #: model:ir.model.fields,field_description:tmtr_exchange.field_efficiency_saler_report__calls_minute
 #: model:ir.model.fields,field_description:tmtr_exchange.field_efficiency_saler_report_history__calls_minute
 msgid "Calls minutes"
-msgstr "Общее количество минут"
+msgstr "Итого минут"
 
 #. module: tmtr_exchange
 #: model:ir.model.fields,field_description:tmtr_exchange.field_efficiency_saler_report__calls_out_count
