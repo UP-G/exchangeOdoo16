@@ -32,23 +32,25 @@ class TmtrExchangeOneCPurchaseOrder(models.Model):
                         })
         return delivery    
     
-    def create_returns_delivery(self, impl_json_value, tms_delivery):
+    def create_returns_delivery(self, impl_json_value, tms_delivery, name_client):
         self.env['tms.delivery.row'].create({
                             'delivery_id': tms_delivery.id,
                             'order_row_type': 'return',
                             'notes': impl_json_value['Комментарий'],
+                            'client_name': name_client,
                             'impl_num': "Возврат {number}".format(number=impl_json_value['LineNumber']),
                             'comment': "{phone};{address}".format(phone='-',address=impl_json_value['Адрес']),
                         })
 
-    def create_delivery_row(self, impl_json_value, tms_delivery):
+    def create_delivery_row(self, impl_json_value, tms_delivery, name_client):
         self.env['tms.delivery.row'].create({
                                 'delivery_id': tms_delivery.id,
                                 'order_row_type': 'delivery',
                                 'selected_1c': impl_json_value['Выбрать'],
                                 'impl_num': impl_json_value['Номер'],
                                 'notes': impl_json_value['Комментарий'],
-                                'comment': "{phone};{address}".format(phone=impl_json_value['Телефон'], address=impl_json_value['АдресДоставки']),
+                                'client_name': name_client,
+                                'comment': "{phone};{address}".format(phone=self._parse_contact_info(impl_json_value['Телефон']), address=self._parse_contact_info(impl_json_value['АдресДоставки'])),
                             })
 
     def get_p_order_on_stock_key(self, date, stock_key, top, skip):
@@ -117,6 +119,9 @@ class TmtrExchangeOneCPurchaseOrder(models.Model):
                 continue # Возрат в начала while
 
             skip += top
+
+            clients = self.env['tmtr.exchange.1c.counterparty'].search([])
+            cash_clients = dict([(r.ref_key, r.full_name) for r in clients])
                 
             for purchase_data in purchases_data:
                 # if not self.env['tms.route'].have_stock(purchase_data):
@@ -148,11 +153,13 @@ class TmtrExchangeOneCPurchaseOrder(models.Model):
                 if not delivery_tms.delivery_row_ids and (purchase_data['Реализации'] or purchase_data['ДопУслуги']):
                     if purchase_data['Реализации'] != []:
                         for item in purchase_data['Реализации']:
+                            name_client = cash_clients.get(item['Контрагент_Key'])
                             #delivery_tms.carrier_ids = self.get_transport_company_id(list(item['ТК']))['carrier_ids']
-                            self.create_delivery_row(item, delivery_tms)
+                            self.create_delivery_row(item, delivery_tms, name_client=name_client)
                     if purchase_data['ДопУслуги'] != []:
                         for item in purchase_data['ДопУслуги']:
-                            self.create_returns_delivery(item, delivery_tms)
+                            name_client = cash_clients.get(item['Контрагент_Key'])
+                            self.create_returns_delivery(item, delivery_tms, name_client=name_client)
                 
             total_cnt += cnt
 
@@ -216,3 +223,8 @@ class TmtrExchangeOneCPurchaseOrder(models.Model):
     def _parse_date(self, str_date):
         date = datetime.strptime(str_date, '%Y-%m-%dT%H:%M:%S')
         return date - timedelta(hours=3) #Время по мск
+    
+    def _parse_contact_info(self, str_info):
+        if ";" in str_info:
+            str_info = str_info.replace(";", "")
+        return str_info
