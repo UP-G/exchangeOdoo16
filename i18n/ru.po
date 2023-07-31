@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 16.0-20221202\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-07-28 11:28+0000\n"
-"PO-Revision-Date: 2023-07-28 11:28+0000\n"
+"POT-Creation-Date: 2023-07-31 09:40+0000\n"
+"PO-Revision-Date: 2023-07-31 09:40+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -236,13 +236,11 @@ msgid ""
 "<span title=\"Учитывается 30% от емкости клиента\">Недостающая по "
 "емкости</span>:"
 msgstr ""
-"<span title=\"Учитывается 30% от емкости клиента\">Недостающая по "
-"емкости</span>:"
 
 #. module: tmtr_exchange
 #: model_terms:ir.ui.view,arch_db:tmtr_exchange.best_one_todo_template
 msgid "<span>EUR</span>"
-msgstr "<span>EUR</span>"
+msgstr ""
 
 #. module: tmtr_exchange
 #: model_terms:ir.ui.view,arch_db:tmtr_exchange.best_one_todo_template
@@ -383,6 +381,21 @@ msgid "Author_Key"
 msgstr ""
 
 #. module: tmtr_exchange
+#: model_terms:ir.ui.view,arch_db:tmtr_exchange.view_tmtr_exchange_indicators_tree
+msgid "Average Sales"
+msgstr "Средние продажи"
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_base_bi_sales_plan__avg_sales
+msgid "Average sales last three months"
+msgstr "Средние продажи за последние три месяца"
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_base_bi_sales_plan_row__avg_sales
+msgid "Avg Sales"
+msgstr "Ср.продажи"
+
+#. module: tmtr_exchange
 #: model:ir.model.fields,field_description:tmtr_exchange.field_res_config_settings__best_one_filter
 msgid "Best One Filter"
 msgstr "Фильтр поиска Лучшей задачи"
@@ -449,7 +462,7 @@ msgstr "Минут"
 #: model:ir.model.fields,field_description:tmtr_exchange.field_efficiency_saler_report__calls_minute
 #: model:ir.model.fields,field_description:tmtr_exchange.field_efficiency_saler_report_history__calls_minute
 msgid "Calls minutes"
-msgstr "Итого минут"
+msgstr "Общее количество минут"
 
 #. module: tmtr_exchange
 #: model:ir.model.fields,field_description:tmtr_exchange.field_efficiency_saler_report__calls_out_count
@@ -483,7 +496,9 @@ msgstr "Водитель перевозчика"
 #. module: tmtr_exchange
 #: model_terms:ir.ui.view,arch_db:tmtr_exchange.res_config_settings_view_form
 msgid "Choose default Sales Team for all unknown Departments in Clients"
-msgstr "Выберите команду продаж по умолчанию для всех не опознанных Департаментов в Партнерах"
+msgstr ""
+"Выберите команду продаж по умолчанию для всех не опознанных Департаментов в "
+"Партнерах"
 
 #. module: tmtr_exchange
 #: model_terms:ir.ui.view,arch_db:tmtr_exchange.res_config_settings_view_form
@@ -521,6 +536,8 @@ msgid "Choose template for 1c manager"
 msgstr "Выберите Шаблон res.user для 1С Продавца"
 
 #. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tms_delivery_row__counterparty_id
+#: model:ir.model.fields,field_description:tmtr_exchange.field_tms_order_row__counterparty_id
 #: model_terms:ir.actions.act_window,help:tmtr_exchange.action_open_tmtr_exchange_contact
 #: model_terms:ir.actions.act_window,help:tmtr_exchange.action_open_tmtr_exchange_user
 #: model_terms:ir.ui.view,arch_db:tmtr_exchange.efficiency_saler_report_history_search
@@ -578,9 +595,19 @@ msgid "Client capacity ratio"
 msgstr "Процент Прогноза к Емкости"
 
 #. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_base_bi_sales_plan_row__client_count
+msgid "Client count"
+msgstr "Клиентов"
+
+#. module: tmtr_exchange
 #: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_indicators__target
 msgid "Client target"
 msgstr "Цель по Партнеру"
+
+#. module: tmtr_exchange
+#: model:ir.model.fields,field_description:tmtr_exchange.field_base_bi_sales_plan_row__client_ids
+msgid "Clients"
+msgstr "Склиенты"
 
 #. module: tmtr_exchange
 #: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_contact__code
@@ -686,6 +713,7 @@ msgstr "Создайть департамент"
 
 #. module: tmtr_exchange
 #: model_terms:ir.actions.act_window,help:tmtr_exchange.action_tmtr_exchange_indicators
+#: model_terms:ir.actions.act_window,help:tmtr_exchange.open_1c_indicators_tree_domain
 msgid "Create indicators"
 msgstr "Создать Индикатор"
 
@@ -820,6 +848,11 @@ msgid "Deliver order 1C"
 msgstr "1С Заказ-наряд"
 
 #. module: tmtr_exchange
+#: model:ir.model,name:tmtr_exchange.model_tms_delivery_row
+msgid "Delivery row"
+msgstr "Точка доставки"
+
+#. module: tmtr_exchange
 #: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_department__department_id
 msgid "Department"
 msgstr "Департамент"
@@ -932,6 +965,11 @@ msgstr "Отчёт по эффективности продавцов"
 #: model:ir.model,name:tmtr_exchange.model_efficiency_saler_report_history
 msgid "Efficiency Saler Report History"
 msgstr "История отчета Эффективности продавцов"
+
+#. module: tmtr_exchange
+#: model_terms:ir.ui.view,arch_db:tmtr_exchange.view_sales_plan_form_inherit
+msgid "Fill by sales"
+msgstr "Заполнить по продажам"
 
 #. module: tmtr_exchange
 #: model:ir.ui.menu,name:tmtr_exchange.menu_tmtr_exchange_1c_indicators
@@ -1577,6 +1615,11 @@ msgid "Route 1C"
 msgstr "1С Маршрут"
 
 #. module: tmtr_exchange
+#: model:ir.model,name:tmtr_exchange.model_tms_order_row
+msgid "Route Row"
+msgstr "Маршруты строки"
+
+#. module: tmtr_exchange
 #: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_route__route_key
 msgid "Route key"
 msgstr "Маршрут key"
@@ -1604,6 +1647,16 @@ msgstr "Код канала продаж"
 #: model:ir.actions.report,name:tmtr_exchange.action_report_seller_efficiency
 msgid "Sales managers efficiency"
 msgstr "Эффективность продавцов"
+
+#. module: tmtr_exchange
+#: model:ir.model,name:tmtr_exchange.model_base_bi_sales_plan_row
+msgid "Sales plan business regions"
+msgstr "Бизнес-регионы Плана продаж"
+
+#. module: tmtr_exchange
+#: model:ir.model,name:tmtr_exchange.model_base_bi_sales_plan
+msgid "Sales plan by business regions"
+msgstr "Планы продаж по бизнес-региону"
 
 #. module: tmtr_exchange
 #: model_terms:ir.ui.view,arch_db:tmtr_exchange.efficiency_saler_report_history_view_graph
@@ -1842,6 +1895,11 @@ msgid "User"
 msgstr "Пользователь"
 
 #. module: tmtr_exchange
+#: model_terms:ir.ui.view,arch_db:tmtr_exchange.view_sales_plan_form_inherit
+msgid "View clients"
+msgstr ""
+
+#. module: tmtr_exchange
 #: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_purchase_order__store_key
 msgid "Warehouse key"
 msgstr ""
@@ -1908,6 +1966,11 @@ msgstr "1С Ключ пользователя ИБ"
 #: model:ir.actions.act_window,name:tmtr_exchange.action_tmtr_exchange_indicators
 msgid "indicators 1c"
 msgstr "1С Показетели"
+
+#. module: tmtr_exchange
+#: model:ir.actions.act_window,name:tmtr_exchange.open_1c_indicators_tree_domain
+msgid "indicators 1c Domain"
+msgstr ""
 
 #. module: tmtr_exchange
 #: model:ir.model.fields,field_description:tmtr_exchange.field_tmtr_exchange_1c_indicators__identifier_ib
