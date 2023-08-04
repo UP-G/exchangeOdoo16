@@ -26,6 +26,7 @@ class TmtrExchangeOneCPurchaseOrder(models.Model):
                         'route_id': route_tms[0].id,
                             'name': json_value['Number'],
                             'order_num': json_value['Number'],
+                            'car_departure_date': datetime.strptime(json_value['ДатаВыездаМашины'], '%Y-%m-%dT%H:%M:%S'),
                             'notes': json_value['Примичание'],
                             'date_create_1c': self._parse_date(json_value['Date']),
                             'carrier_driver_id': driver_id,
@@ -63,7 +64,6 @@ class TmtrExchangeOneCPurchaseOrder(models.Model):
                 "skip": skip
                 })['value']
         return interaction_data
-
 
     def upload_deliveries_by_stock_key(self, from_date=None, stock_upload=None, top=50, skip=0):
         key_ids = []
@@ -112,7 +112,7 @@ class TmtrExchangeOneCPurchaseOrder(models.Model):
                 skip = 0
             _logger.info(key_ids)
             purchases_data = self.get_p_order_on_stock_key(date=date, stock_key=key_ids[0], top=top, skip=skip)
-
+            self.env['tmtr.exchange.1c.intervals'].upload_intervals(key_ids[0])
             if not purchases_data: #Если нет больше для склада маршрутов
                 key_ids.remove(key_ids[0]) #Переход к следующему
                 skip = 0
@@ -127,7 +127,7 @@ class TmtrExchangeOneCPurchaseOrder(models.Model):
                 # if not self.env['tms.route'].have_stock(purchase_data):
                 #     _logger.info(f"order {purchase_data['Number']} dosent have a stock in DB")
                 #     continue
-
+                
                 routes = self.env['tms.route'].upload_new_route(purchase_data)
                 driver = self.env['tms.carrier.driver'].get_carrier_driver(purchase_data['Водитель_Key'])#выгрузка водителей
                 _logger.info(purchase_data['Number'])
@@ -137,10 +137,11 @@ class TmtrExchangeOneCPurchaseOrder(models.Model):
                 if not delivery_tms and routes:
                     delivery_tms = self.create_delivery(purchase_data, routes, driver.id if driver else False)
                     cnt += 1
-
+                _logger.info(f"routes: {routes}, data: {purchase_data}")
                 tk_unique_key = self.get_unique_values_on_filed(purchase_data['Реализации'], 'ТК')
                 transport_companys = self.get_transport_company_id(tk_unique_key)
                 self.update_carrier_id(delivery_tms, transport_companys['carrier_ids'])
+                self.update_intervals(delivery_tms, routes)#выгрузка интервалов 
 
                 # if driver:
                 #     self.update_carrier_driver_id(delivery_tms, driver.carrier_driver_id)
@@ -219,6 +220,19 @@ class TmtrExchangeOneCPurchaseOrder(models.Model):
         for item in obj:
             self.env['tms.carrier.route'].create_carrier_route(item['id'], item['name'], route_list)
         return
+    
+    def update_intervals(self, delivery_tms, routes):
+        if routes == []:
+            return
+        value = self.env['tmtr.exchange.1c.intervals'].get_intervals(routes[0].route_1c_key)
+        date = delivery_tms.car_departure_date + timedelta(days=int(value.delivery_terms))
+        interval_f = datetime(date.year, date.month, date.day,value.interval_from.hour,value.interval_from.minute,0)
+        interval_t = datetime(date.year, date.month, date.day,value.interval_to.hour,value.interval_to.minute,0)
+        delivery_tms.update({
+            'interval_from': interval_f,
+            'interval_to': interval_t,
+            
+        })
     
     def _parse_date(self, str_date):
         date = datetime.strptime(str_date, '%Y-%m-%dT%H:%M:%S')

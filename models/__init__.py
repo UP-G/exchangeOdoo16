@@ -17,5 +17,7 @@ from . import tmtr_exchange_transport_company
 from . import tmtr_exchange_business_region
 from . import tmtr_exchange_department
 from . import tmtr_exchange_stock
+from . import tmtr_exchange_intervals
 from . import tmtr_exchange_company_route
 from . import base_bi_sales_plan
+

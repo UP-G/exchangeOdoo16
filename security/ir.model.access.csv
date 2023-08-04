@@ -18,3 +18,5 @@ access_tmtr_exchange_1c_business_type,access.tmtr.exchange.1c.business_type,mode
 access_tmtr_exchange_1c_business_region,access.tmtr.exchange.1c.business_region,model_tmtr_exchange_1c_business_region,,1,1,1,1
 access_tmtr_exchange_1c_department,access.tmtr.exchange.1c.department,model_tmtr_exchange_1c_department,,1,1,1,1
 access_tmtr_exchange_1c_stock,access.tmtr.exchange.1c.stock,model_tmtr_exchange_1c_stock,,1,1,1,1
+access_tmtr_exchange_1c_intervals,access.tmtr.exchange.1c.intervals,model_tmtr_exchange_1c_intervals,,1,1,1,1
+
