@@ -59,7 +59,7 @@ class TmtrExchangeOneCIntervals(models.Model):
     def _update_interval_for_tms_order(self):
         orders = self.env['tms.order'].search([])
         for order in orders:
-            i = self.env['tmtr.exchange.1c.intervals'].search(['&',('route_key', '=', order.route_id.route_1c_key),('stock_key', '=', d.route_id.stock_1c_key)])
+            i = self.env['tmtr.exchange.1c.intervals'].search(['&',('route_key', '=', order.route_id.route_1c_key),('stock_key', '=', order.route_id.stock_1c_key)])
             date = order.car_departure_date + timedelta(days=int(i.delivery_terms)) if order.car_departure_date else order.date_create_1c + timedelta(days=int(i.delivery_terms))
             interval_f = datetime(date.year, date.month, date.day,i.interval_from.hour,i.interval_from.minute,0)
             interval_t = datetime(date.year, date.month, date.day,i.interval_to.hour,i.interval_to.minute,0)
