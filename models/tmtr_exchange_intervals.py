@@ -73,23 +73,14 @@ class TmtrExchangeOneCIntervals(models.Model):
     def _update_interval_for_tms_order(self):
         orders = self.env['tms.order'].search([])
         for order in orders:
-            i = self.env['tmtr.exchange.1c.intervals'].search(['&',('route_key', '=', order.route_id.route_1c_key),('stock_key', '=', order.route_id.stock_1c_key)], limit=1)
+            i = self.env['tmtr.exchange.1c.intervals'].search(['&',('route_key', '=', order.route_id.route_1c_key),
+                                                       ('stock_key', '=', order.route_id.stock_1c_key),
+                                                       '&', ('interval_from', '!=', None),
+                                                       ('interval_to', '!=', None)], limit=1)
             date = order.car_departure_date + timedelta(days=int(i.delivery_terms)) if order.car_departure_date else (order.date_create_1c + timedelta(days=int(i.delivery_terms)) if order.date_create_1c else False)
-            if not date:
-                if len(i) == 0:
-                    print('Этот заказ не имеет дату и не имеет время:', order)   
-                else:
-                    print('Этот заказ не имеет дату, но время имеет:', order)
-                    # interval_f = datetime(1999, 1, 1, i.interval_from.hour,i.interval_from.minute,0)
-                    # interval_t = datetime(1999, 1, 2, i.interval_to.hour,i.interval_to.minute,0)
-            else:
-                if len(i) == 0:
-                    print('Этот заказ имеет дату, но не время:', order)
-                    # interval_f = datetime(date.year, date.month, date.day,0,0,0)
-                    # interval_t = datetime(date.year, date.month, date.day,0,0,0)
-                else:
-                    print('Этот заказ имеет и дату и время:', order)
-                    interval_f = datetime(date.year, date.month, date.day,i.interval_from.hour,i.interval_from.minute,0)
-                    interval_t = datetime(date.year, date.month, date.day,i.interval_to.hour,i.interval_to.minute,0)         
-                    order.interval_from = interval_f
-                    order.interval_to = interval_t
+            if not date or not i:
+                continue
+            interval_f = datetime(date.year, date.month, date.day,i.interval_from.hour,i.interval_from.minute,0)
+            interval_t = datetime(date.year, date.month, date.day,i.interval_to.hour,i.interval_to.minute,0)         
+            order.interval_from = interval_f
+            order.interval_to = interval_t
