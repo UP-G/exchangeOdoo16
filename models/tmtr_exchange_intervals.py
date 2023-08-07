@@ -48,7 +48,7 @@ class TmtrExchangeOneCIntervals(models.Model):
         return new_interval
     
     def get_intervals(self, route_key):
-        return self.search([('route_key','=', route_key)])
+        return self.search([('route_key','=', route_key)], order='create_date desc', limit=1)
     
     def _parse_date(self, str_date):
         date = datetime.strptime(str_date, '%Y-%m-%dT%H:%M:%S')
@@ -59,9 +59,23 @@ class TmtrExchangeOneCIntervals(models.Model):
     def _update_interval_for_tms_order(self):
         orders = self.env['tms.order'].search([])
         for order in orders:
-            i = self.env['tmtr.exchange.1c.intervals'].search(['&',('route_key', '=', order.route_id.route_1c_key),('stock_key', '=', order.route_id.stock_1c_key)])
-            date = order.car_departure_date + timedelta(days=int(i.delivery_terms)) if order.car_departure_date else order.date_create_1c + timedelta(days=int(i.delivery_terms))
-            interval_f = datetime(date.year, date.month, date.day,i.interval_from.hour,i.interval_from.minute,0)
-            interval_t = datetime(date.year, date.month, date.day,i.interval_to.hour,i.interval_to.minute,0)
-            order.interval_from = interval_f
-            order.interval_to = interval_t
+            i = self.env['tmtr.exchange.1c.intervals'].search(['&',('route_key', '=', order.route_id.route_1c_key),('stock_key', '=', order.route_id.stock_1c_key)], limit=1)
+            date = order.car_departure_date + timedelta(days=int(i.delivery_terms)) if order.car_departure_date else (order.date_create_1c + timedelta(days=int(i.delivery_terms)) if order.date_create_1c else False)
+            if not date:
+                if len(i) == 0:
+                    print('Этот заказ не имеет дату и не имеет время:', order)   
+                else:
+                    print('Этот заказ не имеет дату, но время имеет:', order)
+                    # interval_f = datetime(1999, 1, 1, i.interval_from.hour,i.interval_from.minute,0)
+                    # interval_t = datetime(1999, 1, 2, i.interval_to.hour,i.interval_to.minute,0)
+            else:
+                if len(i) == 0:
+                    print('Этот заказ имеет дату, но не время:', order)
+                    # interval_f = datetime(date.year, date.month, date.day,0,0,0)
+                    # interval_t = datetime(date.year, date.month, date.day,0,0,0)
+                else:
+                    print('Этот заказ имеет и дату и время:', order)
+                    interval_f = datetime(date.year, date.month, date.day,i.interval_from.hour,i.interval_from.minute,0)
+                    interval_t = datetime(date.year, date.month, date.day,i.interval_to.hour,i.interval_to.minute,0)         
+                    order.interval_from = interval_f
+                    order.interval_to = interval_t
