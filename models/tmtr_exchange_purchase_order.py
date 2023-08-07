@@ -68,7 +68,7 @@ class TmtrExchangeOneCPurchaseOrder(models.Model):
     def upload_intervals(self):
         routes = self.env['tms.route'].search([])
         cnt=0
-        intervals = self.env['tmtr.exchange.1c.intervals'].serach([]) 
+        intervals = self.env['tmtr.exchange.1c.intervals'].search([]) 
         loaded_intervals = [i.stock_key for i in intervals]
         for route in routes:
             if not route.stock_1c_key or route.stock_1c_key in loaded_intervals or len(route.stock_1c_key) != 36:
@@ -154,7 +154,7 @@ class TmtrExchangeOneCPurchaseOrder(models.Model):
                 tk_unique_key = self.get_unique_values_on_filed(purchase_data['Реализации'], 'ТК')
                 transport_companys = self.get_transport_company_id(tk_unique_key)
                 self.update_carrier_id(delivery_tms, transport_companys['carrier_ids'])
-                #self.update_intervals(delivery_tms, routes)#выгрузка интервалов 
+                self.update_intervals(delivery_tms, routes)#выгрузка интервалов 
 
                 # if driver:
                 #     self.update_carrier_driver_id(delivery_tms, driver.carrier_driver_id)
