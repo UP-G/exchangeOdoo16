@@ -33,7 +33,6 @@ class TmtrExchangeOneCCompanyRoute(models.Model):
                     new_entry = self.create_new_entry(data, impl)
                     cnt+=1
                 else:
-                    _logger.info(f'can not create entry for {impl}')
                     continue
         if cnt != 0:
             self.create_tms_carrier_route()

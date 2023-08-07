@@ -69,12 +69,14 @@ class TmtrExchangeOneCPurchaseOrder(models.Model):
         routes = self.env['tms.route'].search([])
         cnt=0
         intervals = self.env['tmtr.exchange.1c.intervals'].search([]) 
-        loaded_intervals = [i.stock_key for i in intervals]
+        loaded_stock_keys = [i.stock_key for i in intervals]
+        loaded_route_keys = [i.route_key for i in intervals]
         for route in routes:
-            if not route.stock_1c_key or route.stock_1c_key in loaded_intervals or len(route.stock_1c_key) != 36:
+            if not route.stock_1c_key or not route.route_1c_key and not route.route_1c_key in loaded_route_keys and route.stock_key in loaded_stock_keys or len(route.stock_1c_key) != 36:
                 continue
-            self.env['tmtr.exchange.1c.intervals'].upload_intervals(route.stock_1c_key)
-            loaded_intervals.append(route.stock_1c_key)
+            self.env['tmtr.exchange.1c.intervals'].upload_intervals(route.stock_1c_key, route.route_1c_key)
+            loaded_stock_keys.append(route.stock_1c_key)
+            loaded_route_keys.append(route.route_2c_key)
             cnt+=1
         return cnt
 
@@ -110,7 +112,6 @@ class TmtrExchangeOneCPurchaseOrder(models.Model):
         copy_key_ids = key_ids[:]
 
         if len(copy_key_ids) == 0:
-            _logger.info("There is no warehouse in the sample")
             return
 
         while datetime.now() < finish_before:
@@ -123,7 +124,6 @@ class TmtrExchangeOneCPurchaseOrder(models.Model):
                 from_date += timedelta(days=1)
                 date = from_date.strftime("%Y-%m-%dT%H:%M:%S")
                 skip = 0
-            _logger.info(key_ids)
             purchases_data = self.get_p_order_on_stock_key(date=date, stock_key=key_ids[0], top=top, skip=skip)
             #self.env['tmtr.exchange.1c.intervals'].upload_intervals(key_ids[0])
             if not purchases_data: #Если нет больше для склада маршрутов
@@ -143,18 +143,17 @@ class TmtrExchangeOneCPurchaseOrder(models.Model):
                 
                 routes = self.env['tms.route'].upload_new_route(purchase_data)
                 driver = self.env['tms.carrier.driver'].get_carrier_driver(purchase_data['Водитель_Key'])#выгрузка водителей
-                _logger.info(purchase_data['Number'])
                 delivery_tms = self.env['tms.delivery'].search([('order_num','=',purchase_data['Number'])])
                 self.env['tmtr.exchange.1c.company.route'].create_company_route(purchase_data)
 
                 if not delivery_tms and routes:
                     delivery_tms = self.create_delivery(purchase_data, routes, driver.id if driver else False)
                     cnt += 1
-                _logger.info(f"routes: {routes}, data: {purchase_data}")
                 tk_unique_key = self.get_unique_values_on_filed(purchase_data['Реализации'], 'ТК')
                 transport_companys = self.get_transport_company_id(tk_unique_key)
                 self.update_carrier_id(delivery_tms, transport_companys['carrier_ids'])
-                self.update_intervals(delivery_tms, routes)#выгрузка интервалов 
+                for item in tk_unique_key:
+                    self.update_intervals(delivery_tms, routes, item)#выгрузка интервалов 
 
                 # if driver:
                 #     self.update_carrier_driver_id(delivery_tms, driver.carrier_driver_id)
@@ -172,7 +171,7 @@ class TmtrExchangeOneCPurchaseOrder(models.Model):
                             self.create_delivery_row(item, delivery_tms, name_client=name_client)
                     if purchase_data['ДопУслуги'] != []:
                         for item in purchase_data['ДопУслуги']:
-                            name_client = cash_clients.get(item['Контрагент_Key'])
+                            name_client =item['Контрагент']
                             self.create_returns_delivery(item, delivery_tms, name_client=name_client)
                 
             total_cnt += cnt
@@ -207,7 +206,6 @@ class TmtrExchangeOneCPurchaseOrder(models.Model):
                                                                              ('carrier_id', '!=', None)])
         carrier_ids = [r['id'] for r in transport_company_ids['carrier_id']]
         tk_ids = [r['id'] for r in transport_company_ids]
-        _logger.info(f"tk_ids: {transport_company_ids}  carrer_ids: {carrier_ids}")
         return {
             'carrier_ids': carrier_ids,
             'tk_ids': tk_ids
@@ -234,11 +232,14 @@ class TmtrExchangeOneCPurchaseOrder(models.Model):
             self.env['tms.carrier.route'].create_carrier_route(item['id'], item['name'], route_list)
         return
     
-    def update_intervals(self, delivery_tms, routes):
+    def update_intervals(self, delivery_tms, routes, tc_key):
         if routes == []:
             return
-        value = self.env['tmtr.exchange.1c.intervals'].get_intervals(routes[0].route_1c_key)
-        date = delivery_tms.car_departure_date + timedelta(days=int(value.delivery_terms))
+        value = self.env['tmtr.exchange.1c.intervals'].get_intervals(routes[0].route_1c_key, routes[0].stock_1c_key, tc_key)
+        if not value:
+            return
+        delivery_date = delivery_tms.car_departure_date if delivery_tms.car_departure_date else delivery_tms.date_create_1c
+        date = delivery_date + timedelta(days=int(value.delivery_terms)) 
         interval_f = datetime(date.year, date.month, date.day,value.interval_from.hour,value.interval_from.minute,0)
         interval_t = datetime(date.year, date.month, date.day,value.interval_to.hour,value.interval_to.minute,0)
         delivery_tms.update({
